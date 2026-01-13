@@ -49,6 +49,11 @@ if (g.__api_interceptors_installed) {
   // Attach access token (Bearer) from Redux to every request
   api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     const token = store.getState().auth.accessToken;
+
+    console.log("[API]", config.method?.toUpperCase(), config.url, {
+    hasToken: Boolean(token),
+  });
+
     if (token) {
       config.headers = config.headers ?? {};
       config.headers.Authorization = `Bearer ${token}`;
@@ -56,66 +61,66 @@ if (g.__api_interceptors_installed) {
     return config;
   });
 
-  // prevent multiple refresh calls at once
-  let refreshPromise: Promise<string> | null = null;
+  // // prevent multiple refresh calls at once
+  // let refreshPromise: Promise<string> | null = null;
 
-  async function doRefresh(): Promise<string> {
-    const res = await refreshClient.post<ApiResponse<LoginResponse>>("/auth/refresh");
+  // async function doRefresh(): Promise<string> {
+  //   const res = await refreshClient.post<ApiResponse<LoginResponse>>("/auth/refresh");
 
-    const newToken = res.data?.data?.accessToken;
-    if (!newToken) throw new Error("Refresh response missing accessToken");
+  //   const newToken = res.data?.data?.accessToken;
+  //   if (!newToken) throw new Error("Refresh response missing accessToken");
 
-    // You store token (and maybe user=null) in redux
-    store.dispatch(refreshSuccess(res.data.data));
-    return newToken;
-  }
+  //   // You store token (and maybe user=null) in redux
+  //   store.dispatch(refreshSuccess(res.data.data));
+  //   return newToken;
+  // }
 
-  api.interceptors.response.use(
-    (response) => response,
-    async (error: AxiosError) => {
-      const status = error.response?.status;
-      const originalConfig = error.config as (AxiosRequestConfig & { _retry?: boolean });
+  // api.interceptors.response.use(
+  //   (response) => response,
+  //   async (error: AxiosError) => {
+  //     const status = error.response?.status;
+  //     const originalConfig = error.config as (AxiosRequestConfig & { _retry?: boolean });
 
-      if (!originalConfig) return Promise.reject(error);
+  //     if (!originalConfig) return Promise.reject(error);
 
-      const path = getPath(originalConfig);
-      const method = (originalConfig.method ?? "get").toLowerCase();
+  //     const path = getPath(originalConfig);
+  //     const method = (originalConfig.method ?? "get").toLowerCase();
 
-      // ✅ refresh ONLY on 401 (unauthorized)
-      // ❌ never refresh on /auth/* calls
-      // ❌ don't loop
-      if (status !== 401 || originalConfig._retry || isAuthPath(path)) {
-        return Promise.reject(error);
-      }
+  //     // ✅ refresh ONLY on 401 (unauthorized)
+  //     // ❌ never refresh on /auth/* calls
+  //     // ❌ don't loop
+  //     if (status !== 401 || originalConfig._retry || isAuthPath(path)) {
+  //       return Promise.reject(error);
+  //     }
 
-      originalConfig._retry = true;
+  //     originalConfig._retry = true;
 
-      try {
-        refreshPromise = refreshPromise ?? doRefresh();
-        const token = await refreshPromise;
-        refreshPromise = null;
+  //     try {
+  //       refreshPromise = refreshPromise ?? doRefresh();
+  //       const token = await refreshPromise;
+  //       refreshPromise = null;
 
-        // ✅ DO NOT automatically replay non-GET (prevents "last POST fires again")
-        // If you *want* retry for POST, opt in by setting config.headers["x-retry"] = "1"
-        const retryAllowed =
-          method === "get" || (originalConfig.headers as any)?.["x-retry"] === "1";
+  //       // ✅ DO NOT automatically replay non-GET (prevents "last POST fires again")
+  //       // If you *want* retry for POST, opt in by setting config.headers["x-retry"] = "1"
+  //       const retryAllowed =
+  //         method === "get" || (originalConfig.headers as any)?.["x-retry"] === "1";
 
-        if (!retryAllowed) {
-          // token refreshed, but we don't replay the request automatically
-          return Promise.reject(error);
-        }
+  //       if (!retryAllowed) {
+  //         // token refreshed, but we don't replay the request automatically
+  //         return Promise.reject(error);
+  //       }
 
-        originalConfig.headers = originalConfig.headers ?? {};
-        (originalConfig.headers as any).Authorization = `Bearer ${token}`;
+  //       originalConfig.headers = originalConfig.headers ?? {};
+  //       (originalConfig.headers as any).Authorization = `Bearer ${token}`;
 
-        return api(originalConfig);
-      } catch (refreshErr) {
-        refreshPromise = null;
-        store.dispatch(logout());
-        return Promise.reject(refreshErr);
-      }
-    }
-  );
+  //       return api(originalConfig);
+  //     } catch (refreshErr) {
+  //       refreshPromise = null;
+  //       store.dispatch(logout());
+  //       return Promise.reject(refreshErr);
+  //     }
+  //   }
+  // );
 }
 
 export function sendGet<TResponse>(

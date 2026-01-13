@@ -65,6 +65,14 @@ export const authSlice = createSlice({
         bootstrapDone: (state) => {
             state.bootstrap = "done";
         },
+        getTestStart: () => {
+        },
+        getTestSuccess: (_state, action: PayloadAction<string>) => {
+            console.log(action.payload);
+        },
+        getTestFailure: () => {
+            console.log("Test failed");
+        },
 
     }
 });
@@ -81,6 +89,9 @@ export const {
     logout,
     bootstrapStart,
     bootstrapDone,
+    getTestStart,
+    getTestSuccess,
+    getTestFailure,
 } = authSlice.actions;
 
 export default authReducer;
