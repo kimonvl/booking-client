@@ -3,13 +3,12 @@ import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loginStart, registerStart } from "@/store/auth/authSlice";
 import { selectAccessToken, selectAuthStatus, selectBootstrapStatus, selectCurrentUser } from "@/store/auth/auth.selector";
+import CommonForm from "@/components/common-form/CommonForm";
+import { loginFormControls, registerFormControls, type LoginFormState, type RegisterFormState } from "@/types/form-config/AuthFormControlls";
 
 
 type UrlRole = "guest" | "partner";
@@ -40,9 +39,16 @@ export default function AuthPage() {
   const accessToken = useAppSelector(selectAccessToken);
   const bootstrap = useAppSelector(selectBootstrapStatus);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
+  const [loginInput, setLoginInput] = useState<LoginFormState>({
+    email: "",
+    password: "",
+  });
+
+  const [registerInput, setRegisterInput] = useState<RegisterFormState>({
+    email: "",
+    password: "",
+    confirm: "",
+  });
 
   const isRegister = mode === "register";
   const isPartner = role === "partner";
@@ -50,8 +56,6 @@ export default function AuthPage() {
     if (isRegister) return isPartner ? "Create partner account" : "Create account";
     return isPartner ? "Partner sign in" : "Sign in";
   }, [isRegister, isPartner]);
-
-  const submitLabel = isRegister ? "Create account" : "Sign in";
 
   //   // If authenticated -> redirect based on role
   //   useEffect(() => {
@@ -72,65 +76,58 @@ export default function AuthPage() {
   //       toast.error(auth.error);
   //     }
   //   }, [auth.status, auth.error]);
-  useEffect(() => {
-    if (bootstrap !== "done") return;
-    if (!accessToken || !user) return;
 
-    // if user originally tried to access /partner/... send them there
-    const from = (location.state as any)?.from?.pathname as string | undefined;
-    if (from) {
-      navigate(from, { replace: true });
-      return;
-    }
+useEffect(() => {
+  if (bootstrap !== "done") return;
+  if (authStatus !== "succeeded") return;
+  if (!accessToken || !user) return;
 
-    // otherwise go to role home
-    navigate(user.role === "PARTNER" ? "/partner" : "/", { replace: true });
-  }, [bootstrap, accessToken, user, navigate, location.state]);
+  // // 1) if user was redirected to login from a protected route, go back there
+  // const from = location.state?.from?.pathname;
+  // if (from) {
+  //   navigate(from, { replace: true });
+  //   return;
+  // }
 
-  useEffect(() => {
-    if (authStatus !== "succeeded") return;
-    if (!accessToken) return;
+  // 2) otherwise go to the correct home page based on actual user role from backend
+  navigate(user.role === "PARTNER" ? "/partner" : "/", { replace: true });
+}, [bootstrap, authStatus, accessToken, user, location.state, navigate]);
 
-    const roleFromState = user?.role; // depends on what you store: "PARTNER" | "GUEST"
-    const isPartnerUser = roleFromState === "PARTNER" || role === "partner";
 
-    navigate(isPartnerUser ? "/partner" : "/", { replace: true });
-  }, [authStatus, accessToken, user?.role, role, navigate]);
-
-  const onSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!email.trim() || !password.trim()) {
+    if (!loginInput.email.trim() || !loginInput.password.trim()) {
       toast.error("Please fill email and password.");
       return;
     }
+    dispatch(
+      loginStart({
+        email: loginInput.email.trim(),
+        password: loginInput.password,
+        role: isPartner ? "PARTNER" : "GUEST",
+      })
+    );
+  }
 
-    if (isRegister) {
-      if (password !== confirm) {
+  const handleRegisterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!registerInput.email.trim() || !registerInput.password.trim()) {
+      toast.error("Please fill email and password.");
+      return;
+    }
+    if (registerInput.password !== registerInput.confirm) {
         toast.error("Passwords do not match.");
         return;
       }
 
       dispatch(
         registerStart({
-          email: email.trim(),
-          password,
+          email: registerInput.email.trim(),
+          password: registerInput.password,
           role: isPartner ? "PARTNER" : "GUEST",
         })
       );
-      return;
-    }
-
-    dispatch(
-      loginStart({
-        email: email.trim(),
-        password,
-        // we keep role for UI/redirect; not necessarily sent to backend
-        role: isPartner ? "PARTNER" : "GUEST",
-      })
-    );
-    navigate("/partner");
-  };
+  }
 
   const switchUrl = isRegister
     ? `/auth/${role}/login`
@@ -173,56 +170,16 @@ export default function AuthPage() {
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={onSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@email.com"
-                autoComplete="email"
-              />
-            </div>
+          {
+            isRegister && <CommonForm<RegisterFormState> formControls={registerFormControls} formInput={registerInput} setFormInput={setRegisterInput} handleSubmit={handleRegisterSubmit} buttonName="Register" />
+          }
+          {
+            !isRegister && <CommonForm<LoginFormState> formControls={loginFormControls} formInput={loginInput} setFormInput={setLoginInput} handleSubmit={handleLoginSubmit} buttonName="Log in" />
+          }
+          <Link to={switchUrl} className="block text-center text-sm text-[#0071c2] hover:underline">
+            {switchText}
+          </Link>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                autoComplete={isRegister ? "new-password" : "current-password"}
-              />
-            </div>
-
-            {isRegister && (
-              <div className="space-y-2">
-                <Label htmlFor="confirm">Confirm password</Label>
-                <Input
-                  id="confirm"
-                  type="password"
-                  value={confirm}
-                  onChange={(e) => setConfirm(e.target.value)}
-                  placeholder="••••••••"
-                  autoComplete="new-password"
-                />
-              </div>
-            )}
-
-            <Button
-              type="submit"
-              className="w-full h-11 bg-[#0071c2] hover:bg-[#005fa3]"
-              disabled={authStatus === "loading"}
-            >
-              {authStatus === "loading" ? "Please wait..." : submitLabel}
-            </Button>
-
-            <Link to={switchUrl} className="block text-center text-sm text-[#0071c2] hover:underline">
-              {switchText}
-            </Link>
-          </form>
         </CardContent>
       </Card>
     </div>

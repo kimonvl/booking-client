@@ -4,11 +4,12 @@ import { toast } from "sonner";
 import type { AuthUser, RegisterRequest } from "./auth.types";
 import type { SagaIterator } from "redux-saga";
 import type { AxiosResponse } from "axios";
-import { sendPostJson } from "@/utils/axios.utils";
+import { sendGet, sendPostJson } from "@/utils/axios.utils";
 import type { ApiResponse } from "@/types/response/apiResponse";
-import { bootstrapDone, bootstrapStart, loginFailed, loginStart, loginSuccess, logout, refreshSuccess, registerFailed, registerStart, registerSuccess } from "./authSlice";
+import { bootstrapDone, bootstrapStart, getTestFailure, getTestStart, getTestSuccess, loginFailed, loginStart, loginSuccess, logout, refreshSuccess, registerFailed, registerStart, registerSuccess } from "./authSlice";
 import type { LoginRequest } from "@/types/request/auth/authRequest.types";
 import type { LoginResponse } from "@/types/response/auth/authResponse.types";
+import { callApiWithRefresh } from "../refreshSagaWraper";
 
 export function* register(action: PayloadAction<RegisterRequest>): SagaIterator {
     try {
@@ -60,6 +61,19 @@ export function* bootstrap(): SagaIterator {
         yield put(bootstrapDone());
     }
 }
+export function* getTest(): SagaIterator {
+    try {
+        const res: AxiosResponse<ApiResponse<string>> = yield call(callApiWithRefresh, () => 
+            sendGet<ApiResponse<string>>("/partner/getTest")
+        );
+        if (res && res.data.success) {
+            yield put(getTestSuccess(res.data.data));
+            toast.success(res.data.message);
+        }
+    } catch (e) {
+        yield put(getTestFailure());
+    }
+}
 
 export function* onRegisterStart(): SagaIterator {
     yield takeLatest(registerStart.type, register);
@@ -73,11 +87,15 @@ export function* onBootstrapStart(): SagaIterator {
     yield takeLatest(bootstrapStart.type, bootstrap);
 }
 
+export function* onGetTestStart(): SagaIterator {
+    yield takeLatest(getTestStart.type, getTest);
+}
 
 export function* authSaga(): SagaIterator {
     yield all([
         call(onRegisterStart),
         call(onLoginStart),
         call(onBootstrapStart),
+        call(onGetTestStart),
     ]);
 }
