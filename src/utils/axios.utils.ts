@@ -1,14 +1,11 @@
 import { store } from "@/store/store";
 import axios, {
-  type AxiosError,
   type AxiosInstance,
   type AxiosRequestConfig,
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from "axios";
-import type { ApiResponse } from "@/types/response/apiResponse";
-import type { LoginResponse } from "@/types/response/auth/authResponse.types";
-import { logout, refreshSuccess } from "@/store/auth/authSlice";
+
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
 
@@ -16,28 +13,6 @@ export const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true, // sends refresh cookie automatically
 });
-
-// Separate instance to avoid interceptor recursion
-const refreshClient = axios.create({
-  baseURL: API_BASE_URL,
-  withCredentials: true,
-});
-
-/** Normalize axios config.url to a pathname like "/auth/login" */
-function getPath(config: AxiosRequestConfig): string {
-  const base = config.baseURL ?? API_BASE_URL;
-  const url = config.url ?? "";
-  try {
-    return new URL(url, base).pathname; // handles "auth/login" and "/auth/login" and full URLs
-  } catch {
-    const u = url.startsWith("/") ? url : `/${url}`;
-    return u.split("?")[0];
-  }
-}
-
-function isAuthPath(path: string) {
-  return path.startsWith("/auth/");
-}
 
 /** IMPORTANT: avoid installing interceptors multiple times (HMR/dev) */
 const g = globalThis as any;
@@ -51,7 +26,7 @@ if (g.__api_interceptors_installed) {
     const token = store.getState().auth.accessToken;
 
     console.log("[API]", config.method?.toUpperCase(), config.url, {
-    hasToken: Boolean(token),
+    hasToken: token,
   });
 
     if (token) {
@@ -60,22 +35,6 @@ if (g.__api_interceptors_installed) {
     }
     return config;
   });
-
-  // // prevent multiple refresh calls at once
-  // let refreshPromise: Promise<string> | null = null;
-
-  // async function doRefresh(): Promise<string> {
-  //   const res = await refreshClient.post<ApiResponse<LoginResponse>>("/auth/refresh");
-
-  //   const newToken = res.data?.data?.accessToken;
-  //   if (!newToken) throw new Error("Refresh response missing accessToken");
-
-  //   // You store token (and maybe user=null) in redux
-  //   store.dispatch(refreshSuccess(res.data.data));
-  //   return newToken;
-  // }
-
-  // api.interceptors.response.use(
   //   (response) => response,
   //   async (error: AxiosError) => {
   //     const status = error.response?.status;

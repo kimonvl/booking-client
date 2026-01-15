@@ -64,7 +64,7 @@ export function* bootstrap(): SagaIterator {
 export function* getTest(): SagaIterator {
     try {
         const res: AxiosResponse<ApiResponse<string>> = yield call(callApiWithRefresh, () => 
-            sendGet<ApiResponse<string>>("/test/getTest")
+            sendGet<ApiResponse<string>>("/partner/getTest")
         );
         if (res && res.data.success) {
             yield put(getTestSuccess(res.data.data));
