@@ -5,6 +5,7 @@ import storage from "redux-persist/lib/storage";
 import logger from "redux-logger";
 import { rootSaga } from "./root-saga";
 import authReducer from "./auth/authSlice";
+import dictionaryReducer from "./dictionaries/dictionarySlice";
 
 /* =========================
    Persist configurations
@@ -13,6 +14,12 @@ const persistAuthConfig = {
   key: "auth",
   storage,
   whitelist: ['user'],
+};
+
+const persistDictionaryConfig = {
+  key: "dictionary",
+  storage,
+  whitelist: ['amenitiesDictionary'],
 };
 
 /* =========================
@@ -24,6 +31,7 @@ const sagaMiddleware = createSagaMiddleware();
 export const store = configureStore({
   reducer: {
     auth: persistReducer(persistAuthConfig, authReducer),
+    dictionary: persistReducer(persistDictionaryConfig, dictionaryReducer),
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

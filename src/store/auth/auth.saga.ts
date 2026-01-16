@@ -1,13 +1,13 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { all, call, put, takeLatest } from "redux-saga/effects";
+import { all, call, put, takeLatest, takeLeading } from "redux-saga/effects";
 import { toast } from "sonner";
-import type { AuthUser, RegisterRequest } from "./auth.types";
+import type { AuthUser } from "./auth.types";
 import type { SagaIterator } from "redux-saga";
 import type { AxiosResponse } from "axios";
 import { sendGet, sendPostJson } from "@/utils/axios.utils";
 import type { ApiResponse } from "@/types/response/apiResponse";
 import { bootstrapDone, bootstrapStart, getTestFailure, getTestStart, getTestSuccess, loginFailed, loginStart, loginSuccess, logout, refreshSuccess, registerFailed, registerStart, registerSuccess } from "./authSlice";
-import type { LoginRequest } from "@/types/request/auth/authRequest.types";
+import type { LoginRequest, RegisterRequest } from "@/types/request/auth/authRequest.types";
 import type { LoginResponse } from "@/types/response/auth/authResponse.types";
 import { callApiWithRefresh } from "../refreshSagaWraper";
 
@@ -53,14 +53,14 @@ export function* bootstrap(): SagaIterator {
         if (res && res.data.success) {
             yield put(refreshSuccess(res.data.data));
             toast.success(res.data.message);
+            yield put(bootstrapDone());
         }
     } catch (e) {
         // refresh may fail -> just stay logged out
-        yield put(logout());
-    } finally {
         yield put(bootstrapDone());
     }
 }
+
 export function* getTest(): SagaIterator {
     try {
         const res: AxiosResponse<ApiResponse<string>> = yield call(callApiWithRefresh, () => 
@@ -84,7 +84,7 @@ export function* onLoginStart(): SagaIterator {
 }
 
 export function* onBootstrapStart(): SagaIterator {
-    yield takeLatest(bootstrapStart.type, bootstrap);
+    yield takeLeading(bootstrapStart.type, bootstrap);
 }
 
 export function* onGetTestStart(): SagaIterator {

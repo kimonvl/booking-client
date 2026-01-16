@@ -7,12 +7,6 @@ export interface AuthUser {
   role: UserRole;
 }
 
-export interface RegisterRequest {
-    email: string;
-    password: string;
-    role: string;
-}
-
 export interface AuthState {
   accessToken: string | null;
   user: AuthUser | null;

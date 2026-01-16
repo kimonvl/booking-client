@@ -12,6 +12,9 @@ import PhotosScreen from "./screens/PhotosScreen";
 import PriceScreen from "./screens/PriceScreen";
 import ReviewScreen from "./screens/ReviewScreen";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { getAmenitiesDictionaryStart } from "@/store/dictionaries/dictionarySlice";
+import { selectAmenitiesDictionary } from "@/store/dictionaries/dictionary.selector";
 
 export type StepsType = "name" | "address" |
   "details" | "amenities" | "services" | "languages" | "rules" |
@@ -125,6 +128,12 @@ const steps: StepsType[] = ["name", "address",
 
 export default function AddAppartmentPage() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const amenitiesDictionary = useAppSelector(selectAmenitiesDictionary);
+
+  useEffect(() => {
+    dispatch(getAmenitiesDictionaryStart());
+  }, [])
 
   const [activeStep, setActiveStep] = useState<StepsType>(steps[0]);
   const [stepsProgress, setStepsProgress] = useState<Record<StepsType, boolean>>({
@@ -160,28 +169,20 @@ export default function AddAppartmentPage() {
   const [offerCots, setOfferCots] = useState<OfferCotsType>("no");
   const [aptSize, setAptSize] = useState<string>("");
 
-  const [amenities, setAmenities] = useState<Record<AmenitiesType, boolean>>({
-    "Air conditioning": false,
-    Heating: false,
-    "Free WiFi": false,
-    "Electric vehicle charging station": false,
+  const [amenities, setAmenities] = useState<Record<string, boolean>>({});
+  useEffect(() => {
+    const initial: Record<string, boolean> = {};
 
-    Kitchen: false,
-    Kitchenette: false,
-    "Washing machine": false,
+    amenitiesDictionary?.forEach(g => {
+      g.items.forEach(item => {
+        initial[item.code] = false;
+      });
+    });
 
-    "Flat-screen TV": false,
-    "Swimming pool": false,
-    "Hot tub": false,
-    Minibar: false,
-    Sauna: false,
+    setAmenities(initial);
+  }, [amenitiesDictionary]);
 
-    Balcony: false,
-    "Garden view": false,
-    Terrace: false,
-    View: false,
-  });
-
+  
   const [serveBreakfast, setServeBreakfast] = useState<ServeBreakfastType>("no");
   const [isParkingAvailable, setIsParkingAvailable] = useState<IsParkingAvailableType>("no");
 

@@ -4,6 +4,8 @@ import { Separator } from "@/components/ui/separator";
 import HelpCard from "./HelpCard";
 import { ThumbsUp } from "lucide-react";
 import type { AmenitiesType } from "../AddAppartmentPage";
+import { useAppSelector } from "@/store/hooks";
+import { selectAmenitiesDictionary } from "@/store/dictionaries/dictionary.selector";
 
 interface AmenitiesScreenProps {
     amenities: Record<AmenitiesType, boolean>;
@@ -11,29 +13,30 @@ interface AmenitiesScreenProps {
 }
 
 export default function AmenitiesScreen({amenities, setAmenities}: AmenitiesScreenProps) {
-  const groups = [
-      {
-        title: "General",
-        items: [
-          "Air conditioning",
-          "Heating",
-          "Free WiFi",
-          "Electric vehicle charging station",
-        ],
-      },
-      {
-        title: "Cooking and cleaning",
-        items: ["Kitchen", "Kitchenette", "Washing machine"],
-      },
-      {
-        title: "Entertainment",
-        items: ["Flat-screen TV", "Swimming pool", "Hot tub", "Minibar", "Sauna"],
-      },
-      {
-        title: "Outside and view",
-        items: ["Balcony", "Garden view", "Terrace", "View"],
-      },
-    ];
+  const groups = useAppSelector(selectAmenitiesDictionary);
+  // const groups = [
+  //     {
+  //       title: "General",
+  //       items: [
+  //         "Air conditioning",
+  //         "Heating",
+  //         "Free WiFi",
+  //         "Electric vehicle charging station",
+  //       ],
+  //     },
+  //     {
+  //       title: "Cooking and cleaning",
+  //       items: ["Kitchen", "Kitchenette", "Washing machine"],
+  //     },
+  //     {
+  //       title: "Entertainment",
+  //       items: ["Flat-screen TV", "Swimming pool", "Hot tub", "Minibar", "Sauna"],
+  //     },
+  //     {
+  //       title: "Outside and view",
+  //       items: ["Balcony", "Garden view", "Terrace", "View"],
+  //     },
+  //   ];
 
     return (
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 ml-2 mt-1 mr-2">
@@ -46,25 +49,25 @@ export default function AmenitiesScreen({amenities, setAmenities}: AmenitiesScre
             <Card className="rounded-md">
               <CardContent className="p-6">
                 <div className="space-y-10">
-                  {groups.map((g) => (
+                  {groups?.map((g) => (
                     <div key={g.title}>
                       <div className="text-lg font-semibold text-[#1a1a1a]">
                         {g.title}
                       </div>
 
                       <div className="mt-4 space-y-3">
-                        {g.items.map((name) => (
+                        {g.items.map((item) => (
                           <label
-                            key={name}
+                            key={item.code}
                             className="flex items-center gap-3"
                           >
                             <Checkbox
-                              checked={amenities[name as AmenitiesType]}
+                              checked={amenities[item.code as AmenitiesType]}
                               onCheckedChange={(v) =>
-                                setAmenities({...amenities, [name]: v})
+                                setAmenities({...amenities, [item.code]: v})
                               }
                             />
-                            <span className="text-sm">{name}</span>
+                            <span className="text-sm">{item.label}</span>
                           </label>
                         ))}
                       </div>
