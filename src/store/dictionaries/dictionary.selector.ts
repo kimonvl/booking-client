@@ -7,5 +7,10 @@ const selectDictionaryReducer = (state: RootState): DictionaryState => state.dic
 
 export const selectAmenitiesDictionary = createSelector(
     [selectDictionaryReducer],
-    (dictionarySlice) => dictionarySlice.amenitiesDictionary
+    (dictionarySlice) => dictionarySlice.amenityDictionary
+);
+
+export const selectLanguageDictionary = createSelector(
+    [selectDictionaryReducer],
+    (dictionarySlice) => dictionarySlice.languageDictionary
 );

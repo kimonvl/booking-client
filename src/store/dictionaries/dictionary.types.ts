@@ -4,13 +4,20 @@ export interface Amenity {
     groupName: string;
 }
 
-export interface AmenitiesDictionaryItem {
+export interface AmenityDictionaryItem {
     title: string;
     items: Amenity[];
 }
 
+export interface LanguageDictionaryItem {
+    id: number;
+    code: string;
+    label: string;
+}
+
 export interface DictionaryState {
-    amenitiesDictionary: AmenitiesDictionaryItem[];
+    amenityDictionary: AmenityDictionaryItem[];
+    languageDictionary: LanguageDictionaryItem[];
     loading: boolean;
     error: string | null;
 }

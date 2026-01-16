@@ -19,7 +19,7 @@ const persistAuthConfig = {
 const persistDictionaryConfig = {
   key: "dictionary",
   storage,
-  whitelist: ['amenitiesDictionary'],
+  whitelist: ['amenityDictionary', 'languageDictionary'],
 };
 
 /* =========================

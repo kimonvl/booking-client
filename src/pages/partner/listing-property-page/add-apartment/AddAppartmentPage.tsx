@@ -13,8 +13,8 @@ import PriceScreen from "./screens/PriceScreen";
 import ReviewScreen from "./screens/ReviewScreen";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { getAmenitiesDictionaryStart } from "@/store/dictionaries/dictionarySlice";
-import { selectAmenitiesDictionary } from "@/store/dictionaries/dictionary.selector";
+import { getAmenitiesDictionaryStart, getLanguageDictionaryStart } from "@/store/dictionaries/dictionarySlice";
+import { selectAmenitiesDictionary, selectLanguageDictionary } from "@/store/dictionaries/dictionary.selector";
 
 export type StepsType = "name" | "address" |
   "details" | "amenities" | "services" | "languages" | "rules" |
@@ -129,11 +129,6 @@ const steps: StepsType[] = ["name", "address",
 export default function AddAppartmentPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const amenitiesDictionary = useAppSelector(selectAmenitiesDictionary);
-
-  useEffect(() => {
-    dispatch(getAmenitiesDictionaryStart());
-  }, [])
 
   const [activeStep, setActiveStep] = useState<StepsType>(steps[0]);
   const [stepsProgress, setStepsProgress] = useState<Record<StepsType, boolean>>({
@@ -169,10 +164,16 @@ export default function AddAppartmentPage() {
   const [offerCots, setOfferCots] = useState<OfferCotsType>("no");
   const [aptSize, setAptSize] = useState<string>("");
 
+  const amenitiesDictionary = useAppSelector(selectAmenitiesDictionary);
+  useEffect(() => {
+    console.log(amenitiesDictionary.length);
+    
+    if(!amenitiesDictionary || amenitiesDictionary.length === 0)
+      dispatch(getAmenitiesDictionaryStart());
+  }, [])
   const [amenities, setAmenities] = useState<Record<string, boolean>>({});
   useEffect(() => {
     const initial: Record<string, boolean> = {};
-
     amenitiesDictionary?.forEach(g => {
       g.items.forEach(item => {
         initial[item.code] = false;
@@ -182,36 +183,35 @@ export default function AddAppartmentPage() {
     setAmenities(initial);
   }, [amenitiesDictionary]);
 
-  
+
   const [serveBreakfast, setServeBreakfast] = useState<ServeBreakfastType>("no");
   const [isParkingAvailable, setIsParkingAvailable] = useState<IsParkingAvailableType>("no");
 
-  const [languages, setLanguages] = useState<Record<LanguageType, boolean>>({
-    English: false,
-    French: false,
-    German: false,
-    Greek: false,
-    Spanish: false,
-  });
-  const [additionalLanguages, setAdditionalLanguages] = useState<Record<AdditionalLanguageType, boolean>>({
-    Korean: false,
-    Latvian: false,
-    Lithuanian: false,
-    Malay: false,
-    Norwegian: false,
-    Polish: false,
-    Portuguese: false,
-    Romanian: false,
-    Russian: false,
-    Serbian: false,
-    Slovak: false,
-    Slovenian: false,
-    Swedish: false,
-    Thai: false,
-    Vietnamese: false,
-    Turkish: false,
-    Ukrainian: false,
-  });
+
+  const allLanguages = useAppSelector(selectLanguageDictionary);
+  useEffect(() => {
+    if (!allLanguages || allLanguages.length === 0)
+      dispatch(getLanguageDictionaryStart());
+  }, []);
+
+  useEffect(() => {
+    if (!allLanguages || allLanguages.length === 0) return;
+
+    const first = allLanguages.slice(0, 7);
+    const rest = allLanguages.slice(7);
+
+    const firstState: Record<string, boolean> = {};
+    const restState: Record<string, boolean> = {};
+
+    first.forEach(l => { firstState[l.label] = false; });
+    rest.forEach(l => { restState[l.label] = false; });
+
+    setLanguages(firstState);
+    setAdditionalLanguages(restState);
+  }, [allLanguages]);
+
+  const [languages, setLanguages] = useState<Record<string, boolean>>({});
+  const [additionalLanguages, setAdditionalLanguages] = useState<Record<string, boolean>>({});
 
   const [smokingAllowed, setSmokingAllowed] = useState(false);
   const [partiesAllowed, setPartiesAllowed] = useState(false);
