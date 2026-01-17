@@ -16,9 +16,15 @@ export interface LanguageDictionaryItem {
     label: string;
 }
 
+export interface CountryDictionaryItem {
+    code: string;
+    name: string;
+}
+
 export interface DictionaryState {
     amenityDictionary: AmenityDictionaryItem[];
     languageDictionary: LanguageDictionaryItem[];
+    countryDictionary: CountryDictionaryItem[];
     loading: boolean;
     error: string | null;
 }

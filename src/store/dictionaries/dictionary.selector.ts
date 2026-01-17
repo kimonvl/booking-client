@@ -15,6 +15,11 @@ export const selectLanguageDictionary = createSelector(
     (dictionarySlice) => dictionarySlice.languageDictionary
 );
 
+export const selectCountryDictionary = createSelector(
+    [selectDictionaryReducer],
+    (dictionarySlice) => dictionarySlice.countryDictionary
+);
+
 export const selectSelectedAmenityLabels = createSelector(
     [
         selectAmenitiesDictionary,
@@ -45,6 +50,17 @@ export const selectSelectedLanguageLabels = createSelector(
         return dictionary
             .filter((lang) => selected[lang.code])
             .map((lang) => lang.label);
+    }
+);
+
+export const selectSelectedCountryLabels = createSelector(
+    [
+        selectCountryDictionary,
+        (_: RootState, countryCode: string) => countryCode,
+    ],
+    (dictionary, countryCode) => {
+        return dictionary
+            .find((country) => country.code === countryCode)?.name
     }
 );
 

@@ -15,7 +15,7 @@ import type {
   TimeType,
 } from "../AddAppartmentPage";
 import { useAppSelector } from "@/store/hooks";
-import { selectSelectedAmenityLabels, selectSelectedLanguageLabels } from "@/store/dictionaries/dictionary.selector";
+import { selectSelectedAmenityLabels, selectSelectedCountryLabels, selectSelectedLanguageLabels } from "@/store/dictionaries/dictionary.selector";
 
 type ReviewScreenProps = {
   propertyName: string;
@@ -114,6 +114,10 @@ export default function ReviewScreen(props: ReviewScreenProps) {
   const selectedLangs = useAppSelector(state => selectSelectedLanguageLabels(state, languages));
   const selectedAdditionalLangs = useAppSelector(state => selectSelectedLanguageLabels(state, additionalLanguages));
 
+  const addressCountry = useAppSelector(state => selectSelectedCountryLabels(state, address.country));
+  console.log(addressCountry);
+  
+
   const mainPhoto = mainPhotoId ? photos.find((p) => p.id === mainPhotoId) : null;
   const previewPhotos = photos.slice(0, 6);
 
@@ -144,7 +148,7 @@ export default function ReviewScreen(props: ReviewScreenProps) {
                       `${address.streetName} ${address.streetNumber}`.trim(),
                       address.floorNumber ? `Floor/Apt: ${address.floorNumber}` : "",
                       `${address.city} ${address.postCode}`.trim(),
-                      address.country,
+                      addressCountry,
                     ]
                       .filter(Boolean)
                       .join(", ") || "—"}

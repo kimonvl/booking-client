@@ -5,6 +5,8 @@ import HelpCard from "./HelpCard";
 import { ThumbsUp } from "lucide-react";
 import type { AddressType } from "../AddAppartmentPage";
 import type { Dispatch, SetStateAction } from "react";
+import { useAppSelector } from "@/store/hooks";
+import { selectCountryDictionary } from "@/store/dictionaries/dictionary.selector";
 
 interface AddressScreenProps {
     address: AddressType;
@@ -12,6 +14,7 @@ interface AddressScreenProps {
 }
 
 export default function AddressScreen({ address, setAddress }: AddressScreenProps) {
+    const countryDictionary = useAppSelector(selectCountryDictionary);
     return (
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 ml-2 mr-2 mt-1">
             <div>
@@ -79,10 +82,12 @@ export default function AddressScreen({ address, setAddress }: AddressScreenProp
                                             <SelectValue placeholder="Select country" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="Greece">Greece</SelectItem>
-                                            <SelectItem value="Italy">Italy</SelectItem>
-                                            <SelectItem value="Spain">Spain</SelectItem>
-                                            <SelectItem value="France">France</SelectItem>
+                                            {
+                                                countryDictionary && countryDictionary.length > 0 &&
+                                                countryDictionary.map((country) => (
+                                                    <SelectItem value={country.code}>{country.name}</SelectItem>
+                                                ))
+                                            }
                                         </SelectContent>
                                     </Select>
                                 </div>

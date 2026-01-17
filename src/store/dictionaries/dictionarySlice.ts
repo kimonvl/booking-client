@@ -1,9 +1,10 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { AmenityDictionaryItem, DictionaryState, LanguageDictionaryItem } from "./dictionary.types";
+import type { AmenityDictionaryItem, CountryDictionaryItem, DictionaryState, LanguageDictionaryItem } from "./dictionary.types";
 
 const initialState: DictionaryState = {
     amenityDictionary: [],
     languageDictionary: [],
+    countryDictionary: [],
     loading: false,
     error: null,
 }
@@ -34,6 +35,17 @@ export const dictionarySlice = createSlice({
             state.error = action.payload;
             state.loading = false;
         },
+        getCountryDictionaryStart: (state) => {
+            state.loading = true;
+        },
+        getCountryDictionarySuccess: (state, action: PayloadAction<CountryDictionaryItem[]>) => {
+            state.countryDictionary = action.payload;
+            state.loading = false;
+        },
+        getCountryDictionaryFailure: (state, action: PayloadAction<string>) => {
+            state.error = action.payload;
+            state.loading = false;
+        },
     }
 });
 
@@ -45,6 +57,9 @@ export const {
     getLanguageDictionaryStart,
     getLanguageDictionarySuccess,
     getLanguageDictionaryFailure,
+    getCountryDictionaryStart,
+    getCountryDictionarySuccess,
+    getCountryDictionaryFailure,
 } = dictionarySlice.actions;
 
 export default dictionaryReducer;

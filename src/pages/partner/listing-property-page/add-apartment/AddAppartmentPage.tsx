@@ -13,8 +13,8 @@ import PriceScreen from "./screens/PriceScreen";
 import ReviewScreen from "./screens/ReviewScreen";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { getAmenitiesDictionaryStart, getLanguageDictionaryStart } from "@/store/dictionaries/dictionarySlice";
-import { selectAmenitiesDictionary, selectLanguageDictionary } from "@/store/dictionaries/dictionary.selector";
+import { getAmenitiesDictionaryStart, getCountryDictionaryStart, getLanguageDictionaryStart } from "@/store/dictionaries/dictionarySlice";
+import { selectAmenitiesDictionary, selectCountryDictionary, selectLanguageDictionary } from "@/store/dictionaries/dictionary.selector";
 
 export type StepsType = "name" | "address" |
   "details" | "amenities" | "services" | "languages" | "rules" |
@@ -103,6 +103,12 @@ export default function AddAppartmentPage() {
   })
 
   const [propertyName, setPropertyName] = useState("");
+
+  const countryDictionary = useAppSelector(selectCountryDictionary);
+  useEffect(() => {
+    if (!countryDictionary || countryDictionary.length === 0)
+      dispatch(getCountryDictionaryStart());
+  }, [dispatch])
   const [address, setAddress] = useState<AddressType>({
     streetName: "",
     streetNumber: "",
@@ -124,8 +130,6 @@ export default function AddAppartmentPage() {
 
   const amenitiesDictionary = useAppSelector(selectAmenitiesDictionary);
   useEffect(() => {
-    console.log(amenitiesDictionary.length);
-
     if (!amenitiesDictionary || amenitiesDictionary.length === 0)
       dispatch(getAmenitiesDictionaryStart());
   }, [dispatch])
