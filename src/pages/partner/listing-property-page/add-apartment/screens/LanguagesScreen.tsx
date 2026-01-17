@@ -3,19 +3,23 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import type { AdditionalLanguageType, LanguageType } from "../AddAppartmentPage";
 import HelpCard from "./HelpCard";
 import { ChevronDown, ThumbsUp } from "lucide-react";
+import { useAppSelector } from "@/store/hooks";
+import { selectLanguageDictionary } from "@/store/dictionaries/dictionary.selector";
 
 interface LanguagesScreenProps {
-    languages: Record<LanguageType, boolean>;
-    setLanguages: (value: Record<LanguageType, boolean>) => void;
-    additionalLanguages: Record<AdditionalLanguageType, boolean>;
-    setAdditionalLanguages: (value: Record<AdditionalLanguageType, boolean>) => void;
+    languages: Record<string, boolean>;
+    setLanguages: (value: Record<string, boolean>) => void;
+    additionalLanguages: Record<string, boolean>;
+    setAdditionalLanguages: (value: Record<string, boolean>) => void;
 }
 
 export default function LanguagesScreen({ languages, setLanguages, additionalLanguages, setAdditionalLanguages }: LanguagesScreenProps) {
-    const selectedAdditionalLanguages = Object.keys(additionalLanguages).filter((lang) => additionalLanguages[lang as AdditionalLanguageType])
+    const allLanguages = useAppSelector(selectLanguageDictionary);
+    const selectedAdditionalLanguages = allLanguages
+    .filter((lang) => additionalLanguages[lang.code])
+    .map((lang) => lang.label);
     const selectedAdditionalLanguagesLabel =
         selectedAdditionalLanguages.length > 0 ? selectedAdditionalLanguages.join(", ") : "Select languages";
 
@@ -34,17 +38,20 @@ export default function LanguagesScreen({ languages, setLanguages, additionalLan
                             </div>
 
                             <div className="mt-4 space-y-3">
-                                {Object.keys(languages).map((lang) => (
-                                    <label key={lang} className="flex items-center gap-3">
-                                        <Checkbox
-                                            checked={languages[lang as LanguageType]}
-                                            onCheckedChange={(v) =>
-                                                setLanguages({ ...languages, [lang]: v })
-                                            }
-                                        />
-                                        <span className="text-sm">{lang}</span>
-                                    </label>
-                                ))}
+                                {allLanguages.map((lang) => {
+                                    if (!(lang.code in languages)) return null;
+                                    return (
+                                        <label key={lang.code} className="flex items-center gap-3">
+                                            <Checkbox
+                                                checked={languages[lang.code]}
+                                                onCheckedChange={(v) =>
+                                                    setLanguages({ ...languages, [lang.code]: v === true })
+                                                }
+                                            />
+                                            <span className="text-sm">{lang.label}</span>
+                                        </label>
+                                    )
+                                })}
                             </div>
 
                             <Separator className="my-8" />
@@ -67,15 +74,18 @@ export default function LanguagesScreen({ languages, setLanguages, additionalLan
                                 <PopoverContent className="w-[640px] max-w-[calc(100vw-32px)] p-0" align="start">
                                     <ScrollArea className="h-[280px] p-4">
                                         <div className="space-y-3">
-                                            {Object.keys(additionalLanguages).map((lang) => (
-                                                <label key={lang} className="flex items-center gap-3">
-                                                    <Checkbox
-                                                        checked={additionalLanguages[lang as AdditionalLanguageType]}
-                                                        onCheckedChange={(v) => setAdditionalLanguages({ ...additionalLanguages, [lang]: v })}
-                                                    />
-                                                    <span className="text-sm">{lang}</span>
-                                                </label>
-                                            ))}
+                                            {allLanguages.map((lang) => {
+                                                if (!(lang.code in additionalLanguages)) return null;
+                                                return (
+                                                    <label key={lang.code} className="flex items-center gap-3">
+                                                        <Checkbox
+                                                            checked={additionalLanguages[lang.code]}
+                                                            onCheckedChange={(v) => setAdditionalLanguages({ ...additionalLanguages, [lang.code]: v === true })}
+                                                        />
+                                                        <span className="text-sm">{lang.label}</span>
+                                                    </label>
+                                                )
+                                            })}
                                         </div>
                                     </ScrollArea>
                                 </PopoverContent>

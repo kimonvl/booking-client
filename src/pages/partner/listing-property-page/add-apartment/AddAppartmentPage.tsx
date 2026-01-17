@@ -45,50 +45,8 @@ export type SleepingAreasType = {
 export type AllowChildrenType = "yes" | "no";
 export type OfferCotsType = "yes" | "no";
 
-export type AmenitiesType = "Air conditioning" |
-  "Heating" |
-  "Free WiFi" |
-  "Electric vehicle charging station" |
-  "Kitchen" |
-  "Kitchenette" |
-  "Washing machine" |
-  "Flat-screen TV" |
-  "Swimming pool" |
-  "Hot tub" |
-  "Minibar" |
-  "Sauna" |
-  "Balcony" |
-  "Garden view" |
-  "Terrace" |
-  "View";
-
 export type ServeBreakfastType = "yes" | "no";
 export type IsParkingAvailableType = "free" | "paid" | "no";
-
-export type LanguageType =
-  "English" |
-  "French" |
-  "German" |
-  "Greek" |
-  "Spanish";
-export type AdditionalLanguageType =
-  "Korean" |
-  "Latvian" |
-  "Lithuanian" |
-  "Malay" |
-  "Norwegian" |
-  "Polish" |
-  "Portuguese" |
-  "Romanian" |
-  "Russian" |
-  "Serbian" |
-  "Slovak" |
-  "Slovenian" |
-  "Swedish" |
-  "Thai" |
-  "Turkish" |
-  "Ukrainian" |
-  "Vietnamese";
 
 export type PetsAllowedType = "Yes" | "Upon request" | "No";
 export type TimeType = "00:00" |
@@ -167,12 +125,14 @@ export default function AddAppartmentPage() {
   const amenitiesDictionary = useAppSelector(selectAmenitiesDictionary);
   useEffect(() => {
     console.log(amenitiesDictionary.length);
-    
-    if(!amenitiesDictionary || amenitiesDictionary.length === 0)
+
+    if (!amenitiesDictionary || amenitiesDictionary.length === 0)
       dispatch(getAmenitiesDictionaryStart());
-  }, [])
+  }, [dispatch])
   const [amenities, setAmenities] = useState<Record<string, boolean>>({});
   useEffect(() => {
+    if (!amenitiesDictionary?.length) return;
+    if (Object.keys(amenities).length > 0) return;
     const initial: Record<string, boolean> = {};
     amenitiesDictionary?.forEach(g => {
       g.items.forEach(item => {
@@ -192,7 +152,7 @@ export default function AddAppartmentPage() {
   useEffect(() => {
     if (!allLanguages || allLanguages.length === 0)
       dispatch(getLanguageDictionaryStart());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (!allLanguages || allLanguages.length === 0) return;
@@ -203,13 +163,12 @@ export default function AddAppartmentPage() {
     const firstState: Record<string, boolean> = {};
     const restState: Record<string, boolean> = {};
 
-    first.forEach(l => { firstState[l.label] = false; });
-    rest.forEach(l => { restState[l.label] = false; });
+    first.forEach(l => { firstState[l.code] = false; });
+    rest.forEach(l => { restState[l.code] = false; });
 
     setLanguages(firstState);
     setAdditionalLanguages(restState);
   }, [allLanguages]);
-
   const [languages, setLanguages] = useState<Record<string, boolean>>({});
   const [additionalLanguages, setAdditionalLanguages] = useState<Record<string, boolean>>({});
 

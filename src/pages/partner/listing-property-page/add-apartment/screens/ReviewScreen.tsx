@@ -4,12 +4,9 @@ import { Separator } from "@/components/ui/separator";
 import { ThumbsUp } from "lucide-react";
 import HelpCard from "./HelpCard";
 import type {
-  AdditionalLanguageType,
   AddressType,
-  AmenitiesType,
   AllowChildrenType,
   IsParkingAvailableType,
-  LanguageType,
   OfferCotsType,
   PetsAllowedType,
   PhotoItem,
@@ -17,6 +14,8 @@ import type {
   SleepingAreasType,
   TimeType,
 } from "../AddAppartmentPage";
+import { useAppSelector } from "@/store/hooks";
+import { selectSelectedAmenityLabels, selectSelectedLanguageLabels } from "@/store/dictionaries/dictionary.selector";
 
 type ReviewScreenProps = {
   propertyName: string;
@@ -29,13 +28,13 @@ type ReviewScreenProps = {
   offerCots: OfferCotsType;
   aptSize: string;
 
-  amenities: Record<AmenitiesType, boolean>;
+  amenities: Record<string, boolean>;
 
   serveBreakfast: ServeBreakfastType;
   isParkingAvailable: IsParkingAvailableType;
 
-  languages: Record<LanguageType, boolean>;
-  additionalLanguages: Record<AdditionalLanguageType, boolean>;
+  languages: Record<string, boolean>;
+  additionalLanguages: Record<string, boolean>;
 
   smokingAllowed: boolean;
   partiesAllowed: boolean;
@@ -81,10 +80,6 @@ function summarizeBeds(sleepingAreas: SleepingAreasType) {
   };
 }
 
-function selectedKeys<T extends string>(record: Record<T, boolean>) {
-  return (Object.keys(record) as T[]).filter((k) => record[k]);
-}
-
 export default function ReviewScreen(props: ReviewScreenProps) {
   const {
     propertyName,
@@ -115,9 +110,9 @@ export default function ReviewScreen(props: ReviewScreenProps) {
 
   const beds = summarizeBeds(sleepingAreas);
 
-  const selectedAmenities = selectedKeys(amenities);
-  const selectedLangs = selectedKeys(languages);
-  const selectedAdditionalLangs = selectedKeys(additionalLanguages);
+  const selectedAmenities = useAppSelector(state => selectSelectedAmenityLabels(state, amenities));
+  const selectedLangs = useAppSelector(state => selectSelectedLanguageLabels(state, languages));
+  const selectedAdditionalLangs = useAppSelector(state => selectSelectedLanguageLabels(state, additionalLanguages));
 
   const mainPhoto = mainPhotoId ? photos.find((p) => p.id === mainPhotoId) : null;
   const previewPhotos = photos.slice(0, 6);

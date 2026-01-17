@@ -5,6 +5,7 @@ export interface Amenity {
 }
 
 export interface AmenityDictionaryItem {
+    code: string;
     title: string;
     items: Amenity[];
 }

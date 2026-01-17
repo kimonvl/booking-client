@@ -3,13 +3,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import HelpCard from "./HelpCard";
 import { ThumbsUp } from "lucide-react";
-import type { AmenitiesType } from "../AddAppartmentPage";
 import { useAppSelector } from "@/store/hooks";
 import { selectAmenitiesDictionary } from "@/store/dictionaries/dictionary.selector";
 
 interface AmenitiesScreenProps {
-    amenities: Record<AmenitiesType, boolean>;
-    setAmenities: (value: Record<AmenitiesType, boolean>) => void;
+    amenities: Record<string, boolean>;
+    setAmenities: (value: Record<string, boolean>) => void;
 }
 
 export default function AmenitiesScreen({amenities, setAmenities}: AmenitiesScreenProps) {
@@ -50,7 +49,7 @@ export default function AmenitiesScreen({amenities, setAmenities}: AmenitiesScre
               <CardContent className="p-6">
                 <div className="space-y-10">
                   {groups?.map((g) => (
-                    <div key={g.title}>
+                    <div key={g.code}>
                       <div className="text-lg font-semibold text-[#1a1a1a]">
                         {g.title}
                       </div>
@@ -62,9 +61,9 @@ export default function AmenitiesScreen({amenities, setAmenities}: AmenitiesScre
                             className="flex items-center gap-3"
                           >
                             <Checkbox
-                              checked={amenities[item.code as AmenitiesType]}
+                              checked={amenities[item.code]}
                               onCheckedChange={(v) =>
-                                setAmenities({...amenities, [item.code]: v})
+                                setAmenities({...amenities, [item.code]: v === true})
                               }
                             />
                             <span className="text-sm">{item.label}</span>
