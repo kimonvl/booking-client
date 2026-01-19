@@ -3,19 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ThumbsUp } from "lucide-react";
 import HelpCard from "./HelpCard";
-import type {
-  AddressType,
-  AllowChildrenType,
-  IsParkingAvailableType,
-  OfferCotsType,
-  PetsAllowedType,
-  PhotoItem,
-  ServeBreakfastType,
-  SleepingAreasType,
-  TimeType,
-} from "../AddAppartmentPage";
 import { useAppSelector } from "@/store/hooks";
 import { selectSelectedAmenityLabels, selectSelectedCountryLabels, selectSelectedLanguageLabels } from "@/store/dictionaries/dictionary.selector";
+import type { AddressType, IsParkingAvailableType, PetsAllowedType, PhotoItem, SleepingAreasType, TimeType } from "@/types/request/apartment/addApartmentRequest.types";
 
 type ReviewScreenProps = {
   propertyName: string;
@@ -24,13 +14,13 @@ type ReviewScreenProps = {
   sleepingAreas: SleepingAreasType;
   guestCount: number;
   bathroomCount: number;
-  allowChildren: AllowChildrenType;
-  offerCots: OfferCotsType;
+  allowChildren: boolean;
+  offerCots: boolean;
   aptSize: string;
 
   amenities: Record<string, boolean>;
 
-  serveBreakfast: ServeBreakfastType;
+  serveBreakfast: boolean;
   isParkingAvailable: IsParkingAvailableType;
 
   languages: Record<string, boolean>;
@@ -145,7 +135,7 @@ export default function ReviewScreen(props: ReviewScreenProps) {
                   <div className="text-sm font-medium text-[#1a1a1a]">Address</div>
                   <div className="text-sm text-muted-foreground">
                     {[
-                      `${address.streetName} ${address.streetNumber}`.trim(),
+                      `${address.street} ${address.streetNumber}`.trim(),
                       address.floorNumber ? `Floor/Apt: ${address.floorNumber}` : "",
                       `${address.city} ${address.postCode}`.trim(),
                       addressCountry,
@@ -196,11 +186,11 @@ export default function ReviewScreen(props: ReviewScreenProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <div className="text-sm font-medium text-[#1a1a1a]">Allow children</div>
-                    <div className="text-sm text-muted-foreground">{titleCase(allowChildren)}</div>
+                    <div className="text-sm text-muted-foreground">{allowChildren ? "Yes" : "No"}</div>
                   </div>
                   <div>
                     <div className="text-sm font-medium text-[#1a1a1a]">Offer cots</div>
-                    <div className="text-sm text-muted-foreground">{titleCase(offerCots)}</div>
+                    <div className="text-sm text-muted-foreground">{offerCots ? "Yes" : "No"}</div>
                   </div>
                 </div>
               </div>
@@ -224,7 +214,7 @@ export default function ReviewScreen(props: ReviewScreenProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div>
                   <div className="font-medium text-[#1a1a1a]">Breakfast</div>
-                  <div className="text-muted-foreground">{titleCase(serveBreakfast)}</div>
+                  <div className="text-muted-foreground">{serveBreakfast ? "Yes" : "No"}</div>
                 </div>
                 <div>
                   <div className="font-medium text-[#1a1a1a]">Parking</div>

@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import HelpCard from "./HelpCard";
 import { Lightbulb } from "lucide-react";
-import type { PetsAllowedType, TimeType } from "../AddAppartmentPage";
+import type { PetsAllowedType, TimeType } from "@/types/request/apartment/addApartmentRequest.types";
 
 interface RulesScreenProps {
     smokingAllowed: boolean;
@@ -113,7 +113,7 @@ export default function RulesScreen({
                                         <span className="text-sm">Yes</span>
                                     </label>
                                     <label className="flex items-center gap-3">
-                                        <RadioGroupItem value="upon" />
+                                        <RadioGroupItem value="upon request" />
                                         <span className="text-sm">Upon request</span>
                                     </label>
                                     <label className="flex items-center gap-3">

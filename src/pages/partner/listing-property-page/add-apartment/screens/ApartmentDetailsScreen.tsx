@@ -7,8 +7,8 @@ import HelpCard from "./HelpCard";
 import { ChevronDown, Lightbulb, Trash2 } from "lucide-react";
 import { useState, type Dispatch, type SetStateAction } from "react";
 import AddBedDialog from "./AddBedDialog";
-import type { AllowChildrenType, OfferCotsType, SleepingAreasType } from "../AddAppartmentPage";
 import CounterFilter from "@/components/filters/CounterFilter";
+import type { SleepingAreasType } from "@/types/request/apartment/addApartmentRequest.types";
 
 interface ApartmentDetailsScreenProps {
   sleepingAreas: SleepingAreasType;
@@ -19,10 +19,10 @@ interface ApartmentDetailsScreenProps {
   setGuestCount: (next: number) => void;
   bathroomCount: number;
   setBathroomCount: (next: number) => void;
-  allowChildren: AllowChildrenType;
-  setAllowChildren: (value: AllowChildrenType) => void;
-  offerCots: OfferCotsType;
-  setOfferCots: (value: OfferCotsType) => void;
+  allowChildren: boolean;
+  setAllowChildren: (value: boolean) => void;
+  offerCots: boolean;
+  setOfferCots: (value: boolean) => void;
   aptSize: string;
   setAptSize: (value: string) => void;
 }
@@ -209,8 +209,8 @@ export default function ApartmentDetailsScreen({
                     Do you allow children?
                   </div>
                   <RadioGroup
-                    value={allowChildren}
-                    onValueChange={(v) => setAllowChildren(v as AllowChildrenType)}
+                    value={allowChildren ? "yes" : "no"}
+                    onValueChange={(v) => setAllowChildren(v === "yes" ? true : false)}
                     className="mt-3 flex items-center gap-6"
                   >
                     <label className="flex items-center gap-2">
@@ -234,8 +234,8 @@ export default function ApartmentDetailsScreen({
                   </div>
 
                   <RadioGroup
-                    value={offerCots}
-                    onValueChange={(v) => setOfferCots(v as OfferCotsType)}
+                    value={offerCots ? "yes" : "no"}
+                    onValueChange={(v) => setOfferCots(v === "yes" ? true : false)}
                     className="mt-3 flex items-center gap-6"
                   >
                     <label className="flex items-center gap-2">

@@ -3,10 +3,10 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import HelpCard from "./HelpCard";
 import { ThumbsUp } from "lucide-react";
-import type { AddressType } from "../AddAppartmentPage";
 import type { Dispatch, SetStateAction } from "react";
 import { useAppSelector } from "@/store/hooks";
 import { selectCountryDictionary } from "@/store/dictionaries/dictionary.selector";
+import type { AddressType } from "@/types/request/apartment/addApartmentRequest.types";
 
 interface AddressScreenProps {
     address: AddressType;
@@ -33,8 +33,8 @@ export default function AddressScreen({ address, setAddress }: AddressScreenProp
                                         Street name
                                     </div>
                                     <Input
-                                        value={address.streetName}
-                                        onChange={(e) => setAddress({ ...address, streetName: e.target.value })}
+                                        value={address.street}
+                                        onChange={(e) => setAddress({ ...address, street: e.target.value })}
                                         placeholder="Street name"
                                         className="h-10"
                                     />

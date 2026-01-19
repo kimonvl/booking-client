@@ -35,51 +35,6 @@ if (g.__api_interceptors_installed) {
     }
     return config;
   });
-  //   (response) => response,
-  //   async (error: AxiosError) => {
-  //     const status = error.response?.status;
-  //     const originalConfig = error.config as (AxiosRequestConfig & { _retry?: boolean });
-
-  //     if (!originalConfig) return Promise.reject(error);
-
-  //     const path = getPath(originalConfig);
-  //     const method = (originalConfig.method ?? "get").toLowerCase();
-
-  //     // ✅ refresh ONLY on 401 (unauthorized)
-  //     // ❌ never refresh on /auth/* calls
-  //     // ❌ don't loop
-  //     if (status !== 401 || originalConfig._retry || isAuthPath(path)) {
-  //       return Promise.reject(error);
-  //     }
-
-  //     originalConfig._retry = true;
-
-  //     try {
-  //       refreshPromise = refreshPromise ?? doRefresh();
-  //       const token = await refreshPromise;
-  //       refreshPromise = null;
-
-  //       // ✅ DO NOT automatically replay non-GET (prevents "last POST fires again")
-  //       // If you *want* retry for POST, opt in by setting config.headers["x-retry"] = "1"
-  //       const retryAllowed =
-  //         method === "get" || (originalConfig.headers as any)?.["x-retry"] === "1";
-
-  //       if (!retryAllowed) {
-  //         // token refreshed, but we don't replay the request automatically
-  //         return Promise.reject(error);
-  //       }
-
-  //       originalConfig.headers = originalConfig.headers ?? {};
-  //       (originalConfig.headers as any).Authorization = `Bearer ${token}`;
-
-  //       return api(originalConfig);
-  //     } catch (refreshErr) {
-  //       refreshPromise = null;
-  //       store.dispatch(logout());
-  //       return Promise.reject(refreshErr);
-  //     }
-  //   }
-  // );
 }
 
 export function sendGet<TResponse>(
@@ -99,3 +54,19 @@ export function sendPostJson<TResponse, TBody = unknown>(
     ...config,
   });
 }
+
+export function sendPostFormData<TResponse = unknown>(
+  endpoint: string,
+  data: FormData,
+  config?: AxiosRequestConfig
+): Promise<AxiosResponse<TResponse>> {
+  return api.post<TResponse>(endpoint, data, {
+    headers: {
+      // 🔥 IMPORTANT: remove Content-Type so browser sets boundary
+      "Content-Type": undefined as any,
+    },
+    ...config,
+  });
+}
+
+

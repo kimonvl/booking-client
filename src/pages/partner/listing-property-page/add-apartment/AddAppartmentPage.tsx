@@ -15,70 +15,12 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { getAmenitiesDictionaryStart, getCountryDictionaryStart, getLanguageDictionaryStart } from "@/store/dictionaries/dictionarySlice";
 import { selectAmenitiesDictionary, selectCountryDictionary, selectLanguageDictionary } from "@/store/dictionaries/dictionary.selector";
+import type { AddressType, IsParkingAvailableType, PetsAllowedType, PhotoItem, SleepingAreasType, TimeType } from "@/types/request/apartment/addApartmentRequest.types";
+import { sendAddApartmentStart } from "@/store/property/apartment/apartmentSlice";
 
 export type StepsType = "name" | "address" |
   "details" | "amenities" | "services" | "languages" | "rules" |
   "photos" | "price" | "review";
-
-export type AddressType = {
-  streetName: string;
-  streetNumber: string;
-  floorNumber: string;
-  country: string;
-  city: string;
-  postCode: string;
-}
-
-export type BedroomBedType = "single" | "double" | "king_size";
-export type LivingroomBedType = "single_sofa" | "double_sofa";
-export type BedroomType = {
-  beds: Record<BedroomBedType, number>;
-}
-export type LivingroomType = {
-  beds: Record<LivingroomBedType, number>;
-}
-export type SleepingAreasType = {
-  bedrooms: BedroomType[];
-  livingroom: LivingroomType;
-}
-
-export type AllowChildrenType = "yes" | "no";
-export type OfferCotsType = "yes" | "no";
-
-export type ServeBreakfastType = "yes" | "no";
-export type IsParkingAvailableType = "free" | "paid" | "no";
-
-export type PetsAllowedType = "Yes" | "Upon request" | "No";
-export type TimeType = "00:00" |
-  "01:00" |
-  "02:00" |
-  "03:00" |
-  "04:00" |
-  "05:00" |
-  "06:00" |
-  "07:00" |
-  "08:00" |
-  "09:00" |
-  "10:00" |
-  "11:00" |
-  "12:00" |
-  "13:00" |
-  "14:00" |
-  "15:00" |
-  "16:00" |
-  "17:00" |
-  "18:00" |
-  "19:00" |
-  "20:00" |
-  "21:00" |
-  "22:00" |
-  "23:00";
-
-export type PhotoItem = {
-  id: string;
-  file: File;
-  url: string;
-};
 
 const steps: StepsType[] = ["name", "address",
   "details", "amenities", "services", "languages", "rules",
@@ -110,7 +52,7 @@ export default function AddAppartmentPage() {
       dispatch(getCountryDictionaryStart());
   }, [dispatch])
   const [address, setAddress] = useState<AddressType>({
-    streetName: "",
+    street: "",
     streetNumber: "",
     floorNumber: "",
     country: "",
@@ -124,8 +66,8 @@ export default function AddAppartmentPage() {
   });
   const [guestCount, setGuestCount] = useState(0);
   const [bathroomCount, setBathroomCount] = useState(0);
-  const [allowChildren, setAllowChildren] = useState<AllowChildrenType>("no");
-  const [offerCots, setOfferCots] = useState<OfferCotsType>("no");
+  const [allowChildren, setAllowChildren] = useState<boolean>(false);
+  const [offerCots, setOfferCots] = useState<boolean>(false);
   const [aptSize, setAptSize] = useState<string>("");
 
   const amenitiesDictionary = useAppSelector(selectAmenitiesDictionary);
@@ -148,7 +90,7 @@ export default function AddAppartmentPage() {
   }, [amenitiesDictionary]);
 
 
-  const [serveBreakfast, setServeBreakfast] = useState<ServeBreakfastType>("no");
+  const [serveBreakfast, setServeBreakfast] = useState<boolean>(false);
   const [isParkingAvailable, setIsParkingAvailable] = useState<IsParkingAvailableType>("no");
 
 
@@ -268,6 +210,10 @@ export default function AddAppartmentPage() {
     })
   }
 
+  const extractCodes = (record: Record<string, boolean>) => {
+    return Object.entries(record).filter(([_, v]) => v).map(([code, _]) => code)
+  }
+
   const onConfirm = () => {
     const payload = {
       propertyName,
@@ -278,11 +224,10 @@ export default function AddAppartmentPage() {
       allowChildren,
       offerCots,
       aptSize,
-      amenities,
+      amenities: extractCodes(amenities),
       serveBreakfast,
       isParkingAvailable,
-      languages,
-      additionalLanguages,
+      languages: [...extractCodes(languages), ...extractCodes(additionalLanguages)],
       smokingAllowed,
       partiesAllowed,
       petsAllowed,
@@ -293,9 +238,10 @@ export default function AddAppartmentPage() {
       photosCount: photos.length,
       mainPhotoId,
       pricePerNight,
+      photos,
     };
 
-    console.log("CONFIRM PAYLOAD", payload);
+    dispatch(sendAddApartmentStart(payload));
     navigate("/partner/add-apartment-loader");
 
     // TODO: call your API
@@ -318,7 +264,7 @@ export default function AddAppartmentPage() {
         return validateAmenitiesScreen();
         break;
       case "services":
-        return validateServicesScreen();
+        return true;
         break;
       case "languages":
         return true;
@@ -346,7 +292,7 @@ export default function AddAppartmentPage() {
   }
 
   const validateAddressScreen = (): boolean => {
-    if (address.streetName.length < 3)
+    if (address.street.length < 3)
       return false;
     if (address.streetNumber.length < 1)
       return false;
@@ -363,10 +309,6 @@ export default function AddAppartmentPage() {
 
   const validateAmenitiesScreen = (): boolean => {
     return Object.entries(amenities).filter(([_name, selected]) => selected).length > 0;
-  }
-
-  const validateServicesScreen = (): boolean => {
-    return serveBreakfast.length > 0 && isParkingAvailable.length > 0;
   }
 
   const validatePhotosScreen = (): boolean => {

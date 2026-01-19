@@ -3,11 +3,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Lightbulb } from "lucide-react";
 import HelpCard from "./HelpCard";
-import type { IsParkingAvailableType, ServeBreakfastType } from "../AddAppartmentPage";
+import type { IsParkingAvailableType } from "@/types/request/apartment/addApartmentRequest.types";
 
 interface ServicesScreenProps {
-    serveBreakfast: ServeBreakfastType;
-    setServeBreakfast: (value: ServeBreakfastType) => void;
+    serveBreakfast: boolean;
+    setServeBreakfast: (value: boolean) => void;
     isParkingAvailable: IsParkingAvailableType;
     setIsParkingAvailable: (value: IsParkingAvailableType) => void;
 }
@@ -38,8 +38,8 @@ export default function ServicesScreen({
               </div>
 
               <RadioGroup
-                value={serveBreakfast}
-                onValueChange={(v) => setServeBreakfast(v as any)}
+                value={serveBreakfast ? "yes" : "no"}
+                onValueChange={(v) => setServeBreakfast(v === "yes" ? true : false)}
                 className="mt-4 space-y-3"
               >
                 <label className="flex items-center gap-3">
