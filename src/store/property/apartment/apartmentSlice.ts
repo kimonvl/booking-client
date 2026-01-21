@@ -3,7 +3,7 @@ import type { AppartmentState } from "./apartment.types";
 import type { AddApartmentRequest } from "@/types/request/apartment/addApartmentRequest.types";
 
 const initialState: AppartmentState = {
-    loading: false,
+    addApartmentLoading: false,
     error: null,
 }
 
@@ -12,13 +12,13 @@ export const apartmentSlice = createSlice({
     initialState,
     reducers: {
         sendAddApartmentStart: (state, _action: PayloadAction<AddApartmentRequest>) => {
-            state.loading = true;
+            state.addApartmentLoading = true;
         },
         sendAddApartmentSuccess: (state) => {
-            state.loading = false;
+            state.addApartmentLoading = false;
         },
         sendAddApartmentFailure: (state, action: PayloadAction<string>) => {
-            state.loading = false;
+            state.addApartmentLoading = false;
             state.error = action.payload;
         },
     }

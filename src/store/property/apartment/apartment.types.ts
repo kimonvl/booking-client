@@ -1,4 +1,4 @@
 export interface AppartmentState {
-    loading: boolean;
+    addApartmentLoading: boolean;
     error: string | null;
 }

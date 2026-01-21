@@ -1,17 +1,17 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Building2, Sparkles } from "lucide-react";
+import { useAppSelector } from "@/store/hooks";
+import { selectAddApartmentLoading } from "@/store/property/apartment/apartment.selector";
 
 export default function AddApartmentLoaderPage() {
   const navigate = useNavigate();
+  const addApartmentLoading = useAppSelector(selectAddApartmentLoading);
 
   useEffect(() => {
-    const t = window.setTimeout(() => {
+    if (!addApartmentLoading)
       navigate("/partner", { replace: true }); // partner group home (your index route)
-    }, 4000);
-
-    return () => window.clearTimeout(t);
-  }, [navigate]);
+  }, [addApartmentLoading]);
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center px-4">

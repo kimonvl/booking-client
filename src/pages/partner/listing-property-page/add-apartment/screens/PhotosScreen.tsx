@@ -3,8 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { AlertCircle, ThumbsUp, Upload, X } from "lucide-react";
 import HelpCard from "./HelpCard";
-import type { PhotoItem } from "../AddAppartmentPage";
 import type { RefObject } from "react";
+import type { PhotoItem } from "@/types/request/apartment/addApartmentRequest.types";
 
 interface PhotosScreen {
     photos: PhotoItem[]; 
