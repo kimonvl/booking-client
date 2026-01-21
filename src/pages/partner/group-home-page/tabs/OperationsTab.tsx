@@ -1,30 +1,25 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { selectOperationsTable, selectSummaryTiles } from "@/store/partner/primary-account/group-home/groupHome.selector";
+import { getOperationsTableStart, getSummaryTilesStart } from "@/store/partner/primary-account/group-home/groupHomeSlice";
 import { Download, Eye, SlidersHorizontal } from "lucide-react";
-import { useMemo, useState } from "react";
-
-type SummaryTile = {
-    label: string;
-    value: number;
-};
+import { useEffect, useState } from "react";
 
 export type Location = "greece" | "athens" | "petra";
 
 export default function OperationsTab() {
+    const dispatch = useAppDispatch();
+    const operationsTable = useAppSelector(selectOperationsTable);
+    const summaryTiles = useAppSelector(selectSummaryTiles);
+
+    useEffect(() => {
+        dispatch(getOperationsTableStart());
+        dispatch(getSummaryTilesStart());
+    }, [dispatch])
 
     const [statusFilter, setStatusFilter] = useState("all");
-
-    const summaryTiles: SummaryTile[] = useMemo(
-        () => [
-            { label: "Reservations", value: 0 },
-            { label: "Arrivals", value: 0 },
-            { label: "Departures", value: 0 },
-            { label: "Reviews", value: 0 },
-            { label: "Cancellations", value: 0 },
-        ],
-        []
-    );
 
     // -----------------------------
     // Small helpers
@@ -123,34 +118,29 @@ export default function OperationsTab() {
                         </TableHeader>
 
                         <TableBody>
-                            {["kimon house petra", "kimon house athens"].map((r: string, idx) => (
-                                <TableRow key={idx}>
-                                    <TableCell className="align-top">{idx}</TableCell>
+                            {operationsTable.map((row) => (
+                                <TableRow key={row.id}>
+                                    <TableCell className="align-top">{row.id}</TableCell>
 
                                     <TableCell className="align-top">
-                                        <div className="font-medium text-[#1a1a1a]">{r}</div>
+                                        <div className="font-medium text-[#1a1a1a]">{row.name}</div>
                                         <div className="text-sm text-muted-foreground mt-1">
-                                            <span className="mr-2">🇬🇷</span>
-                                            {"address"}
+                                            <span className="mr-2">{row.address.country}</span>
+                                            {`${row.address.street} ${row.address.streetNumber} ${row.address.city}`}
                                         </div>
                                     </TableCell>
 
                                     <TableCell className="align-top">
-                                        <StatusPill tone={"danger"} label={"label"} />
+                                        <StatusPill tone={"danger"} label={row.status} />
                                     </TableCell>
 
-                                    <TableCell className="align-top tabular-nums">{"arrivals48h"}</TableCell>
-                                    <TableCell className="align-top tabular-nums">{"departures48h"}</TableCell>
-                                    <TableCell className="align-top tabular-nums">{"guestMessages"}</TableCell>
+                                    <TableCell className="align-top tabular-nums">{row.arrivalsNext48}</TableCell>
+                                    <TableCell className="align-top tabular-nums">{row.departuresNext48}</TableCell>
+                                    <TableCell className="align-top tabular-nums">{row.guestMessages}</TableCell>
 
                                     <TableCell className="align-top">
                                         <div className="flex items-center gap-3">
-                                            <span className="tabular-nums">{"bookingMessages"}</span>
-                                            {1 > 0 && (
-                                                <span className="h-6 w-6 rounded-full bg-[#0071c2] text-white text-xs flex items-center justify-center">
-                                                    {"bookingMessages"}
-                                                </span>
-                                            )}
+                                            <span className="tabular-nums">{row.bookingMessages}</span>
                                         </div>
                                     </TableCell>
                                 </TableRow>
