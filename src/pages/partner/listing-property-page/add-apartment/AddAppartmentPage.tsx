@@ -62,7 +62,7 @@ export default function AddAppartmentPage() {
 
   const [sleepingAreas, setSleepingAreas] = useState<SleepingAreasType>({
     bedrooms: [{ beds: { single: 1, double: 3, king_size: 0 } }],
-    livingroom: { beds: { single_sofa: 0, double_sofa: 0 } }
+    livingRoom: { beds: { single_sofa: 0, double_sofa: 0 } }
   });
   const [guestCount, setGuestCount] = useState(0);
   const [bathroomCount, setBathroomCount] = useState(0);

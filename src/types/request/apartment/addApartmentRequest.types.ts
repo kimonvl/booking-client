@@ -7,16 +7,16 @@ export type AddressType = {
   floorNumber: string;
 }
 export type BedroomBedType = "single" | "double" | "king_size";
-export type LivingroomBedType = "single_sofa" | "double_sofa";
+export type LivingRoomBedType = "single_sofa" | "double_sofa";
 export type BedroomType = {
   beds: Record<BedroomBedType, number>;
 }
-export type LivingroomType = {
-  beds: Record<LivingroomBedType, number>;
+export type LivingRoomType = {
+  beds: Record<LivingRoomBedType, number>;
 }
 export type SleepingAreasType = {
   bedrooms: BedroomType[];
-  livingroom: LivingroomType;
+  livingRoom: LivingRoomType;
 }
 
 export type IsParkingAvailableType = "free" | "paid" | "no";

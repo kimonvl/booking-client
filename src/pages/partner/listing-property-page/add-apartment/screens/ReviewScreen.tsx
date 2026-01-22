@@ -59,7 +59,7 @@ function summarizeBeds(sleepingAreas: SleepingAreasType) {
     return `Bedroom ${i + 1}: ${text || "0 beds"}`;
   });
 
-  const livingroomText = Object.entries(sleepingAreas.livingroom.beds)
+  const livingroomText = Object.entries(sleepingAreas.livingRoom.beds)
     .filter(([, c]) => c > 0)
     .map(([t, c]) => `${c} ${titleCase(t)}${c > 1 ? "s" : ""}`)
     .join(", ");

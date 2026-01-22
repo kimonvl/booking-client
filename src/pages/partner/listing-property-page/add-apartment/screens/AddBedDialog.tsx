@@ -2,9 +2,9 @@ import CounterFilter from "@/components/filters/CounterFilter";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import type { BedroomBedType, LivingRoomBedType, SleepingAreasType } from "@/types/request/apartment/addApartmentRequest.types";
 import { Bed, X } from "lucide-react";
 import { type Dispatch, type SetStateAction } from "react";
-import type { BedroomBedType, LivingroomBedType, SleepingAreasType } from "../AddAppartmentPage";
 
 interface AddBedDialogProps {
     open: boolean;
@@ -15,7 +15,7 @@ interface AddBedDialogProps {
 }
 
 const bedroomBedTypeValues: BedroomBedType[] = ["single", "double", "king_size"];
-const livingRoomBedTypeValues: LivingroomBedType[] = ["single_sofa", "double_sofa"];
+const livingRoomBedTypeValues: LivingRoomBedType[] = ["single_sofa", "double_sofa"];
 
 export default function AddBedDialog({ open, setOpen, sleepingAreas, setSleepingAreas, selectedBedroomIndex }: AddBedDialogProps) {
 console.log(selectedBedroomIndex);
@@ -100,11 +100,11 @@ console.log(selectedBedroomIndex);
 
                                 <CounterFilter
                                     label={opt}
-                                    count={sleepingAreas.livingroom.beds[opt]}
+                                    count={sleepingAreas.livingRoom.beds[opt]}
                                     setCount={(next) => {
                                         setSleepingAreas((prev) => {
                                             const updated = structuredClone(prev); // or immer
-                                            updated.livingroom.beds[opt] = next;
+                                            updated.livingRoom.beds[opt] = next;
                                             return updated;
                                         })
                                     }}

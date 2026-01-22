@@ -138,7 +138,7 @@ export default function ApartmentDetailsScreen({
                     <div>
                       <div className="font-medium text-[#1a1a1a]">{"Living room "}</div>
                       {(() => {
-                        const text = Object.entries(sleepingAreas.livingroom.beds)
+                        const text = Object.entries(sleepingAreas.livingRoom.beds)
                           .filter(([, count]) => count > 0)
                           .map(([type, count]) => `${count} ${type} bed${count > 1 ? "s" : ""}`)
                           .join(", ");
