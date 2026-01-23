@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Building2, Sparkles } from "lucide-react";
 import { useAppSelector } from "@/store/hooks";
-import { selectAddApartmentLoading } from "@/store/partner/add-property/apartment/apartment.selector";
+import { selectAddApartmentLoading } from "@/store/partner/manage-property/apartment/apartment.selector";
 
 export default function AddApartmentLoaderPage() {
   const navigate = useNavigate();

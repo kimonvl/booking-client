@@ -16,7 +16,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { getAmenitiesDictionaryStart, getCountryDictionaryStart, getLanguageDictionaryStart } from "@/store/dictionaries/dictionarySlice";
 import { selectAmenitiesDictionary, selectCountryDictionary, selectLanguageDictionary } from "@/store/dictionaries/dictionary.selector";
 import type { AddressType, IsParkingAvailableType, PetsAllowedType, PhotoItem, SleepingAreasType, TimeType } from "@/types/request/apartment/addApartmentRequest.types";
-import { sendAddApartmentStart } from "@/store/partner/add-property/apartment/apartmentSlice";
+import { sendAddApartmentStart } from "@/store/partner/manage-property/apartment/apartmentSlice";
 
 export type StepsType = "name" | "address" |
   "details" | "amenities" | "services" | "languages" | "rules" |

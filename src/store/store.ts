@@ -6,8 +6,9 @@ import logger from "redux-logger";
 import { rootSaga } from "./root-saga";
 import authReducer from "./auth/authSlice";
 import dictionaryReducer from "./dictionaries/dictionarySlice";
-import apartmentReducer from "./partner/add-property/apartment/apartmentSlice";
 import groupHomeReducer from "./partner/primary-account/group-home/groupHomeSlice";
+import guestPropertyReducer from "./guest/property/guestPropertySlice";
+import apartmentReducer from "./partner/manage-property/apartment/apartmentSlice";
 
 /* =========================
    Persist configurations
@@ -36,6 +37,12 @@ const persistGroupHomeConfig = {
   whitelist: [],
 };
 
+const persistGuestPropertyConfig = {
+  key: "guestProperty",
+  storage,
+  whitelist: [],
+};
+
 /* =========================
    Persisted reducers
    ========================= */
@@ -48,6 +55,7 @@ export const store = configureStore({
     dictionary: persistReducer(persistDictionaryConfig, dictionaryReducer),
     apartment: persistReducer(persistApartmentConfig, apartmentReducer),
     groupHome: persistReducer(persistGroupHomeConfig, groupHomeReducer),
+    guestProperty: persistReducer(persistGuestPropertyConfig, guestPropertyReducer),
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
