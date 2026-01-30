@@ -19,7 +19,7 @@ const initialState: SearchPageState = {
         pets: false,
     },
     page: 0,
-    size: 10,
+    size: 5,
     totalPages: 0,
     totalElements: 0,
     last: false,
@@ -35,7 +35,7 @@ export const searchPageSlice = createSlice({
             city: string,
             checkIn: string,
             checkOut: string,
-            maxGuests: number,
+            maxGuest: number,
             pets: boolean
         }>) => {
             state.filters = {...state.filters, ...action.payload};

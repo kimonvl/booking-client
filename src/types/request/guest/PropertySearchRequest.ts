@@ -1,25 +1,27 @@
 import type { SearchPageFilters } from "@/store/guest/pages/search-page/searchPage.types";
 
 export interface PropertySearchRequest {
-    city: string | null;
-    type: string | null;
-    minPrice: number;
-    maxPrice: number;
-    maxGuest: number | null;
-    bathroomCount: number;
-    bedroomCount: number;
-    cotsOffered: boolean | null;
-    breakFastServed: boolean | null;
-    amenities: string[];
-    checkIn: string | null;
-    checkOut: string | null;
-    pets: boolean;
-    page: number;
-    size: number;
+  city: string | null;
+  type: string | null;
+  minPrice: number;
+  maxPrice: number;
+  maxGuest: number | null;
+  bathroomCount: number;
+  bedroomCount: number;
+  cotsOffered: boolean | null;
+  breakFastServed: boolean | null;
+  amenities: string[];
+  checkIn: string | null;
+  checkOut: string | null;
+  pets: boolean;
+  page: number;
+  size: number;
 }
 
 export function filtersToRequest(filters: SearchPageFilters, page: number, size: number): PropertySearchRequest {
-    const [minPrice, maxPrice] = filters.price;
+  const [minPrice, maxPrice] = filters.price;
+  console.log("filterToRequest max guest", filters.maxGuest);
+  
 
   return {
     city: filters.city,

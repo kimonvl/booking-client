@@ -19,8 +19,9 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { selectSearchResult } from "@/store/guest/property/guestProperty.selector";
 import { getAmenitiesDictionaryStart } from "@/store/dictionaries/dictionarySlice";
 import { selectAmenitiesDictionaryNoGroups } from "@/store/dictionaries/dictionary.selector";
-import { selectAmenityCheckboxOptions, selectSearchPageBathrooms, selectSearchPageBedrooms, selectSearchPagePrice } from "@/store/guest/pages/search-page/searchPage.selector";
+import { selectAmenityCheckboxOptions, selectSearchPageBathrooms, selectSearchPageBedrooms, selectSearchPageIsLast, selectSearchPagePrice, selectSearchPageTotalElements } from "@/store/guest/pages/search-page/searchPage.selector";
 import { setBasicFilters, setBathrooms, setBedrooms, setPrice, toggleAmenity } from "@/store/guest/pages/search-page/searchPageSlice";
+import { loadMoreStart } from "@/store/guest/property/guestPropertySlice";
 
 export type ViewMode = "list" | "grid";
 export type SortingMethod = "top" | "price_low" | "price_high" | "rating";
@@ -33,6 +34,8 @@ const SearchPage = () => {
   const price = useAppSelector(selectSearchPagePrice);
   const bedroomCount = useAppSelector(selectSearchPageBedrooms);
   const bathroomCount = useAppSelector(selectSearchPageBathrooms);
+  const lastPage = useAppSelector(selectSearchPageIsLast);
+  const totalElements = useAppSelector(selectSearchPageTotalElements);
 
   const [params] = useSearchParams();
   const city = params.get("city");
@@ -43,7 +46,7 @@ const SearchPage = () => {
 
   useEffect(() => {
     if (city != null && checkIn != null && checkOut != null && guests != null)
-      dispatch(setBasicFilters({city, checkIn, checkOut, maxGuests: Number(guests), pets: pets === "true"}));
+      dispatch(setBasicFilters({ city, checkIn, checkOut, maxGuest: Number(guests), pets: pets === "true" }));
   }, [city, checkIn, checkOut, guests, pets]);
 
   useEffect(() => {
@@ -212,7 +215,7 @@ const SearchPage = () => {
           <div className="flex items-start justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold">
-                {city}: {results.length} properties found
+                {city}: {totalElements} properties found
               </h1>
 
               {/* Select for sorting method */}
@@ -242,6 +245,17 @@ const SearchPage = () => {
               <PropertyCardWide property={p} />
             ))}
           </div>
+          {!lastPage && (
+            <div className="mt-6 flex justify-center">
+              <button
+                className="text-[#0071c2] font-semibold hover:underline"
+                onClick={() => dispatch(loadMoreStart())}
+              >
+                Load more
+              </button>
+            </div>
+          )}
+
         </section>
       </div>
 
@@ -257,11 +271,13 @@ const SearchPage = () => {
         >
           <Card className="shadow-md">
             <CardContent className="p-4">
-              {/* <CheckBoxFilter
-                checkBoxTitle="Popular filters"
-                checkBoxOptions={popularFilters}
-                setCheckBoxOptions={setPopularFilters}
-              /> */}
+              <CheckBoxFilter
+                checkBoxTitle="Amenities"
+                checkBoxOptions={amenityCheckBoxOptions}
+                setCheckBoxOptions={(_v, name) => {
+                  dispatch(toggleAmenity(name))
+                }}
+              />
             </CardContent>
           </Card>
         </div>

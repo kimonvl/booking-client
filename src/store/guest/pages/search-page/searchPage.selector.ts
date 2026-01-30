@@ -15,6 +15,11 @@ export const selectSearchPagePage = createSelector(
     (searchPageSlice) => searchPageSlice.page
 );
 
+export const selectSearchPageIsLast = createSelector(
+    [selectSearchPageReducer],
+    (searchPageSlice) => searchPageSlice.last
+);
+
 export const selectSearchPageSize = createSelector(
     [selectSearchPageReducer],
     (searchPageSlice) => searchPageSlice.size
@@ -49,9 +54,15 @@ export const selectSearchPageCheckIn = createSelector(
     [selectSearchPageFilters],
     (filters) => filters.checkIn
 );
+
 export const selectSearchPageCheckout = createSelector(
     [selectSearchPageFilters],
     (filters) => filters.checkOut
+);
+
+export const selectSearchPageCity = createSelector(
+    [selectSearchPageFilters],
+    (filters) => filters.city
 );
 
 export const selectAmenityCheckboxOptions = createSelector(

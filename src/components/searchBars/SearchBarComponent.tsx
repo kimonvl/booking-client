@@ -6,7 +6,7 @@ import type { DateRange } from 'react-day-picker';
 import DateRangePickerPopOver from './DatePickerPopOver';
 import GuestCountPopOver from './GuestCountPopOver';
 import { useAppSelector } from '@/store/hooks';
-import { selectSearchPageCheckIn, selectSearchPageCheckout } from '@/store/guest/pages/search-page/searchPage.selector';
+import { selectSearchPageCheckIn, selectSearchPageCheckout, selectSearchPageCity } from '@/store/guest/pages/search-page/searchPage.selector';
 import { fromYmd, toYmd } from '@/store/guest/pages/search-page/searchPage.types';
 import { toast } from 'sonner';
 
@@ -15,6 +15,7 @@ export default function SearchBarComponent() {
     const navigate = useNavigate();
     const checkIn = useAppSelector(selectSearchPageCheckIn);
     const checkOut = useAppSelector(selectSearchPageCheckout);
+    const city = useAppSelector(selectSearchPageCity);
 
     const initialRange = useMemo<DateRange>(() => {
         const from = checkIn ? fromYmd(checkIn) : undefined;
@@ -23,7 +24,7 @@ export default function SearchBarComponent() {
     }, [checkIn, checkOut]);
 
     const [dates, setDates] = useState<DateRange | undefined>(initialRange);
-    const [cityFilter, setCityFilter] = useState("");
+    const [cityFilter, setCityFilter] = useState(city ?? "");
     const [open, setOpen] = useState(false);
     const [guestPopoverOpen, setGuestPopoverOpen] = useState(false);
     const [adultCount, setAdultCount] = useState(2);

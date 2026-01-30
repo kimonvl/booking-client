@@ -1,6 +1,6 @@
 import type { SagaIterator } from "redux-saga";
 import { all, call, put, select, takeLatest } from "redux-saga/effects";
-import { getPropertiesByCityFailure, getPropertiesByCityStart, getPropertiesByCitySuccess, searchFailure, searchSuccess } from "./guestPropertySlice";
+import { getPropertiesByCityFailure, getPropertiesByCityStart, getPropertiesByCitySuccess, loadMoreFailure, loadMoreStart, loadMoreSuccess, searchFailure, searchSuccess } from "./guestPropertySlice";
 import type { AxiosResponse } from "axios";
 import type { ApiResponse } from "@/types/response/apiResponse";
 import type { PropertyShort } from "./guestProperty.types";
@@ -10,7 +10,7 @@ import type { CountryDictionaryItem } from "@/store/dictionaries/dictionary.type
 import { toast } from "sonner";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { filtersToRequest, type PropertySearchRequest } from "@/types/request/guest/PropertySearchRequest";
-import { selectSearchPageFilters, selectSearchPageSize } from "../pages/search-page/searchPage.selector";
+import { selectSearchPageFilters, selectSearchPagePage, selectSearchPageSize } from "../pages/search-page/searchPage.selector";
 import type { Page } from "@/types/response/page";
 import { setBasicFilters, setBathrooms, setBedrooms, setCity, setGuestCount, setPaginationMetadata, setPrice, toggleAmenity } from "../pages/search-page/searchPageSlice";
 
@@ -34,7 +34,7 @@ export function* search(): SagaIterator {
         const filters = yield select(selectSearchPageFilters);
         const pageSize = yield select(selectSearchPageSize)
         const filtersReq = filtersToRequest(filters, 0, pageSize);
-        console.log(filtersReq);
+        console.log("search saga maxGuest ", filtersReq.maxGuest);
         
         const res: AxiosResponse<ApiResponse<Page<PropertyShort>>> = yield call(callApiWithRefresh, () => 
             sendPostJson<ApiResponse<Page<PropertyShort>>, PropertySearchRequest>(`/guest/properties/search`, filtersReq)
@@ -47,6 +47,27 @@ export function* search(): SagaIterator {
     } catch (error: any) {
         const errorMessage = error.response?.data?.message || "An error occurred";
         yield put(searchFailure(errorMessage));
+    }
+}
+
+export function* loadMore(): SagaIterator {
+    try {
+        const filters = yield select(selectSearchPageFilters);
+        const pageSize = yield select(selectSearchPageSize);
+        const pageNumber = yield select(selectSearchPagePage);
+        const filtersReq = filtersToRequest(filters, pageNumber + 1, pageSize);
+        
+        const res: AxiosResponse<ApiResponse<Page<PropertyShort>>> = yield call(callApiWithRefresh, () => 
+            sendPostJson<ApiResponse<Page<PropertyShort>>, PropertySearchRequest>(`/guest/properties/search`, filtersReq)
+        );
+        if (res && res.data.success) {
+            yield put(loadMoreSuccess(res.data.data.content));
+            yield put(setPaginationMetadata({page: res.data.data.number, totalPages: res.data.data.totalPages, totalElements: res.data.data.totalElements, last: res.data.data.last}));
+            toast.success(res.data.message);
+        }
+    } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "An error occurred";
+        yield put(loadMoreFailure(errorMessage));
     }
 }
 
@@ -66,9 +87,16 @@ export function* onSearchStart(): SagaIterator {
     ], search);
 }
 
+export function* onLoadMoreStart(): SagaIterator {
+    yield takeLatest(loadMoreStart.type, loadMore);
+}
+
+
 export function* guestPropertySaga(): SagaIterator {
     yield all([
         call(onGetPropertiesByCityStart),
         call(onSearchStart),
+        call(onSearchStart),
+        call(onLoadMoreStart),
     ]);
 }
