@@ -22,7 +22,29 @@ export const guestPropertySlice = createSlice({
         getPropertiesByCityFailure: (state, action: PayloadAction<string>) => {
             state.error = action.payload;
             state.loading = false;
-        }
+        },
+        searchStart: (state) => {
+            state.loading = true;
+        },
+        searchSuccess: (state, action: PayloadAction<PropertyShort[]>) => {
+            state.searchResults = action.payload;
+            state.loading = false;
+        },
+        searchFailure: (state, action: PayloadAction<string>) => {
+            state.error = action.payload;
+            state.loading = false;
+        },
+        loadMoreStart: (state) => {
+            state.loading = true;
+        },
+        loadMoreSuccess: (state, action: PayloadAction<PropertyShort[]>) => {
+            state.searchResults = [...state.searchResults, ...action.payload]
+            state.loading = false;
+        },
+        loadMoreFailure: (state, action: PayloadAction<string>) => {
+            state.error = action.payload;
+            state.loading = false;
+        },
     }
 });
 
@@ -31,6 +53,12 @@ export const {
     getPropertiesByCityStart,
     getPropertiesByCitySuccess,
     getPropertiesByCityFailure,
+    searchStart,
+    searchSuccess,
+    searchFailure,
+    loadMoreStart,
+    loadMoreSuccess,
+    loadMoreFailure,
 } = guestPropertySlice.actions;
 
 export default guestPropertyReducer;

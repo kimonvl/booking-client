@@ -10,6 +10,13 @@ export const selectAmenitiesDictionary = createSelector(
     (dictionarySlice) => dictionarySlice.amenityDictionary
 );
 
+export const selectAmenitiesDictionaryNoGroups = createSelector(
+    [selectDictionaryReducer],
+    (dictionarySlice) => {
+        return dictionarySlice.amenityDictionary.flatMap((g) => g.items);  
+    }
+);
+
 export const selectLanguageDictionary = createSelector(
     [selectDictionaryReducer],
     (dictionarySlice) => dictionarySlice.languageDictionary

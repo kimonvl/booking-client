@@ -1,13 +1,14 @@
-import type { Dispatch, SetStateAction } from 'react';
 import { Slider } from '../ui/slider'
 
 interface SliderFilterProps {
     label: string;
     limits: [number, number];
-    setLimits: Dispatch<SetStateAction<[number, number]>>
+    setLimits: (v: [number, number]) => void;
 }
 
 export default function SliderFilter({ limits, setLimits, label }: SliderFilterProps) {
+    console.log(limits, " slider");
+    
     return (
         <div>
             <div className="font-semibold">{label}</div>

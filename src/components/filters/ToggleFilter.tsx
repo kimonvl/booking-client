@@ -1,16 +1,14 @@
-import type { ViewMode } from "@/pages/public/SearchPage";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
-import type { Dispatch, SetStateAction } from "react";
 
 export interface ToggleFilterOption {
-    value: ViewMode;
+    value: string;
     label: string;
 }
 
 interface ToggleFilterProps {
     options: ToggleFilterOption[];
-    value: ViewMode;
-    setValue: Dispatch<SetStateAction<ViewMode>>
+    value: string;
+    setValue: (v: string) => void;
 }
 
 export default function ToggleFilter({ options, value, setValue }: ToggleFilterProps) {
@@ -19,7 +17,7 @@ export default function ToggleFilter({ options, value, setValue }: ToggleFilterP
             <ToggleGroup
                 type="single"
                 value={value}
-                onValueChange={(v) => v && setValue(v as ViewMode)}
+                onValueChange={(v) => v && setValue(v)}
                 className="border rounded-full p-1"
             >
                 {

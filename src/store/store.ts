@@ -9,6 +9,7 @@ import dictionaryReducer from "./dictionaries/dictionarySlice";
 import groupHomeReducer from "./partner/primary-account/group-home/groupHomeSlice";
 import guestPropertyReducer from "./guest/property/guestPropertySlice";
 import apartmentReducer from "./partner/manage-property/apartment/apartmentSlice";
+import searchPageReducer from "./guest/pages/search-page/searchPageSlice";
 
 /* =========================
    Persist configurations
@@ -43,6 +44,12 @@ const persistGuestPropertyConfig = {
   whitelist: [],
 };
 
+const persistSearchPageConfig = {
+  key: "searchPage",
+  storage,
+  whitelist: ['filters'],
+};
+
 /* =========================
    Persisted reducers
    ========================= */
@@ -56,6 +63,7 @@ export const store = configureStore({
     apartment: persistReducer(persistApartmentConfig, apartmentReducer),
     groupHome: persistReducer(persistGroupHomeConfig, groupHomeReducer),
     guestProperty: persistReducer(persistGuestPropertyConfig, guestPropertyReducer),
+    searchPage: persistReducer(persistSearchPageConfig, searchPageReducer),
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

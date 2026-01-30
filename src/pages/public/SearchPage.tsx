@@ -7,7 +7,6 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import type { CheckBoxOption } from "@/components/filters/CheckBoxFilter";
 import CheckBoxFilter from "@/components/filters/CheckBoxFilter";
 import CounterFilter from "@/components/filters/CounterFilter";
 import PropertyCardWide from "@/components/property-cards/PropertyCardWide";
@@ -17,8 +16,11 @@ import SelectFilter from "@/components/filters/SelectFilter";
 import type { ToggleFilterOption } from "@/components/filters/ToggleFilter";
 import ToggleFilter from "@/components/filters/ToggleFilter";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { getPropertiesByCityStart } from "@/store/guest/property/guestPropertySlice";
 import { selectSearchResult } from "@/store/guest/property/guestProperty.selector";
+import { getAmenitiesDictionaryStart } from "@/store/dictionaries/dictionarySlice";
+import { selectAmenitiesDictionaryNoGroups } from "@/store/dictionaries/dictionary.selector";
+import { selectAmenityCheckboxOptions, selectSearchPageBathrooms, selectSearchPageBedrooms, selectSearchPagePrice } from "@/store/guest/pages/search-page/searchPage.selector";
+import { setBasicFilters, setBathrooms, setBedrooms, setPrice, toggleAmenity } from "@/store/guest/pages/search-page/searchPageSlice";
 
 export type ViewMode = "list" | "grid";
 export type SortingMethod = "top" | "price_low" | "price_high" | "rating";
@@ -26,14 +28,28 @@ export type SortingMethod = "top" | "price_low" | "price_high" | "rating";
 const SearchPage = () => {
   const dispatch = useAppDispatch()
   const results = useAppSelector(selectSearchResult);
-  const [params] = useSearchParams();
-  const destination = params.get("city");
+  const amenitiesDictionary = useAppSelector(selectAmenitiesDictionaryNoGroups);
+  const amenityCheckBoxOptions = useAppSelector(selectAmenityCheckboxOptions);
+  const price = useAppSelector(selectSearchPagePrice);
+  const bedroomCount = useAppSelector(selectSearchPageBedrooms);
+  const bathroomCount = useAppSelector(selectSearchPageBathrooms);
 
+  const [params] = useSearchParams();
+  const city = params.get("city");
+  const checkIn = params.get("checkIn");
+  const checkOut = params.get("checkOut");
+  const guests = params.get("guests");
+  const pets = params.get("pets");
 
   useEffect(() => {
-    if (destination != null)
-      dispatch(getPropertiesByCityStart(destination));
-  }, [destination])
+    if (city != null && checkIn != null && checkOut != null && guests != null)
+      dispatch(setBasicFilters({city, checkIn, checkOut, maxGuests: Number(guests), pets: pets === "true"}));
+  }, [city, checkIn, checkOut, guests, pets]);
+
+  useEffect(() => {
+    if (!amenitiesDictionary || amenitiesDictionary.length === 0)
+      dispatch(getAmenitiesDictionaryStart());
+  }, [dispatch])
 
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const viewModeOptions: ToggleFilterOption[] = [
@@ -41,43 +57,13 @@ const SearchPage = () => {
     { value: "grid", label: "Grid" },
   ]
 
-  const [budget, setBudget] = useState<[number, number]>([45, 200]);
-
   const [sortBy, setSortBy] = useState<SortingMethod>("top");
   const sortingMethodOptions: SelectFilterOption<SortingMethod>[] = [
     { value: "top", label: "Our top picks" },
     { value: "price_low", label: "Price (lowest first)" },
     { value: "price_high", label: "Price (highest first)" },
     { value: "rating", label: "Guest rating" },
-  ]
-
-  const [popularFilters, setPopularFilters] = useState<CheckBoxOption[]>([
-    { key: "hotels", label: "Hotels", count: 12, selected: false },
-    { key: "breakfast_included", label: "Breakfast included", count: 12, selected: false },
-    { key: "air_conditioning", label: "Air conditioning", count: 13, selected: false },
-    { key: "double_bed", label: "Double bed", count: 1, selected: false },
-    { key: "free_wiFi", label: "Free WiFi", count: 1, selected: false },
-    { key: "beachfront", label: "Beachfront", count: 1, selected: false },
-  ]);
-  const [reviewScore1, setReviewScore1] = useState<CheckBoxOption[]>([
-    { key: "wonderful", label: "Wonderful: 9+", count: 12, selected: false },
-    { key: "very_good", label: "Very Good: 8+", count: 12, selected: false },
-    { key: "good", label: "Good: 7+", count: 13, selected: false },
-    { key: "pleasant", label: "Pleasant: 6+", count: 1, selected: false },
-  ]);
-  const [beachAccess, setBeachAccess] = useState<CheckBoxOption[]>([
-    { key: "beach_access", label: "Beach Access", count: 12, selected: false },
-  ]);
-  const [propertyType, setPropertyType] = useState<CheckBoxOption[]>([
-    { key: "entire_homes&apartments", label: "Entire homes & apartments", count: 12, selected: false },
-    { key: "vacation_homes", label: "Vacation Homes", count: 12, selected: false },
-    { key: "guesthouses", label: "Guesthouses", count: 13, selected: false },
-    { key: "hotels", label: "Hotels", count: 1, selected: false },
-  ]);
-
-
-  const [bedrooms, setBedrooms] = useState(0);
-  const [bathrooms, setBathrooms] = useState(0);
+  ];
 
   // Desktop-only sticky mini filterbar
   const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= 1024);
@@ -142,7 +128,7 @@ const SearchPage = () => {
         <span className="mx-1">{">"}</span>
         <span className="text-blue-700 hover:underline cursor-pointer">Lesvos</span>{" "}
         <span className="mx-1">{">"}</span>
-        <span className="text-blue-700 hover:underline cursor-pointer">{destination}</span>{" "}
+        <span className="text-blue-700 hover:underline cursor-pointer">{city}</span>{" "}
         <span className="mx-1">{">"}</span>
         <span>Search results</span>
       </div>
@@ -180,44 +166,19 @@ const SearchPage = () => {
                 {/* Budget */}
                 <SliderFilter
                   label="Budget"
-                  limits={budget}
-                  setLimits={setBudget}
-                />
-
-                <Separator className="my-4" />
-
-                {/* Popular filters */}
-                <CheckBoxFilter
-                  checkBoxTitle="Popular Filters"
-                  checkBoxOptions={popularFilters}
-                  setCheckBoxOptions={setPopularFilters}
-                />
-
-                <Separator className="my-4" />
-
-                {/* Review score */}
-                <CheckBoxFilter
-                  checkBoxTitle="Review Score"
-                  checkBoxOptions={reviewScore1}
-                  setCheckBoxOptions={setReviewScore1}
-                />
-
-                <Separator className="my-4" />
-
-                {/* Beach Access */}
-                <CheckBoxFilter
-                  checkBoxTitle="Beach Access"
-                  checkBoxOptions={beachAccess}
-                  setCheckBoxOptions={setBeachAccess}
+                  limits={price}
+                  setLimits={(v) => dispatch(setPrice(v))}
                 />
 
                 <Separator className="my-4" />
 
                 {/* Property Type */}
                 <CheckBoxFilter
-                  checkBoxTitle="Property Type"
-                  checkBoxOptions={propertyType}
-                  setCheckBoxOptions={setPropertyType}
+                  checkBoxTitle="Amenities"
+                  checkBoxOptions={amenityCheckBoxOptions}
+                  setCheckBoxOptions={(_v, name) => {
+                    dispatch(toggleAmenity(name))
+                  }}
                 />
 
                 <Separator className="my-4" />
@@ -229,14 +190,14 @@ const SearchPage = () => {
                   <div className="mt-3 space-y-4">
                     <CounterFilter
                       label="Bedrooms"
-                      count={bedrooms}
-                      setCount={setBedrooms}
+                      count={bedroomCount}
+                      setCount={(next) => dispatch(setBedrooms(next))}
                     />
 
                     <CounterFilter
                       label="Bathrooms"
-                      count={bathrooms}
-                      setCount={setBathrooms}
+                      count={bathroomCount}
+                      setCount={(next) => dispatch(setBathrooms(next))}
                     />
                   </div>
                 </div>
@@ -251,7 +212,7 @@ const SearchPage = () => {
           <div className="flex items-start justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold">
-                {destination}: {results.length} properties found
+                {city}: {results.length} properties found
               </h1>
 
               {/* Select for sorting method */}
@@ -271,14 +232,14 @@ const SearchPage = () => {
             <ToggleFilter
               options={viewModeOptions}
               value={viewMode}
-              setValue={setViewMode}
+              setValue={(v) => setViewMode(v as ViewMode)}
             />
           </div>
 
           {/* List of property cards */}
           <div className="mt-5 space-y-5">
             {results.map((p) => (
-              <PropertyCardWide property={p}/>
+              <PropertyCardWide property={p} />
             ))}
           </div>
         </section>
@@ -296,11 +257,11 @@ const SearchPage = () => {
         >
           <Card className="shadow-md">
             <CardContent className="p-4">
-              <CheckBoxFilter
+              {/* <CheckBoxFilter
                 checkBoxTitle="Popular filters"
                 checkBoxOptions={popularFilters}
                 setCheckBoxOptions={setPopularFilters}
-              />
+              /> */}
             </CardContent>
           </Card>
         </div>

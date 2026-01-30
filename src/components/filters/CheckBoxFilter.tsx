@@ -1,17 +1,18 @@
 import type { Dispatch, SetStateAction } from "react";
 import { Checkbox } from "../ui/checkbox";
+import type { CheckedState } from "@radix-ui/react-checkbox";
 
 export interface CheckBoxOption {
     key: string;
     label: string;
-    count: number;
+    count?: number;
     selected: boolean;
 }
 
 interface CheckBoxFilterProps {
     checkBoxTitle: string;
     checkBoxOptions: CheckBoxOption[];
-    setCheckBoxOptions: Dispatch<SetStateAction<CheckBoxOption[]>>
+    setCheckBoxOptions: (v: CheckedState, name: string) => void;
 }
 
 export default function CheckBoxFilter({ checkBoxTitle, checkBoxOptions, setCheckBoxOptions }: CheckBoxFilterProps) {
@@ -28,16 +29,12 @@ export default function CheckBoxFilter({ checkBoxTitle, checkBoxOptions, setChec
                             <Checkbox
                                 checked={option.selected}
                                 onCheckedChange={(v) =>
-                                    setCheckBoxOptions((prev) => (
-                                        prev.map((o) => {
-                                            return o.key === option.key ? {...o, selected: Boolean(v)} : o;
-                                        })
-                                    ))
+                                    setCheckBoxOptions(v, option.key)
                                 }
                             />
                             <span>{option.label}</span>
                         </div>
-                        <span className="text-muted-foreground tabular-nums">{option.count}</span>
+                        { option.count ?? <span className="text-muted-foreground tabular-nums">{option.count}</span> }
                     </label>
                 ))}
             </div>
