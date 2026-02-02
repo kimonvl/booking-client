@@ -14,7 +14,6 @@ import {
     CookingPot,
     ParkingCircle,
     Check,
-    MessageCircleQuestion,
     X,
 } from "lucide-react";
 
@@ -75,32 +74,6 @@ const defaultChips: AmenityChip[] = [
     { icon: <ParkingCircle className="h-5 w-5" />, label: "Parking" },
     { icon: <Snowflake className="h-5 w-5" />, label: "Air conditioning" },
     { icon: <Bath className="h-5 w-5" />, label: "Private bathroom" },
-];
-
-const defaultRooms: RoomRow[] = [
-    {
-        roomType: "Queen Studio",
-        leftTag: "We have 1 left",
-        bedLine: "1 queen bed",
-        perks: [
-            "Includes late check-in",
-            "Flexible to reschedule if plans change",
-            "Non-refundable",
-            "Pay online",
-            "10% discount applied",
-        ],
-        oldPrice: "€ 768",
-        price: "€ 655",
-        nightsLine: "Price for 16 nights",
-    },
-    {
-        roomType: "Queen Studio (Partially refundable)",
-        bedLine: "1 queen bed",
-        perks: ["Includes late check-in", "Partially refundable", "Pay online"],
-        oldPrice: "€ 782",
-        price: "€ 667",
-        nightsLine: "Price for 16 nights",
-    },
 ];
 
 const defaultReviewCategories = [
@@ -165,12 +138,9 @@ export default function PropertyDetailsPage(props: Props) {
     }, [propertyId])
     const {
         title = "Dinostratus House",
-        addressLine = "Deinostratou 32., Athens, 11743, Greece",
         locationLinkLabel = "Great location - show map",
-        ratingValue = 8.7,
         ratingLabel = "Excellent",
         reviewCount = 302,
-        mainPhotoUrl = "https://picsum.photos/1200/800?main",
         galleryUrls = [
             "https://picsum.photos/900/600?g1",
             "https://picsum.photos/900/600?g2",
@@ -184,7 +154,6 @@ export default function PropertyDetailsPage(props: Props) {
         aboutText =
         "This property offers a convenient location with great infrastructure, cafes, restaurants, shopping and public transport nearby.",
         popularFacilities = ["Free WiFi", "Non-smoking rooms", "Heating", "Air conditioning"],
-        rooms = defaultRooms,
         reviewCategories = defaultReviewCategories,
         reviews = defaultReviews,
     } = props;
