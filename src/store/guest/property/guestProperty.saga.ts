@@ -1,9 +1,9 @@
 import type { SagaIterator } from "redux-saga";
 import { all, call, put, select, takeLatest } from "redux-saga/effects";
-import { getPropertiesByCityFailure, getPropertiesByCityStart, getPropertiesByCitySuccess, loadMoreFailure, loadMoreStart, loadMoreSuccess, searchFailure, searchSuccess } from "./guestPropertySlice";
+import { getSelectedPropertyFailure, getSelectedPropertyStart, getSelectedPropertySuccess, loadMoreFailure, loadMoreStart, loadMoreSuccess, searchFailure, searchSuccess } from "./guestPropertySlice";
 import type { AxiosResponse } from "axios";
 import type { ApiResponse } from "@/types/response/apiResponse";
-import type { PropertyShort } from "./guestProperty.types";
+import type { PropertyDetails, PropertyShort } from "./guestProperty.types";
 import { callApiWithRefresh } from "@/store/refreshSagaWraper";
 import { sendGet, sendPostJson } from "@/utils/axios.utils";
 import type { CountryDictionaryItem } from "@/store/dictionaries/dictionary.types";
@@ -14,20 +14,7 @@ import { selectSearchPageFilters, selectSearchPagePage, selectSearchPageSize } f
 import type { Page } from "@/types/response/page";
 import { setBasicFilters, setBathrooms, setBedrooms, setCity, setGuestCount, setPaginationMetadata, setPrice, toggleAmenity } from "../pages/search-page/searchPageSlice";
 
-export function* getPropertiesByCity(action: PayloadAction<string>): SagaIterator {
-    try {
-        const res: AxiosResponse<ApiResponse<PropertyShort[]>> = yield call(callApiWithRefresh, () => 
-            sendGet<ApiResponse<CountryDictionaryItem[]>>(`/guest/properties/getPropertiesByCity?city=${action.payload}`)
-        );
-        if (res && res.data.success) {
-            yield put(getPropertiesByCitySuccess(res.data.data));
-            toast.success(res.data.message);
-        }
-    } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "An error occurred";
-        yield put(getPropertiesByCityFailure(errorMessage));
-    }
-}
+
 
 export function* search(): SagaIterator {
     try {
@@ -71,8 +58,19 @@ export function* loadMore(): SagaIterator {
     }
 }
 
-export function* onGetPropertiesByCityStart(): SagaIterator {
-    yield takeLatest(getPropertiesByCityStart.type, getPropertiesByCity);
+export function* getSelectedProperty(action: PayloadAction<string>): SagaIterator {
+    try {
+        const res: AxiosResponse<ApiResponse<PropertyDetails>> = yield call(callApiWithRefresh, () => 
+            sendGet<ApiResponse<PropertyDetails>>(`/guest/properties/getPropertyDetails/${action.payload}`)
+        );
+        if (res && res.data.success) {
+            yield put(getSelectedPropertySuccess(res.data.data));
+            toast.success(res.data.message);
+        }
+    } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "An error occurred";
+        yield put(getSelectedPropertyFailure(errorMessage));
+    }
 }
 
 export function* onSearchStart(): SagaIterator {
@@ -91,12 +89,14 @@ export function* onLoadMoreStart(): SagaIterator {
     yield takeLatest(loadMoreStart.type, loadMore);
 }
 
+export function* onGetSelectedPropertyStart(): SagaIterator {
+    yield takeLatest(getSelectedPropertyStart.type, getSelectedProperty);
+}
 
 export function* guestPropertySaga(): SagaIterator {
     yield all([
-        call(onGetPropertiesByCityStart),
-        call(onSearchStart),
         call(onSearchStart),
         call(onLoadMoreStart),
+        call(onGetSelectedPropertyStart),
     ]);
 }

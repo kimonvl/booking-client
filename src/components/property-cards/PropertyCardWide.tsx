@@ -1,6 +1,9 @@
+import { selectSearchPageGuests, selectSearchPageNightsStay } from "@/store/guest/pages/search-page/searchPage.selector";
 import type { PropertyShort } from "@/store/guest/property/guestProperty.types";
+import { useAppSelector } from "@/store/hooks";
 import { Heart, ChevronRight, Info } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Stars({ count = 0 }: { count?: number }) {
     const stars = Array.from({ length: Math.max(0, Math.min(5, count)) });
@@ -20,12 +23,32 @@ export interface PropertyCardWideProps {
 }
 
 export default function PropertyCardWide({property}: PropertyCardWideProps) {
+    const navigate = useNavigate();
+
+    const constructBulletsArr = () => {
+        const arr = [];
+        if (property.type)
+            arr.push(property.type);
+        if (property.livingRoomCount > 0)
+            arr.push(`${property.livingRoomCount} living room`);
+        if (property.bedroomCount > 0)
+            arr.push(`${property.bedroomCount} bedrooms`);
+        if (property.bathrooms > 0)
+            arr.push(`${property.bathrooms} bathrooms`);
+        arr.push(`${property.sizeSqm} m²`);
+        return arr;
+    }
+
     const [showTip, setShowTip] = useState(false);
-    const bullets = ["Entire apartment", "1 bedroom", "1 living room", "1 bathroom", "1 kitchen", "45 m²"];
-    const ratingValue = 9.8;
+    const bullets = constructBulletsArr();
+    const ratingValue = property.reviewSummary.averageRating;
     const ratingLabel = "Wonderful";
-    const reviewCount = 173;
-    const nightsAndGuests = "1 night, 2 adults";
+    const reviewCount = property.reviewSummary.reviewCount;
+    const nights = useAppSelector(selectSearchPageNightsStay) ?? 0;
+    const guests = useAppSelector(selectSearchPageGuests) ?? 0;
+    const nightsAndGuests = `${nights} night${nights > 1 ? "s" : ""}, ${guests} adult${guests > 1 ? "s" : ""}`;
+
+    
 
     const ratingText = useMemo(() => {
         if (ratingValue == null) return null;
@@ -61,7 +84,7 @@ export default function PropertyCardWide({property}: PropertyCardWideProps) {
                         <h2 className="text-2xl font-bold text-[#0071c2] leading-tight">
                             {property.name}
                         </h2>
-                        <Stars count={5} />
+                        <Stars count={property.reviewSummary.averageRating} />
                     </div>
 
                     <div className="mt-1 text-sm">
@@ -146,7 +169,7 @@ export default function PropertyCardWide({property}: PropertyCardWideProps) {
 
                         <div className="mt-1 flex items-end justify-end gap-2">
                             <div className="text-3xl font-bold text-[#1a1a1a]">
-                                {property.pricePerNight}
+                                {property.pricePerNight * nights}
                             </div>
                         </div>
 
@@ -157,7 +180,7 @@ export default function PropertyCardWide({property}: PropertyCardWideProps) {
                     <div className="mt-4 flex justify-end">
                         <button
                             type="button"
-                            // onClick={onSeeAvailability}
+                            onClick={() => navigate(`/property-details/${property.id}`)}
                             className="inline-flex items-center gap-2 rounded-lg bg-[#0071c2] px-4 py-3 text-white font-semibold hover:bg-[#005fa3]"
                         >
                             See availability

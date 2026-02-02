@@ -6,7 +6,7 @@ import type { SagaIterator } from "redux-saga";
 import type { AxiosResponse } from "axios";
 import { sendGet, sendPostJson } from "@/utils/axios.utils";
 import type { ApiResponse } from "@/types/response/apiResponse";
-import { bootstrapDone, bootstrapStart, getTestFailure, getTestStart, getTestSuccess, loginFailed, loginStart, loginSuccess, logout, refreshSuccess, registerFailed, registerStart, registerSuccess } from "./authSlice";
+import { bootstrapDone, bootstrapStart, getTestFailure, getTestStart, getTestSuccess, loginFailed, loginStart, loginSuccess, logoutFailure, logoutStart, logoutSuccess, refreshSuccess, registerFailed, registerStart, registerSuccess } from "./authSlice";
 import type { LoginRequest, RegisterRequest } from "@/types/request/auth/authRequest.types";
 import type { LoginResponse } from "@/types/response/auth/authResponse.types";
 import { callApiWithRefresh } from "../refreshSagaWraper";
@@ -47,6 +47,23 @@ export function* login(action: PayloadAction<LoginRequest>): SagaIterator {
     }
 }
 
+export function* logout(): SagaIterator {
+    try {        
+        const res: AxiosResponse<ApiResponse<LoginResponse>> = yield call(sendPostJson<LoginResponse, LoginRequest>, "auth/logout")
+        if (res && res.data.success) {
+            yield put(logoutSuccess());
+            toast.success(res.data.message);
+        }
+    } catch (error: any) {
+        console.error("Register Error:", error); // Debugging log
+
+        const errorMessage = error.response?.data?.message || "An error occurred";
+
+        yield put(logoutFailure(errorMessage));
+        toast.error(errorMessage);
+    }
+}
+
 export function* bootstrap(): SagaIterator {
     try {
         const res: AxiosResponse<ApiResponse<LoginResponse>> = yield call(sendPostJson<LoginResponse, {}>, "auth/refresh", {})
@@ -83,6 +100,10 @@ export function* onLoginStart(): SagaIterator {
     yield takeLatest(loginStart.type, login);
 }
 
+export function* onLogoutStart(): SagaIterator {
+    yield takeLatest(logoutStart.type, logout);
+}
+
 export function* onBootstrapStart(): SagaIterator {
     yield takeLeading(bootstrapStart.type, bootstrap);
 }
@@ -97,5 +118,6 @@ export function* authSaga(): SagaIterator {
         call(onLoginStart),
         call(onBootstrapStart),
         call(onGetTestStart),
+        call(onLogoutStart),
     ]);
 }

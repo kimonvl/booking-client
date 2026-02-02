@@ -1,7 +1,7 @@
 import type { AxiosError, AxiosResponse } from "axios";
 import { call, put } from "redux-saga/effects";
 import { api } from "@/utils/axios.utils";
-import { logout, refreshSuccess } from "@/store/auth/authSlice";
+import { logoutStart, refreshSuccess } from "@/store/auth/authSlice";
 import type { ApiResponse } from "@/types/response/apiResponse";
 import type { LoginResponse } from "@/types/response/auth/authResponse.types";
 
@@ -95,7 +95,7 @@ export function* callApiWithRefresh<T>(
       // retry original request ONCE
       return yield call(requestFn);
     } catch (refreshErr) {
-      yield put(logout());
+      yield put(logoutStart());
       throw refreshErr;
     }
   }

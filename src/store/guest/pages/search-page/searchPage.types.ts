@@ -29,3 +29,17 @@ export const fromYmd = (s: string) => {
   const [y, m, d] = s.split("-").map(Number);
   return new Date(y, m - 1, d); // local midnight
 };
+
+// "2026-02-01" -> Date at UTC midnight
+const parseYmdUtc = (ymd: string) => {
+  const [y, m, d] = ymd.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d));
+};
+
+export const nightsBetween = (checkIn: string | null, checkOut: string | null) => {
+    if (checkIn === null || checkOut === null) return;
+  const inDate = parseYmdUtc(checkIn);
+  const outDate = parseYmdUtc(checkOut);
+  const msPerDay = 24 * 60 * 60 * 1000;
+  return Math.max(0, Math.round((outDate.getTime() - inDate.getTime()) / msPerDay));
+};

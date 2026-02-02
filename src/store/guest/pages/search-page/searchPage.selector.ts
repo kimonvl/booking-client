@@ -1,6 +1,6 @@
 import type { RootState } from "@/store/store";
 import { createSelector } from "reselect";
-import type { SearchPageState } from "./searchPage.types";
+import { nightsBetween, type SearchPageState } from "./searchPage.types";
 import { selectAmenitiesDictionaryNoGroups } from "@/store/dictionaries/dictionary.selector";
 
 const selectSearchPageReducer = (state: RootState): SearchPageState => state.searchPage;
@@ -63,6 +63,16 @@ export const selectSearchPageCheckout = createSelector(
 export const selectSearchPageCity = createSelector(
     [selectSearchPageFilters],
     (filters) => filters.city
+);
+
+export const selectSearchPageGuests = createSelector(
+    [selectSearchPageFilters],
+    (filters) => filters.maxGuest
+);
+
+export const selectSearchPageNightsStay = createSelector(
+    [selectSearchPageFilters],
+    (filters) => nightsBetween(filters.checkIn, filters.checkOut)
 );
 
 export const selectAmenityCheckboxOptions = createSelector(

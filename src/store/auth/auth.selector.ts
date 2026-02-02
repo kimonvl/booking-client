@@ -23,3 +23,8 @@ export const selectBootstrapStatus = createSelector(
     [selectAuthReducer],
     (authSlice) => authSlice.bootstrap
 );
+
+export const selectIsAuthenticated = createSelector(
+  [selectAccessToken, selectCurrentUser],
+  (token, user) => Boolean(token && user)
+);
