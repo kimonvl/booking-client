@@ -10,6 +10,7 @@ import groupHomeReducer from "./partner/primary-account/group-home/groupHomeSlic
 import guestPropertyReducer from "./guest/property/guestPropertySlice";
 import apartmentReducer from "./partner/manage-property/apartment/apartmentSlice";
 import searchPageReducer from "./guest/pages/search-page/searchPageSlice";
+import checkoutPageReducer from "./guest/pages/checkout-page/checkoutPageSlice";
 
 /* =========================
    Persist configurations
@@ -50,6 +51,12 @@ const persistSearchPageConfig = {
   whitelist: ['filters'],
 };
 
+const persistCheckoutPageConfig = {
+  key: "checkoutPage",
+  storage,
+  whitelist: [],
+};
+
 /* =========================
    Persisted reducers
    ========================= */
@@ -64,6 +71,7 @@ export const store = configureStore({
     groupHome: persistReducer(persistGroupHomeConfig, groupHomeReducer),
     guestProperty: persistReducer(persistGuestPropertyConfig, guestPropertyReducer),
     searchPage: persistReducer(persistSearchPageConfig, searchPageReducer),
+    checkoutPage: persistReducer(persistCheckoutPageConfig, checkoutPageReducer),
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -1,6 +1,7 @@
 import PublicLayout from '@/layouts/public/PublicLayout'
 import AuthPage from '@/pages/public/AuthPage'
 import FlightsPage from '@/pages/public/FlightsPage'
+import GuestCheckoutDetailsPage from '@/pages/public/guest-checkout-details/GuestCheckoutDetailsPage'
 import PropertyDetailsPage from '@/pages/public/property-details/PropertyDetailsPage'
 import SearchPage from '@/pages/public/SearchPage'
 import StaysPage from '@/pages/public/StaysPage'
@@ -14,6 +15,7 @@ export default function PublicRoutes() {
             <Route path="flights" element={<FlightsPage />} />
             <Route path="search" element={<SearchPage />} />
             <Route path="property-details/:propertyId" element={<PropertyDetailsPage />} />
+            <Route path="guest-checkout-details" element={<GuestCheckoutDetailsPage />} />
         </Route>
         <Route path="auth/:role/:mode" element={<AuthPage />} />
     </Routes>

@@ -57,41 +57,36 @@ export default function AuthPage() {
     return isPartner ? "Partner sign in" : "Sign in";
   }, [isRegister, isPartner]);
 
-  //   // If authenticated -> redirect based on role
-  //   useEffect(() => {
-  //     if (!auth.accessToken) return;
+  useEffect(() => {
+    if (bootstrap !== "done") return;
+    if (authStatus !== "succeeded") return;
+    if (!accessToken || !user) return;
 
-  //     // If you fetch /auth/me after login/register, you can rely on `me?.role`.
-  //     // If not available yet, fallback to URL role for redirect.
-  //     const target =
-  //       (me?.role === "PARTNER" || role === "partner") ? "/partner" : "/";
+    const sp = new URLSearchParams(location.search);
+    const fromQuery = sp.get("from");
 
-  //     // Small delay to avoid navigation during render cycles
-  //     const t = setTimeout(() => navigate(target, { replace: true }), 0);
-  //     return () => clearTimeout(t);
-  //   }, [auth.accessToken, me?.role, role, navigate]);
+    const from = location.state?.from?.pathname ?? fromQuery ?? undefined;
 
-  //   useEffect(() => {
-  //     if (auth.status === "failed" && auth.error) {
-  //       toast.error(auth.error);
-  //     }
-  //   }, [auth.status, auth.error]);
 
-useEffect(() => {
-  if (bootstrap !== "done") return;
-  if (authStatus !== "succeeded") return;
-  if (!accessToken || !user) return;
+    // ✅ Special case:
+    // If user was on home page (or no "from") and logs in as PARTNER -> go to partner dashboard
+    const isHome =
+      !from || from === "/" || from.startsWith("/?") || from.startsWith("/#");
 
-  // // 1) if user was redirected to login from a protected route, go back there
-  // const from = location.state?.from?.pathname;
-  // if (from) {
-  //   navigate(from, { replace: true });
-  //   return;
-  // }
+    if (user.role === "PARTNER" && isHome) {
+      navigate("/partner", { replace: true });
+      return;
+    }
 
-  // 2) otherwise go to the correct home page based on actual user role from backend
-  navigate(user.role === "PARTNER" ? "/partner" : "/", { replace: true });
-}, [bootstrap, authStatus, accessToken, user, location.state, navigate]);
+    // ✅ Normal case: always go back to where user was
+    if (from) {
+      navigate(from, { replace: true });
+      return;
+    }
+
+    // Fallback if no from and not partner-home
+    navigate("/", { replace: true });
+  }, [bootstrap, authStatus, accessToken, user, location.state, navigate]);
 
 
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -116,17 +111,17 @@ useEffect(() => {
       return;
     }
     if (registerInput.password !== registerInput.confirm) {
-        toast.error("Passwords do not match.");
-        return;
-      }
+      toast.error("Passwords do not match.");
+      return;
+    }
 
-      dispatch(
-        registerStart({
-          email: registerInput.email.trim(),
-          password: registerInput.password,
-          role: isPartner ? "PARTNER" : "GUEST",
-        })
-      );
+    dispatch(
+      registerStart({
+        email: registerInput.email.trim(),
+        password: registerInput.password,
+        role: isPartner ? "PARTNER" : "GUEST",
+      })
+    );
   }
 
   const switchUrl = isRegister
@@ -149,7 +144,8 @@ useEffect(() => {
 
           <div className="flex gap-2 text-sm">
             <Link
-              to={`/auth/guest/${mode}`}
+              to={`/auth/guest/${mode}${location.search}`}
+              state={location.state}
               className={[
                 "px-3 py-1 rounded-full border",
                 !isPartner ? "bg-blue-50 border-blue-600 text-blue-600" : "border-gray-300",
@@ -157,8 +153,10 @@ useEffect(() => {
             >
               Guest
             </Link>
+
             <Link
-              to={`/auth/partner/${mode}`}
+              to={`/auth/partner/${mode}${location.search}`}
+              state={location.state}
               className={[
                 "px-3 py-1 rounded-full border",
                 isPartner ? "bg-blue-50 border-blue-600 text-blue-600" : "border-gray-300",

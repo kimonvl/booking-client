@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type JSX } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
     Heart,
     Share2,
@@ -126,6 +126,7 @@ export function SectionTitle({ id, title, right }: { id?: string; title: string;
 }
 
 export default function PropertyDetailsPage(props: Props) {
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { propertyId } = useParams();
     const property = useAppSelector(selectSelectedProperty);
@@ -512,7 +513,7 @@ export default function PropertyDetailsPage(props: Props) {
                                 </div>
 
                                 <div className="col-span-2 p-4 flex items-center justify-center">
-                                    <Button className="bg-[#0071c2] hover:bg-[#005fa3]">
+                                    <Button onClick={() => navigate("/guest-checkout-details")} className="bg-[#0071c2] hover:bg-[#005fa3]">
                                         I'll reserve
                                     </Button>
                                 </div>
