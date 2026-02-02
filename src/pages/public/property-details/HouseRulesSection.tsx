@@ -2,7 +2,7 @@ import type { PropertyDetails } from "@/store/guest/property/guestProperty.types
 import { SectionTitle } from "./PropertyDetailsPage";
 import { Card, CardContent } from "@/components/ui/card";
 import type { JSX } from "react";
-import { Baby, CigaretteOff, Clock, Info, PartyPopper, PawPrint } from "lucide-react";
+import { Baby, CigaretteOff, Clock, PartyPopper, PawPrint } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 function RuleRow({
