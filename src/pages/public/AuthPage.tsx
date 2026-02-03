@@ -9,6 +9,7 @@ import { loginStart, registerStart } from "@/store/auth/authSlice";
 import { selectAccessToken, selectAuthStatus, selectBootstrapStatus, selectCurrentUser } from "@/store/auth/auth.selector";
 import CommonForm from "@/components/common-form/CommonForm";
 import { loginFormControls, registerFormControls, type LoginFormState, type RegisterFormState } from "@/types/form-config/AuthFormControlls";
+import { selectCountryNames } from "@/store/dictionaries/dictionary.selector";
 
 
 type UrlRole = "guest" | "partner";
@@ -38,6 +39,16 @@ export default function AuthPage() {
   const user = useAppSelector(selectCurrentUser);
   const accessToken = useAppSelector(selectAccessToken);
   const bootstrap = useAppSelector(selectBootstrapStatus);
+  const countries = useAppSelector(selectCountryNames);
+
+  useEffect(() => {
+    if (user && user.role == "PARTNER") {
+      navigate("/partner", { replace: true });
+    }
+    if (user && user.role == "GUEST") {
+      navigate("/", { replace: true });
+    }
+  }, [user])
 
   const [loginInput, setLoginInput] = useState<LoginFormState>({
     email: "",
@@ -48,6 +59,9 @@ export default function AuthPage() {
     email: "",
     password: "",
     confirm: "",
+    lastName: "",
+    firstName: "",
+    country: "",
   });
 
   const isRegister = mode === "register";
@@ -106,22 +120,43 @@ export default function AuthPage() {
 
   const handleRegisterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!registerInput.email.trim() || !registerInput.password.trim()) {
-      toast.error("Please fill email and password.");
+    if (!validateRegister())
       return;
-    }
-    if (registerInput.password !== registerInput.confirm) {
-      toast.error("Passwords do not match.");
-      return;
-    }
 
     dispatch(
       registerStart({
         email: registerInput.email.trim(),
         password: registerInput.password,
+        lastName: registerInput.lastName,
+        firstName: registerInput.firstName,
+        country: registerInput.country,
         role: isPartner ? "PARTNER" : "GUEST",
       })
     );
+  }
+
+  const validateRegister = () => {
+    if (!registerInput.email.trim() || !registerInput.password.trim()) {
+      toast.error("Please fill email and password.");
+      return false;
+    }
+    if (registerInput.password !== registerInput.confirm) {
+      toast.error("Passwords do not match.");
+      return false;
+    }
+    if (!registerInput.firstName.trim()) {
+      toast.error("Please fill first name.");
+      return false;
+    }
+    if (!registerInput.lastName.trim()) {
+      toast.error("Please fill last name.");
+      return false;
+    }
+    if (!registerInput.country.trim()) {
+      toast.error("Please select your country.");
+      return false;
+    }
+    return true;
   }
 
   const switchUrl = isRegister
@@ -169,7 +204,7 @@ export default function AuthPage() {
 
         <CardContent>
           {
-            isRegister && <CommonForm<RegisterFormState> formControls={registerFormControls} formInput={registerInput} setFormInput={setRegisterInput} handleSubmit={handleRegisterSubmit} buttonName="Register" />
+            isRegister && <CommonForm<RegisterFormState> formControls={registerFormControls(countries)} formInput={registerInput} setFormInput={setRegisterInput} handleSubmit={handleRegisterSubmit} buttonName="Register" />
           }
           {
             !isRegister && <CommonForm<LoginFormState> formControls={loginFormControls} formInput={loginInput} setFormInput={setLoginInput} handleSubmit={handleLoginSubmit} buttonName="Log in" />

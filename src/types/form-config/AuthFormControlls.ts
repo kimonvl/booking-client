@@ -11,6 +11,9 @@ export interface LoginFormState extends AuthFormState{
 
 export interface RegisterFormState extends AuthFormState{
     confirm: string;
+    lastName: string;
+    firstName: string;
+    country: string;
 }
 
 export const loginFormControls: FormControl<LoginFormState>[] = [
@@ -30,7 +33,8 @@ export const loginFormControls: FormControl<LoginFormState>[] = [
     }
 ];
 
-export const registerFormControls: FormControl<RegisterFormState>[] = [
+export const registerFormControls =  (countries: string[]): FormControl<RegisterFormState>[] => {
+    return [
     {
         name : "email",
         label : "Email",
@@ -51,5 +55,27 @@ export const registerFormControls: FormControl<RegisterFormState>[] = [
         placeholder : "Enter your password",
         type : "password",
         componentType : "input",
-    }
+    },
+    {
+        name : "firstName",
+        label : "First name",
+        placeholder : "Enter your first name",
+        type : "text",
+        componentType : "input",
+    },
+    {
+        name : "lastName",
+        label : "Last name",
+        placeholder : "Enter your last name",
+        type : "text",
+        componentType : "input",
+    },
+    {
+        name : "country",
+        label : "Country",
+        placeholder : "Select category",
+        options : countries,
+        componentType : "select",
+    },
 ];
+} 

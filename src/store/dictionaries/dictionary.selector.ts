@@ -27,6 +27,22 @@ export const selectCountryDictionary = createSelector(
     (dictionarySlice) => dictionarySlice.countryDictionary
 );
 
+export const selectCountryNames = createSelector(
+    [selectCountryDictionary],
+    (countryDictionary) => countryDictionary.map((item) => item.name)
+);
+
+export const selectSelectedCountryCode = createSelector(
+    [
+        selectCountryDictionary,
+        (_: RootState, selected: string) => selected,
+    ],
+    (dictionary, selected) => {
+        return dictionary
+            .find((lang) => lang.name == selected)?.code
+    }
+);
+
 export const selectSelectedAmenityLabels = createSelector(
     [
         selectAmenitiesDictionary,

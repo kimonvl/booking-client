@@ -1,5 +1,5 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { all, call, put, takeLatest, takeLeading } from "redux-saga/effects";
+import { all, call, put, select, takeLatest, takeLeading } from "redux-saga/effects";
 import { toast } from "sonner";
 import type { AuthUser } from "./auth.types";
 import type { SagaIterator } from "redux-saga";
@@ -10,10 +10,20 @@ import { bootstrapDone, bootstrapStart, getTestFailure, getTestStart, getTestSuc
 import type { LoginRequest, RegisterRequest } from "@/types/request/auth/authRequest.types";
 import type { LoginResponse } from "@/types/response/auth/authResponse.types";
 import { callApiWithRefresh } from "../refreshSagaWraper";
+import { selectSelectedCountryCode } from "../dictionaries/dictionary.selector";
 
 export function* register(action: PayloadAction<RegisterRequest>): SagaIterator {
     try {
-        const res: AxiosResponse<ApiResponse<AuthUser>> = yield call(sendPostJson<AuthUser, RegisterRequest>, "auth/register", action.payload)
+        const countryName = action.payload.country;
+        const countryCode: string | undefined = yield select(
+            selectSelectedCountryCode,
+            countryName
+        );
+        const apiPayload: RegisterRequest = {
+            ...action.payload,
+            country: countryCode ?? "",
+        };
+        const res: AxiosResponse<ApiResponse<AuthUser>> = yield call(sendPostJson<AuthUser, RegisterRequest>, "auth/register", apiPayload)
         if (res && res.data.success) {
             yield put(registerSuccess());
             toast.success(res.data.message);
@@ -31,7 +41,7 @@ export function* register(action: PayloadAction<RegisterRequest>): SagaIterator 
 export function* login(action: PayloadAction<LoginRequest>): SagaIterator {
     try {
         console.log("sending login", action.payload);
-        
+
         const res: AxiosResponse<ApiResponse<LoginResponse>> = yield call(sendPostJson<LoginResponse, LoginRequest>, "auth/login", action.payload)
         if (res && res.data.success) {
             yield put(loginSuccess(res.data.data));
@@ -48,7 +58,7 @@ export function* login(action: PayloadAction<LoginRequest>): SagaIterator {
 }
 
 export function* logout(): SagaIterator {
-    try {        
+    try {
         const res: AxiosResponse<ApiResponse<LoginResponse>> = yield call(sendPostJson<LoginResponse, LoginRequest>, "auth/logout")
         if (res && res.data.success) {
             yield put(logoutSuccess());
@@ -80,7 +90,7 @@ export function* bootstrap(): SagaIterator {
 
 export function* getTest(): SagaIterator {
     try {
-        const res: AxiosResponse<ApiResponse<string>> = yield call(callApiWithRefresh, () => 
+        const res: AxiosResponse<ApiResponse<string>> = yield call(callApiWithRefresh, () =>
             sendGet<ApiResponse<string>>("/partner/getTest")
         );
         if (res && res.data.success) {
