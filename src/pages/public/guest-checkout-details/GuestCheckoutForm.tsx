@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import type { CheckoutDetailsFormState } from "@/types/form-config/CheckoutFormControlls";
+import type { CheckoutDetailsFormState } from "@/store/guest/pages/checkout-page/checkoutPage.types";
 import type { Dispatch, FormEvent, SetStateAction } from "react";
 
 interface GuestCheckoutFormProps {

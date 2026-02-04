@@ -2,22 +2,36 @@ import PublicLayout from '@/layouts/public/PublicLayout'
 import AuthPage from '@/pages/public/AuthPage'
 import FlightsPage from '@/pages/public/FlightsPage'
 import GuestCheckoutDetailsPage from '@/pages/public/guest-checkout-details/GuestCheckoutDetailsPage'
+import GuestCheckoutConfirmPage from '@/pages/public/guest-checkout-payment/GuestCheckoutConfirmPage'
+import GuestCheckoutPaymentPage from '@/pages/public/guest-checkout-payment/GuestCheckoutPaymentPage'
 import PropertyDetailsPage from '@/pages/public/property-details/PropertyDetailsPage'
 import SearchPage from '@/pages/public/SearchPage'
 import StaysPage from '@/pages/public/StaysPage'
 import { Route, Routes } from 'react-router-dom'
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from '@stripe/react-stripe-js'
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 export default function PublicRoutes() {
   return (
     <Routes>
-        <Route element={<PublicLayout />} >
-            <Route index element={<StaysPage />} />
-            <Route path="flights" element={<FlightsPage />} />
-            <Route path="search" element={<SearchPage />} />
-            <Route path="property-details/:propertyId" element={<PropertyDetailsPage />} />
-            <Route path="guest-checkout-details" element={<GuestCheckoutDetailsPage />} />
-        </Route>
-        <Route path="auth/:role/:mode" element={<AuthPage />} />
+      <Route element={<PublicLayout />} >
+        <Route index element={<StaysPage />} />
+        <Route path="flights" element={<FlightsPage />} />
+        <Route path="search" element={<SearchPage />} />
+        <Route path="property-details/:propertyId" element={<PropertyDetailsPage />} />
+        <Route path="guest-checkout-details" element={<GuestCheckoutDetailsPage />} />
+        <Route path="checkout/payment" element={
+          <Elements stripe={stripePromise}>
+            <GuestCheckoutPaymentPage />
+          </Elements>
+        } />
+        <Route path="checkout/confirm" element={<GuestCheckoutConfirmPage />} />
+        <Route path="checkout/success" element={<div>Success page</div>} />
+
+      </Route>
+      <Route path="auth/:role/:mode" element={<AuthPage />} />
     </Routes>
   )
 }

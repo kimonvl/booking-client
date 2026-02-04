@@ -87,6 +87,7 @@ export default function GuestCheckoutDetailsPage() {
     // TODO: call backend create booking
     // if ok -> navigate to step 3
     console.log("submit", formInput);
+    navigate(`/checkout/payment`);
   };
 
 

@@ -5,6 +5,8 @@ import { dictionarySaga } from "./dictionaries/dictionary.saga";
 import { groupHomeSaga } from "./partner/primary-account/group-home/groupHome.saga";
 import { apartmentSaga } from "./partner/manage-property/apartment/apartment.saga";
 import { guestPropertySaga } from "./guest/property/guestProperty.saga";
+import { bookingConfirmSaga } from "./guest/booking/bookingConfirm.saga";
+import { paymentSaga } from "./guest/payment/payment.saga";
 
 export function* rootSaga(): SagaIterator {
     yield all([
@@ -13,5 +15,7 @@ export function* rootSaga(): SagaIterator {
         fork(apartmentSaga),
         fork(groupHomeSaga),
         fork(guestPropertySaga),
+        fork(bookingConfirmSaga),
+        fork(paymentSaga),
     ]);
 }

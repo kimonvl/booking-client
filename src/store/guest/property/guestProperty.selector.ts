@@ -16,6 +16,11 @@ export const selectSelectedProperty = createSelector(
     (guestPropertySlice) => guestPropertySlice.selectedProperty
 );
 
+export const selectSelectedPropertyId = createSelector(
+    [selectSelectedProperty],
+    (selectedProperty) => selectedProperty?.id
+);
+
 export const selectGuestPropertyLoading = createSelector(
     [selectGuestPropertyReducer],
     (guestPropertySlice) => guestPropertySlice.loading

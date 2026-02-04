@@ -6,7 +6,6 @@ import type { ApiResponse } from "@/types/response/apiResponse";
 import type { PropertyDetails, PropertyShort } from "./guestProperty.types";
 import { callApiWithRefresh } from "@/store/refreshSagaWraper";
 import { sendGet, sendPostJson } from "@/utils/axios.utils";
-import type { CountryDictionaryItem } from "@/store/dictionaries/dictionary.types";
 import { toast } from "sonner";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { filtersToRequest, type PropertySearchRequest } from "@/types/request/guest/PropertySearchRequest";
