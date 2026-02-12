@@ -11,6 +11,7 @@ import type { LoginRequest, RegisterRequest } from "@/types/request/auth/authReq
 import type { LoginResponse } from "@/types/response/auth/authResponse.types";
 import { callApiWithRefresh } from "../refreshSagaWraper";
 import { selectSelectedCountryCode } from "../dictionaries/dictionary.selector";
+import { data } from "react-router-dom";
 
 export function* register(action: PayloadAction<RegisterRequest>): SagaIterator {
     try {
@@ -23,17 +24,19 @@ export function* register(action: PayloadAction<RegisterRequest>): SagaIterator 
             ...action.payload,
             country: countryCode ?? "",
         };
+        console.log(apiPayload);
+        
         const res: AxiosResponse<ApiResponse<AuthUser>> = yield call(sendPostJson<AuthUser, RegisterRequest>, "auth/register", apiPayload)
         if (res && res.data.success) {
             yield put(registerSuccess());
             toast.success(res.data.message);
         }
     } catch (error: any) {
-        console.error("Register Error:", error); // Debugging log
+        console.error("Register Error:", error.response?.data); // Debugging log
 
         const errorMessage = error.response?.data?.message || "An error occurred";
 
-        yield put(registerFailed(errorMessage));
+        yield put(registerFailed({registerErrors: error.response?.data.data, error: error.response?.data.message}));
         toast.error(errorMessage);
     }
 }
@@ -84,6 +87,7 @@ export function* bootstrap(): SagaIterator {
         }
     } catch (e) {
         // refresh may fail -> just stay logged out
+        yield put(logoutStart());
         yield put(bootstrapDone());
     }
 }

@@ -14,6 +14,11 @@ export const selectAccessToken = createSelector(
     (authSlice) => authSlice.accessToken
 );
 
+export const selectRegisterErrors = createSelector(
+    [selectAuthReducer],
+    (authSlice) => authSlice.registerErrors
+);
+
 export const selectAuthStatus = createSelector(
     [selectAuthReducer],
     (authSlice) => authSlice.status

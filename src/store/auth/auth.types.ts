@@ -7,10 +7,24 @@ export interface AuthUser {
   role: UserRole;
 }
 
+export interface RegisterErrors {
+  email?: string;
+  password?: string;
+  firstName?: string;
+  lastName?: string;
+  country?: string;
+}
+
+export interface RegisterFailed {
+  registerErrors: RegisterErrors;
+  error: string;
+}
+
 export interface AuthState {
   accessToken: string | null;
   user: AuthUser | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
+  registerErrors: RegisterErrors | null;
   bootstrap: BootstrapStatus;
 }
