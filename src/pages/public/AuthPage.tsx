@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loginStart, registerStart } from "@/store/auth/authSlice";
-import { selectAccessToken, selectAuthStatus, selectBootstrapStatus, selectCurrentUser } from "@/store/auth/auth.selector";
+import { selectAccessToken, selectAuthStatus, selectBootstrapStatus, selectCurrentUser, selectRegisterErrors } from "@/store/auth/auth.selector";
 import CommonForm from "@/components/common-form/CommonForm";
 import { loginFormControls, registerFormControls, type LoginFormState, type RegisterFormState } from "@/types/form-config/AuthFormControlls";
 import { selectCountryNames } from "@/store/dictionaries/dictionary.selector";
@@ -40,6 +40,7 @@ export default function AuthPage() {
   const accessToken = useAppSelector(selectAccessToken);
   const bootstrap = useAppSelector(selectBootstrapStatus);
   const countries = useAppSelector(selectCountryNames);
+  const registerFieldErrors = useAppSelector(selectRegisterErrors);
 
   useEffect(() => {
     if (user && user.role == "PARTNER") {
@@ -204,7 +205,14 @@ export default function AuthPage() {
 
         <CardContent>
           {
-            isRegister && <CommonForm<RegisterFormState> formControls={registerFormControls(countries)} formInput={registerInput} setFormInput={setRegisterInput} handleSubmit={handleRegisterSubmit} buttonName="Register" />
+            isRegister && <CommonForm<RegisterFormState> 
+                            formControls={registerFormControls(countries)} 
+                            formInput={registerInput} 
+                            setFormInput={setRegisterInput} 
+                            handleSubmit={handleRegisterSubmit} 
+                            buttonName="Register"
+                            fieldErrors={registerFieldErrors ?? {}}
+                             />
           }
           {
             !isRegister && <CommonForm<LoginFormState> formControls={loginFormControls} formInput={loginInput} setFormInput={setLoginInput} handleSubmit={handleLoginSubmit} buttonName="Log in" />

@@ -8,10 +8,16 @@ interface FormFieldsProps<TFormState> {
     formControls: FormControl<TFormState>[];
     formInput: TFormState;
     setFormInput: React.Dispatch<React.SetStateAction<TFormState>>;
+    fieldErrors?: Partial<Record<keyof TFormState, string>>;
 }
 
-function FormFields<TFormState>({ formControls, formInput, setFormInput }: FormFieldsProps<TFormState>) {
-    
+function FormFields<TFormState>({
+    formControls,
+    formInput,
+    setFormInput,
+    fieldErrors
+}: FormFieldsProps<TFormState>) {
+
     const renderComponentByType = (controlItem: FormControl<TFormState>) => {
         const itemValue = formInput[controlItem.name] as string;
 
@@ -70,16 +76,26 @@ function FormFields<TFormState>({ formControls, formInput, setFormInput }: FormF
 
     return (
         <div>
-            {
-                formControls.map((controlItem) => {
-                    return (
-                        <div className="grid gap-2" key={controlItem.name as string}>
-                            <Label className='float-start mt-1' htmlFor={controlItem.name as string}>{controlItem.label}</Label>
-                            {renderComponentByType(controlItem)}
-                        </div>
-                    )
-                })
-            }
+            {formControls.map((controlItem) => {
+                const error = fieldErrors?.[controlItem.name];
+
+                return (
+                    <div className="grid gap-1" key={controlItem.name as string}>
+
+
+                        <Label htmlFor={controlItem.name as string}>
+                            {controlItem.label}
+                        </Label>
+                        {/* ✅ Error ABOVE the input */}
+                        {error && (
+                            <div className="text-xs text-red-500 font-medium">
+                                {error}
+                            </div>
+                        )}
+                        {renderComponentByType(controlItem)}
+                    </div>
+                );
+            })}
         </div>
     )
 }
