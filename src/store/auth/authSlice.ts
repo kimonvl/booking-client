@@ -10,6 +10,7 @@ const initialState: AuthState = {
     status: "idle",
     error: null,
     registerErrors: null,
+    registerCompleted: false,
     bootstrap: "idle",
 }
 
@@ -24,11 +25,17 @@ export const authSlice = createSlice({
         registerSuccess: (state) => {
             state.status = "succeeded";
             state.error = null;
+            state.registerErrors = null;
+            state.registerCompleted = true;
         },
         registerFailed: (state, action: PayloadAction<RegisterFailed>) => {
             state.status = "failed";
             state.error = action.payload.error;
             state.registerErrors = action.payload.registerErrors;
+            state.registerCompleted = false;
+        },
+        resetRegisterCompleted: (state) => {
+            state.registerCompleted = false;
         },
         loginStart: (state, _action: PayloadAction<LoginRequest>) => {
             state.status = "loading";
@@ -93,6 +100,7 @@ export const {
     registerStart,
     registerSuccess,
     registerFailed,
+    resetRegisterCompleted,
     loginStart,
     loginSuccess,
     loginFailed,

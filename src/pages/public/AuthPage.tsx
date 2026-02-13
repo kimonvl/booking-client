@@ -5,8 +5,8 @@ import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { loginStart, registerStart } from "@/store/auth/authSlice";
-import { selectAccessToken, selectAuthStatus, selectBootstrapStatus, selectCurrentUser, selectRegisterErrors } from "@/store/auth/auth.selector";
+import { loginStart, registerStart, resetRegisterCompleted } from "@/store/auth/authSlice";
+import { selectAccessToken, selectAuthStatus, selectBootstrapStatus, selectCurrentUser, selectRegisterCompleted, selectRegisterErrors } from "@/store/auth/auth.selector";
 import CommonForm from "@/components/common-form/CommonForm";
 import { loginFormControls, registerFormControls, type LoginFormState, type RegisterFormState } from "@/types/form-config/AuthFormControlls";
 import { selectCountryNames } from "@/store/dictionaries/dictionary.selector";
@@ -41,6 +41,14 @@ export default function AuthPage() {
   const bootstrap = useAppSelector(selectBootstrapStatus);
   const countries = useAppSelector(selectCountryNames);
   const registerFieldErrors = useAppSelector(selectRegisterErrors);
+  const isRegisterCompleted = useAppSelector(selectRegisterCompleted);
+
+  useEffect(() => {
+    if (isRegisterCompleted) {
+      navigate(`/auth/${role}/login`);
+      dispatch(resetRegisterCompleted());
+    }
+  }, [isRegisterCompleted])
 
   useEffect(() => {
     if (user && user.role == "PARTNER") {

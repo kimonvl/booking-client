@@ -19,6 +19,11 @@ export const selectRegisterErrors = createSelector(
     (authSlice) => authSlice.registerErrors
 );
 
+export const selectRegisterCompleted = createSelector(
+    [selectAuthReducer],
+    (authSlice) => authSlice.registerCompleted
+);
+
 export const selectAuthStatus = createSelector(
     [selectAuthReducer],
     (authSlice) => authSlice.status

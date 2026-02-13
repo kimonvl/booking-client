@@ -11,7 +11,6 @@ import type { LoginRequest, RegisterRequest } from "@/types/request/auth/authReq
 import type { LoginResponse } from "@/types/response/auth/authResponse.types";
 import { callApiWithRefresh } from "../refreshSagaWraper";
 import { selectSelectedCountryCode } from "../dictionaries/dictionary.selector";
-import { data } from "react-router-dom";
 
 export function* register(action: PayloadAction<RegisterRequest>): SagaIterator {
     try {

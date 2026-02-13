@@ -26,5 +26,6 @@ export interface AuthState {
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
   registerErrors: RegisterErrors | null;
+  registerCompleted: boolean;
   bootstrap: BootstrapStatus;
 }
