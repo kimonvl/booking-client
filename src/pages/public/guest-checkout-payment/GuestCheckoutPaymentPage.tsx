@@ -5,13 +5,13 @@ import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectClientSecret,
-  selectPaymentBookingId,
   selectPaymentStatus,
 } from "@/store/guest/payment/payment.selector";
 import {
   createPaymentIntentStart,
   resetPaymentState,
 } from "@/store/guest/payment/paymentSlice";
+import { selectCreatedBookingId } from "@/store/guest/booking/booking.selector";
 
 export default function GuestCheckoutPaymentPage() {
   const dispatch = useAppDispatch();
@@ -22,14 +22,10 @@ export default function GuestCheckoutPaymentPage() {
 
   const status = useAppSelector(selectPaymentStatus);
   const clientSecret = useAppSelector(selectClientSecret);
-  const bookingId = useAppSelector(selectPaymentBookingId);
+  const bookingId = useAppSelector(selectCreatedBookingId);
 
   const [confirming, setConfirming] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  // you should already have created a booking draft before coming here
-  // e.g. from previous step (details page)
-  const draftBookingId = bookingId ?? 123; // replace with real redux checkout bookingId
 
   const onCompleteBooking = () => {
     setErrorMsg(null);

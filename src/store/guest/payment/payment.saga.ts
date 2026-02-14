@@ -12,74 +12,19 @@ import {
   createPaymentIntentSuccess,
   createPaymentIntentFailure,
 } from "./paymentSlice";
-import { selectSelectedPropertyId } from "../property/guestProperty.selector";
-import { selectSearchPageCheckIn, selectSearchPageCheckout, selectSearchPageGuests } from "../pages/search-page/searchPage.selector";
-import type { CheckoutDetailsFormState } from "../pages/checkout-page/checkoutPage.types";
-import { selectCheckoutPageDetailsForm } from "../pages/checkout-page/checkoutPage.selector";
-
-type CheckOutDetails = {
-  travelingForWork: boolean,
-  title: string,
-  firstName: string,
-  lastName: string,
-  email: string,
-  phoneCountryCode: string,
-  phoneNumber: string,
-  specialRequest: string
-};
-type CreateIntentRes = { bookingId: number, clientSecret: string };
-type CreateIntentReq = {
-  propertyId: number,
-  checkIn: string,
-  checkOut: string,
-  guestCount: number,
-  checkOutDetails: CheckOutDetails
-}
-
-const constructCreateIntentReq = (
-  propertyId: number, 
-  checkIn: string, 
-  checkOut: string, 
-  guestCount: number, 
-  checkoutDetailForm: CheckoutDetailsFormState
-): CreateIntentReq => {
-  return {
-    propertyId,
-    checkIn,
-    checkOut,
-    guestCount,
-    checkOutDetails: {
-      travelingForWork: checkoutDetailForm.travelingForWork === "no" ? false : true,
-      title: checkoutDetailForm.title,
-      firstName: checkoutDetailForm.firstName,
-      lastName: checkoutDetailForm.lastName,
-      email: checkoutDetailForm.email,
-      phoneCountryCode: checkoutDetailForm.phoneCountryCode,
-      phoneNumber: checkoutDetailForm.phoneNumber,
-      specialRequest: checkoutDetailForm.specialRequest
-    }
-  }
-}
+import { selectCreatedBookingId } from "../booking/booking.selector";
 
 function* createPaymentIntent(): SagaIterator {
-  const proprtyId = yield select(selectSelectedPropertyId);
-  const checkIn = yield select(selectSearchPageCheckIn);
-  const checkout = yield select(selectSearchPageCheckout);
-  const guestCount = yield select(selectSearchPageGuests);
-  const checkoutDetailForm = yield select(selectCheckoutPageDetailsForm);
-  const req = constructCreateIntentReq(proprtyId, checkIn, checkout, guestCount, checkoutDetailForm);
+  const bookingId = yield select(selectCreatedBookingId);  
   try {
-    const res: AxiosResponse<ApiResponse<CreateIntentRes>> = yield call(callApiWithRefresh, () =>
-      sendPostJson<ApiResponse<CreateIntentRes>, CreateIntentReq>(`/payments/create-intent`, req)
+    const res: AxiosResponse<ApiResponse<string>> = yield call(callApiWithRefresh, () =>
+      sendPostJson<ApiResponse<string>, number>(`/payments/create-intent`, bookingId)
     );
 
     if (res.data.success) {
       yield put(createPaymentIntentSuccess(res.data.data));
       return;
     }
-
-    yield put(createPaymentIntentFailure(res.data.message || "Payment intent failed"));
-    toast.error(res.data.message || "Payment intent failed");
   } catch (error: any) {
     const msg = error.response?.data?.message || error.message || "Payment intent failed";
     yield put(createPaymentIntentFailure(msg));

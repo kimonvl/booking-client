@@ -2,16 +2,15 @@ import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { Button } from "@/components/ui/button";
-import { selectConfirmError, selectConfirmLatest, selectConfirmStatus } from "@/store/guest/booking/bookingConfirm.selector";
-import { resetConfirm, startPollingBooking } from "@/store/guest/booking/bookingConfirmSlice";
-import { selectPaymentBookingId } from "@/store/guest/payment/payment.selector";
+import { selectConfirmError, selectConfirmLatest, selectConfirmStatus } from "@/store/guest/booking/booking.selector";
+import { resetConfirm, startPollingBooking } from "@/store/guest/booking/bookingSlice";
 
 export default function GuestCheckoutConfirmPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [sp] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
-  const bookingId = useAppSelector(selectPaymentBookingId);
+  const bookingId = searchParams.get("bookingId");
   const status = useAppSelector(selectConfirmStatus);
   const latest = useAppSelector(selectConfirmLatest);
   const error = useAppSelector(selectConfirmError);
@@ -68,7 +67,12 @@ export default function GuestCheckoutConfirmPage() {
             <Button variant="outline" onClick={() => navigate(-1)}>
               Back
             </Button>
-            <Button onClick={() => dispatch(startPollingBooking({ bookingId }))}>
+            <Button onClick={() => {
+                if (bookingId === null)
+                  return;
+                dispatch(startPollingBooking(bookingId));
+              }
+            }>
               Retry
             </Button>
           </div>

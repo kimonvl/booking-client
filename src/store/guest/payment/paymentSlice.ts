@@ -10,14 +10,12 @@ type PaymentState = {
   status: PaymentStatusUI;
   error: string | null;
   clientSecret: string | null;
-  bookingId: number | null;
 };
 
 const initialState: PaymentState = {
   status: "idle",
   error: null,
   clientSecret: null,
-  bookingId: null,
 };
 
 export const paymentSlice = createSlice({
@@ -29,10 +27,9 @@ export const paymentSlice = createSlice({
       state.error = null;
       state.clientSecret = null;
     },
-    createPaymentIntentSuccess: (state, action: PayloadAction<{ clientSecret: string, bookingId: number }>) => {
+    createPaymentIntentSuccess: (state, action: PayloadAction<string>) => {
       state.status = "succeeded";
-      state.clientSecret = action.payload.clientSecret;
-      state.bookingId = action.payload.bookingId;
+      state.clientSecret = action.payload;
     },
     createPaymentIntentFailure: (state, action: PayloadAction<string>) => {
       state.status = "failed";

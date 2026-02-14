@@ -1,25 +1,43 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { BookingStatusResponse } from "@/types/response/booking/bookingStatus.types";
 
-type ConfirmState = {
+export type BookingState = {
   polling: boolean;
   status: "idle" | "loading" | "confirmed" | "failed";
   error: string | null;
   latest: BookingStatusResponse | null;
+  createBookingCompleted: boolean;
+  createdBookingId: number | null;
 };
 
-const initialState: ConfirmState = {
+const initialState: BookingState = {
   polling: false,
   status: "idle",
   error: null,
   latest: null,
+  createBookingCompleted: false,
+  createdBookingId: null,
 };
 
-export const bookingConfirmSlice = createSlice({
-  name: "bookingConfirm",
+export const bookingSlice = createSlice({
+  name: "booking",
   initialState,
   reducers: {
-    startPollingBooking: (state, _action: PayloadAction<{ bookingId: number }>) => {
+    createBookingPendingStart: (state) => {
+      state.createBookingCompleted = false;
+    },
+    createBookingPendingSuccess: (state, action: PayloadAction<number>) => {
+      state.createBookingCompleted = true;
+      state.createdBookingId = action.payload;
+    },
+    createBookingPendingFailure: (state, action: PayloadAction<string>) => {
+      state.createBookingCompleted = false;
+      state.error = action.payload;
+    },
+    resetCreateBookingCompleted: (state) => {
+      state.createBookingCompleted = false;
+    },
+    startPollingBooking: (state, _action: PayloadAction<string>) => {
       state.polling = true;
       state.status = "loading";
       state.error = null;
@@ -45,14 +63,18 @@ export const bookingConfirmSlice = createSlice({
   },
 });
 
-const bookingConfirmReducer = bookingConfirmSlice.reducer;
+const bookingReducer = bookingSlice.reducer;
 export const {
+  createBookingPendingStart,
+  createBookingPendingSuccess,
+  createBookingPendingFailure,
+  resetCreateBookingCompleted,
   startPollingBooking,
   pollingUpdate,
   pollingConfirmed,
   pollingFailed,
   stopPolling,
   resetConfirm,
-} = bookingConfirmSlice.actions;
+} = bookingSlice.actions;
 
-export default bookingConfirmReducer;
+export default bookingReducer;

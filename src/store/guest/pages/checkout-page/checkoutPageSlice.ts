@@ -8,8 +8,8 @@ const initialState: CheckoutPageState = {
     checkoutDetailsForm: {
         travelingForWork: "no",
         title: "",
-        firstName: "Vloutis",
-        lastName: "Kimon",
+        firstName: "",
+        lastName: "",
         email: "",
         confirmEmail: "",
         phoneCountryCode: "+30",
@@ -25,6 +25,8 @@ export const checkoutPageSlice = createSlice({
         populateFromAuthenticatedUser: (state, action: PayloadAction<AuthUser>) => {
             state.checkoutDetailsForm.email = action.payload.email;
             state.checkoutDetailsForm.confirmEmail = action.payload.email;
+            state.checkoutDetailsForm.firstName = action.payload.firstName;
+            state.checkoutDetailsForm.lastName = action.payload.lastName;
         },
         setGuestCheckoutDetailsForm: (state, action: PayloadAction<CheckoutDetailsFormState>) => {
             state.checkoutDetailsForm = action.payload;

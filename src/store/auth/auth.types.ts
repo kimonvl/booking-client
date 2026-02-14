@@ -4,6 +4,9 @@ export type BootstrapStatus = "idle" | "loading" | "done";
 export interface AuthUser {
   id: string;
   email: string;
+  country: string;
+  firstName: string;
+  lastName: string;
   role: UserRole;
 }
 

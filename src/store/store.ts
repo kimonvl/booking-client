@@ -11,8 +11,8 @@ import guestPropertyReducer from "./guest/property/guestPropertySlice";
 import apartmentReducer from "./partner/manage-property/apartment/apartmentSlice";
 import searchPageReducer from "./guest/pages/search-page/searchPageSlice";
 import checkoutPageReducer from "./guest/pages/checkout-page/checkoutPageSlice";
-import bookingConfirmReducer from "./guest/booking/bookingConfirmSlice";
 import paymentReducer from "./guest/payment/paymentSlice";
+import bookingReducer from "./guest/booking/bookingSlice";
 
 /* =========================
    Persist configurations
@@ -59,8 +59,8 @@ const persistCheckoutPageConfig = {
   whitelist: [],
 };
 
-const persistBookingConfirmConfig = {
-  key: "bookingConfirm",
+const persistBookingConfig = {
+  key: "booking",
   storage,
   whitelist: [],
 };
@@ -86,7 +86,7 @@ export const store = configureStore({
     guestProperty: persistReducer(persistGuestPropertyConfig, guestPropertyReducer),
     searchPage: persistReducer(persistSearchPageConfig, searchPageReducer),
     checkoutPage: persistReducer(persistCheckoutPageConfig, checkoutPageReducer),
-    bookingConfirm: persistReducer(persistBookingConfirmConfig, bookingConfirmReducer),
+    booking: persistReducer(persistBookingConfig, bookingReducer),
     payment: persistReducer(persistPaymentConfig, paymentReducer),
   },
   middleware: (getDefaultMiddleware) =>

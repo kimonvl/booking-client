@@ -10,6 +10,8 @@ import { selectCheckoutPageDetailsForm } from "@/store/guest/pages/checkout-page
 import { populateFromAuthenticatedUser } from "@/store/guest/pages/checkout-page/checkoutPageSlice";
 import { useNavigate } from "react-router-dom";
 import SignInToContinueModal from "./SignInToContinueModal";
+import { createBookingPendingStart, resetCreateBookingCompleted } from "@/store/guest/booking/bookingSlice";
+import { selectCreateBookingCompleted } from "@/store/guest/booking/booking.selector";
 
 
 function Stepper() {
@@ -60,16 +62,24 @@ export default function GuestCheckoutDetailsPage() {
   const currentUser = useAppSelector(selectCurrentUser);
   const checkoutDetailsForm = useAppSelector(selectCheckoutPageDetailsForm);
   const showGate = !isAuthenticated;
+  const createBookingCompleted = useAppSelector(selectCreateBookingCompleted);
+
+  useEffect(() => {
+    if (createBookingCompleted) {
+      dispatch(resetCreateBookingCompleted());
+      navigate(`/checkout/payment`);
+    }
+  }, [createBookingCompleted])
 
   useEffect(() => {
     if (currentUser === null)
       return;
     dispatch(populateFromAuthenticatedUser(currentUser))
-  }, [dispatch, currentUser])
+  }, [dispatch, currentUser]);
 
   useEffect(() => {
     setFormInput(checkoutDetailsForm);
-  }, [checkoutDetailsForm])
+  }, [checkoutDetailsForm]);
 
   const [formInput, setFormInput] = useState<CheckoutDetailsFormState>(checkoutDetailsForm);
 
@@ -84,10 +94,7 @@ export default function GuestCheckoutDetailsPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: call backend create booking
-    // if ok -> navigate to step 3
-    console.log("submit", formInput);
-    navigate(`/checkout/payment`);
+    dispatch(createBookingPendingStart());
   };
 
 
@@ -135,11 +142,6 @@ export default function GuestCheckoutDetailsPage() {
 
               {/* Form card */}
               <GuestCheckoutForm formInput={formInput} setFormInput={setFormInput} handleSubmit={handleSubmit} isValid={isValid} />
-
-              {/* If you want to reuse CommonForm instead of inline inputs:
-                you can replace the email/phone/specialRequest blocks with <CommonForm .../>
-                but Booking layout needs custom grid so inline is easiest here.
-            */}
             </div>
           </div>
         </div>

@@ -61,7 +61,9 @@ export function* login(action: PayloadAction<LoginRequest>): SagaIterator {
 
 export function* logout(): SagaIterator {
     try {
-        const res: AxiosResponse<ApiResponse<LoginResponse>> = yield call(sendPostJson<LoginResponse, LoginRequest>, "auth/logout")
+        const res: AxiosResponse<ApiResponse<LoginResponse>> = yield call(sendPostJson<LoginResponse, LoginRequest>, "auth/logout");
+        console.log(res);
+        
         if (res && res.data.success) {
             yield put(logoutSuccess());
             toast.success(res.data.message);
