@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { Toaster } from 'sonner';
@@ -8,12 +7,10 @@ import { persistor, store } from './store/store.ts';
 import { Provider } from 'react-redux';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
     <Provider store={store}>
       <PersistGate persistor={persistor}>
         <AppRouter />
         <Toaster richColors position='top-right' />
       </PersistGate>
     </Provider>
-  </StrictMode>,
 )

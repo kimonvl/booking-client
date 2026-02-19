@@ -67,9 +67,10 @@ export default function GuestCheckoutDetailsPage() {
   useEffect(() => {
     if (createBookingCompleted) {
       dispatch(resetCreateBookingCompleted());
-      navigate(`/checkout/payment`);
+      navigate(`/checkout/payment`, { replace: true });
+
     }
-  }, [createBookingCompleted])
+  }, [createBookingCompleted, dispatch, navigate])
 
   useEffect(() => {
     if (currentUser === null)

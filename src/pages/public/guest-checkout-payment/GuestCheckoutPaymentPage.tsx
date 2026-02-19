@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import {
   resetPaymentState,
 } from "@/store/guest/payment/paymentSlice";
 import { selectCreatedBookingId } from "@/store/guest/booking/booking.selector";
+import { cancelPendingBookingStart } from "@/store/guest/booking/bookingSlice";
 
 export default function GuestCheckoutPaymentPage() {
   const dispatch = useAppDispatch();
@@ -26,6 +27,22 @@ export default function GuestCheckoutPaymentPage() {
 
   const [confirming, setConfirming] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const finishedRef = useRef(false);
+  const bookingIdRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    bookingIdRef.current = bookingId ?? null;
+  }, [bookingId]);
+
+  useEffect(() => {
+    return () => {
+      const id = bookingIdRef.current;
+      if (!finishedRef.current && id) {
+        dispatch(cancelPendingBookingStart(id));
+      }
+    };
+  }, [dispatch]);
 
   const onCompleteBooking = () => {
     setErrorMsg(null);
@@ -43,7 +60,7 @@ export default function GuestCheckoutPaymentPage() {
       setErrorMsg(null);
 
       console.log("client secret before sending to stripe ", clientSecret);
-      
+
       const result = await stripe.confirmCardPayment(clientSecret, {
         payment_method: { card: elements.getElement(CardElement)! },
       });
@@ -54,6 +71,8 @@ export default function GuestCheckoutPaymentPage() {
         setErrorMsg(result.error.message ?? "Payment failed");
         return;
       }
+
+      finishedRef.current = true;
 
       // Payment succeeded client-side.
       // Booking will be confirmed by webhook.
