@@ -16,6 +16,9 @@ import {
   createBookingPendingStart,
   createBookingPendingSuccess,
   createBookingPendingFailure,
+  cancelPendingBookingStart,
+  cancelPendingBookingSuccess,
+  cancelPendingBookingFailed,
 } from "./bookingSlice";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { selectSelectedPropertyId } from "../property/guestProperty.selector";
@@ -108,13 +111,14 @@ const constructCreateIntentReq = (
     }
   }
 }
+
 export function* createBookingPending(): SagaIterator {
-  const proprtyId = yield select(selectSelectedPropertyId);
+  const propertyId = yield select(selectSelectedPropertyId);
   const checkIn = yield select(selectSearchPageCheckIn);
   const checkout = yield select(selectSearchPageCheckout);
   const guestCount = yield select(selectSearchPageGuests);
   const checkoutDetailForm = yield select(selectCheckoutPageDetailsForm);
-  const req = constructCreateIntentReq(proprtyId, checkIn, checkout, guestCount, checkoutDetailForm);
+  const req = constructCreateIntentReq(propertyId, checkIn, checkout, guestCount, checkoutDetailForm);
   try {
     const res: AxiosResponse<ApiResponse<number>> = yield call(callApiWithRefresh, () =>
       sendPostJson<ApiResponse<number>, CreateBookingReq>(`/bookings/create`, req)
@@ -131,6 +135,23 @@ export function* createBookingPending(): SagaIterator {
   }
 }
 
+export function* cancelPendingBooking(action: PayloadAction<number>): SagaIterator {
+  try {
+    const res: AxiosResponse<ApiResponse<null>> = yield call(callApiWithRefresh, () =>
+      sendPostJson<ApiResponse<null>, {bookingId: number}>(`/bookings/cancel/${action.payload}`)
+    );
+
+    if (res.data.success) {
+      yield put(cancelPendingBookingSuccess());
+      return;
+    }
+  } catch (error: any) {
+    const msg = error.response?.data?.message || error.message || "Payment intent failed";
+    yield put(cancelPendingBookingFailed(msg));
+    toast.error(msg);
+  }
+}
+
 export function* onPollingStart(): SagaIterator {
   yield takeLatest(startPollingBooking.type, pollBookingStatus);
 }
@@ -139,10 +160,15 @@ export function* onCreateBookingPendingStart(): SagaIterator {
   yield takeLatest(createBookingPendingStart.type, createBookingPending);
 }
 
+export function* onCancelPendingBookingStart(): SagaIterator {
+  yield takeLatest(cancelPendingBookingStart.type, cancelPendingBooking);
+}
+
 export function* bookingConfirmSaga(): SagaIterator {
   yield all([
     call(onPollingStart),
     call(onCreateBookingPendingStart),
+    call(onCancelPendingBookingStart),
   ]);
 }
 

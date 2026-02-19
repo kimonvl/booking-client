@@ -513,7 +513,7 @@ export default function PropertyDetailsPage(props: Props) {
                                 </div>
 
                                 <div className="col-span-2 p-4 flex items-center justify-center">
-                                    <Button onClick={() => navigate("/guest-checkout-details")} className="bg-[#0071c2] hover:bg-[#005fa3]">
+                                    <Button onClick={() => navigate("/checkout/details")} className="bg-[#0071c2] hover:bg-[#005fa3]">
                                         I'll reserve
                                     </Button>
                                 </div>

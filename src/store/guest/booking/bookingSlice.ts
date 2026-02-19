@@ -34,6 +34,14 @@ export const bookingSlice = createSlice({
       state.createBookingCompleted = false;
       state.error = action.payload;
     },
+    cancelPendingBookingStart: (_state, _action: PayloadAction<number>) => {
+    },
+    cancelPendingBookingSuccess: (state) => {
+      state.createdBookingId = null;
+    },
+    cancelPendingBookingFailed: (state, action: PayloadAction<string>) => {
+      state.error = action.payload;
+    },
     resetCreateBookingCompleted: (state) => {
       state.createBookingCompleted = false;
     },
@@ -68,6 +76,9 @@ export const {
   createBookingPendingStart,
   createBookingPendingSuccess,
   createBookingPendingFailure,
+  cancelPendingBookingStart,
+  cancelPendingBookingSuccess,
+  cancelPendingBookingFailed,
   resetCreateBookingCompleted,
   startPollingBooking,
   pollingUpdate,

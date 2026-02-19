@@ -10,6 +10,7 @@ import StaysPage from '@/pages/public/StaysPage'
 import { Route, Routes } from 'react-router-dom'
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from '@stripe/react-stripe-js'
+import GuestCheckoutSuccessPage from '@/pages/public/guest-checkout-success/GuestCheckoutSuccessPage'
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -21,14 +22,14 @@ export default function PublicRoutes() {
         <Route path="flights" element={<FlightsPage />} />
         <Route path="search" element={<SearchPage />} />
         <Route path="property-details/:propertyId" element={<PropertyDetailsPage />} />
-        <Route path="guest-checkout-details" element={<GuestCheckoutDetailsPage />} />
+        <Route path="checkout/details" element={<GuestCheckoutDetailsPage />} />
         <Route path="checkout/payment" element={
           <Elements stripe={stripePromise}>
             <GuestCheckoutPaymentPage />
           </Elements>
         } />
         <Route path="checkout/confirm" element={<GuestCheckoutConfirmPage />} />
-        <Route path="checkout/success" element={<div>Success page</div>} />
+        <Route path="checkout/success" element={<GuestCheckoutSuccessPage />} />
 
       </Route>
       <Route path="auth/:role/:mode" element={<AuthPage />} />
