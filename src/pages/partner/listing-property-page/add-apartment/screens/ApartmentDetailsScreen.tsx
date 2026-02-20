@@ -265,7 +265,10 @@ export default function ApartmentDetailsScreen({
                 <div className="mt-2 flex items-center gap-3">
                   <Input
                     value={aptSize}
-                    onChange={(e) => setAptSize(e.target.value)}
+                    onChange={(e) => {
+                      const digitsOnly = e.target.value.replace(/\D/g, "");
+                      setAptSize(digitsOnly);
+                    }}
                     className="h-10 w-48"
                   />
                   <Select
