@@ -45,7 +45,8 @@ export function* sendAddApartment(action: PayloadAction<AddApartmentRequest>): S
         }
     } catch (error: any) {
         const errorMessage = error.response?.data?.message || "An error occurred";
-        yield put(sendAddApartmentFailure(errorMessage));
+        toast.warning(errorMessage);
+        yield put(sendAddApartmentFailure({error: errorMessage, fieldErrors: error.response?.data?.data}));
     }
 }
 

@@ -16,7 +16,8 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { getAmenitiesDictionaryStart, getCountryDictionaryStart, getLanguageDictionaryStart } from "@/store/dictionaries/dictionarySlice";
 import { selectAmenitiesDictionary, selectCountryDictionary, selectLanguageDictionary } from "@/store/dictionaries/dictionary.selector";
 import type { AddressType, IsParkingAvailableType, PetsAllowedType, PhotoItem, SleepingAreasType, TimeType } from "@/types/request/apartment/addApartmentRequest.types";
-import { sendAddApartmentStart } from "@/store/partner/manage-property/apartment/apartmentSlice";
+import { sendAddApartmentStart, setAddApartmentForm } from "@/store/partner/manage-property/apartment/apartmentSlice";
+import { selectAddApartmentForm, selectAddApartmentStepsWithError } from "@/store/partner/manage-property/apartment/apartment.selector";
 
 export type StepsType = "name" | "address" |
   "details" | "amenities" | "services" | "languages" | "rules" |
@@ -30,7 +31,10 @@ export default function AddAppartmentPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const [activeStep, setActiveStep] = useState<StepsType>(steps[0]);
+  const apartmentForm = useAppSelector(selectAddApartmentForm);
+  const errorSteps = useAppSelector(selectAddApartmentStepsWithError);
+
+  const [activeStep, setActiveStep] = useState<StepsType>(errorSteps.length > 0 ? errorSteps[0] : steps[0]);
   const [stepsProgress, setStepsProgress] = useState<Record<StepsType, boolean>>({
     name: false,
     address: false,
@@ -44,31 +48,31 @@ export default function AddAppartmentPage() {
     review: false,
   })
 
-  const [propertyName, setPropertyName] = useState("");
+  const goNextWithError = () => {
+    const errIndex = errorSteps.indexOf(activeStep);
+    if (errIndex >= 0) {
+      const nextIndex = (errIndex + 1) % errorSteps.length;
+      setActiveStep(errorSteps[nextIndex]);
+    } else {
+      setActiveStep(errorSteps[0]);
+    }
+  }
+
+  const [propertyName, setPropertyName] = useState(apartmentForm.propertyName);
 
   const countryDictionary = useAppSelector(selectCountryDictionary);
   useEffect(() => {
     if (!countryDictionary || countryDictionary.length === 0)
       dispatch(getCountryDictionaryStart());
   }, [dispatch])
-  const [address, setAddress] = useState<AddressType>({
-    street: "",
-    streetNumber: "",
-    floorNumber: "",
-    country: "",
-    city: "",
-    postCode: ""
-  });
+  const [address, setAddress] = useState<AddressType>(apartmentForm.address);
 
-  const [sleepingAreas, setSleepingAreas] = useState<SleepingAreasType>({
-    bedrooms: [{ beds: { single: 1, double: 3, king_size: 0 } }],
-    livingRoom: { beds: { single_sofa: 0, double_sofa: 0 } }
-  });
-  const [guestCount, setGuestCount] = useState(0);
-  const [bathroomCount, setBathroomCount] = useState(0);
-  const [allowChildren, setAllowChildren] = useState<boolean>(false);
-  const [offerCots, setOfferCots] = useState<boolean>(false);
-  const [aptSize, setAptSize] = useState<string>("");
+  const [sleepingAreas, setSleepingAreas] = useState<SleepingAreasType>(apartmentForm.sleepingAreas);
+  const [guestCount, setGuestCount] = useState(apartmentForm.guestCount);
+  const [bathroomCount, setBathroomCount] = useState(apartmentForm.bathroomCount);
+  const [allowChildren, setAllowChildren] = useState<boolean>(apartmentForm.allowChildren);
+  const [offerCots, setOfferCots] = useState<boolean>(apartmentForm.offerCots);
+  const [aptSize, setAptSize] = useState<string>(apartmentForm.aptSize);
 
   const amenitiesDictionary = useAppSelector(selectAmenitiesDictionary);
   useEffect(() => {
@@ -79,10 +83,11 @@ export default function AddAppartmentPage() {
   useEffect(() => {
     if (!amenitiesDictionary?.length) return;
     if (Object.keys(amenities).length > 0) return;
+    // check if amenities are not null to set the state with them
     const initial: Record<string, boolean> = {};
     amenitiesDictionary?.forEach(g => {
       g.items.forEach(item => {
-        initial[item.code] = false;
+        initial[item.code] = apartmentForm.amenities === null ? false : apartmentForm.amenities[item.code];
       });
     });
 
@@ -90,8 +95,8 @@ export default function AddAppartmentPage() {
   }, [amenitiesDictionary]);
 
 
-  const [serveBreakfast, setServeBreakfast] = useState<boolean>(false);
-  const [isParkingAvailable, setIsParkingAvailable] = useState<IsParkingAvailableType>("no");
+  const [serveBreakfast, setServeBreakfast] = useState<boolean>(apartmentForm.serveBreakfast);
+  const [isParkingAvailable, setIsParkingAvailable] = useState<IsParkingAvailableType>(apartmentForm.isParkingAvailable);
 
 
   const allLanguages = useAppSelector(selectLanguageDictionary);
@@ -109,26 +114,26 @@ export default function AddAppartmentPage() {
     const firstState: Record<string, boolean> = {};
     const restState: Record<string, boolean> = {};
 
-    first.forEach(l => { firstState[l.code] = false; });
-    rest.forEach(l => { restState[l.code] = false; });
+    first.forEach(l => { firstState[l.code] = apartmentForm.languages === null ? false : apartmentForm.languages[l.code]; });
+    rest.forEach(l => { restState[l.code] = apartmentForm.additionalLanguages === null ? false : apartmentForm.additionalLanguages[l.code]; });
 
     setLanguages(firstState);
     setAdditionalLanguages(restState);
   }, [allLanguages]);
-  const [languages, setLanguages] = useState<Record<string, boolean>>({});
-  const [additionalLanguages, setAdditionalLanguages] = useState<Record<string, boolean>>({});
+  const [languages, setLanguages] = useState<Record<string, boolean>>(apartmentForm.languages === null ? {} : apartmentForm.languages);
+  const [additionalLanguages, setAdditionalLanguages] = useState<Record<string, boolean>>(apartmentForm.additionalLanguages === null ? {} : apartmentForm.additionalLanguages);
 
-  const [smokingAllowed, setSmokingAllowed] = useState(false);
-  const [partiesAllowed, setPartiesAllowed] = useState(false);
-  const [petsAllowed, setPetsAllowed] = useState<PetsAllowedType>("No");
-  const [checkInFrom, setCheckInFrom] = useState<TimeType>("13:00");
-  const [checkInUntil, setCheckInUntil] = useState<TimeType>("16:00");
-  const [checkOutFrom, setCheckOutFrom] = useState<TimeType>("13:00");
-  const [checkOutUntil, setCheckOutUntil] = useState<TimeType>("16:00");
+  const [smokingAllowed, setSmokingAllowed] = useState(apartmentForm.smokingAllowed);
+  const [partiesAllowed, setPartiesAllowed] = useState(apartmentForm.partiesAllowed);
+  const [petsAllowed, setPetsAllowed] = useState<PetsAllowedType>(apartmentForm.petsAllowed);
+  const [checkInFrom, setCheckInFrom] = useState<TimeType>(apartmentForm.checkInFrom);
+  const [checkInUntil, setCheckInUntil] = useState<TimeType>(apartmentForm.checkInUntil);
+  const [checkOutFrom, setCheckOutFrom] = useState<TimeType>(apartmentForm.checkOutFrom);
+  const [checkOutUntil, setCheckOutUntil] = useState<TimeType>(apartmentForm.checkOutUntil);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [photos, setPhotos] = useState<PhotoItem[]>([]);
-  const [mainPhotoId, setMainPhotoId] = useState<string | null>(null);
+  const [photos, setPhotos] = useState<PhotoItem[]>(apartmentForm.photos);
+  const [mainPhotoId, setMainPhotoId] = useState<string | null>(apartmentForm.mainPhotoId);
   useEffect(() => {
     // cleanup object URLs on unmount
     return () => {
@@ -174,7 +179,7 @@ export default function AddAppartmentPage() {
     });
   };
 
-  const [pricePerNight, setPricePerNight] = useState(0);
+  const [pricePerNight, setPricePerNight] = useState(apartmentForm.pricePerNight);
 
   const goBack = () => {
     const idx = steps.indexOf(activeStep);
@@ -212,6 +217,36 @@ export default function AddAppartmentPage() {
 
   const extractCodes = (record: Record<string, boolean>) => {
     return Object.entries(record).filter(([_, v]) => v).map(([code, _]) => code)
+  }
+
+  const persistForm = () => {
+    dispatch(setAddApartmentForm(
+      {
+        propertyName,
+  address,
+  sleepingAreas,
+  guestCount,
+  bathroomCount,
+  allowChildren,
+  offerCots,
+  aptSize,
+  amenities,
+  serveBreakfast,
+  isParkingAvailable,
+  languages,
+  additionalLanguages,
+  smokingAllowed,
+  partiesAllowed,
+  petsAllowed,
+  checkInFrom,
+  checkInUntil,
+  checkOutFrom,
+  checkOutUntil,
+  photos,
+  mainPhotoId,
+  pricePerNight,
+      }
+    ))
   }
 
   const onConfirm = () => {
@@ -445,7 +480,10 @@ export default function AddAppartmentPage() {
       <NavigationButons
         goBack={goBack}
         goNext={goNext}
+        goNextWithError={goNextWithError}
+        hasErrors={errorSteps.length > 0}
         canContinue={canContinue()}
+        persistForm={persistForm}
       />
     </div>
   );

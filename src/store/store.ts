@@ -32,7 +32,12 @@ const persistDictionaryConfig = {
 const persistApartmentConfig = {
   key: "apartment",
   storage,
-  whitelist: [],
+  whitelist: [
+    "addApartmentLoading",
+    "addApartmentErrors",
+    "hasFieldErrors",
+    "apartmentForm",
+  ],
 };
 
 const persistGroupHomeConfig = {

@@ -4,10 +4,13 @@ import { ChevronLeft } from "lucide-react";
 interface NavigationButonsProps {
     goBack: () => void;
     goNext: () => void;
+    goNextWithError: () => void;
+    hasErrors: boolean;
     canContinue: boolean;
+    persistForm: () => void;
 }
 
-export default function NavigationButons({ goBack, goNext, canContinue }: NavigationButonsProps) {
+export default function NavigationButons({ goBack, goNext, goNextWithError, hasErrors, canContinue, persistForm }: NavigationButonsProps) {
     return (
         <div className=" bottom-0 bg-white border-t">
             <div className="max-w-6xl mx-auto px-6">
@@ -23,7 +26,7 @@ export default function NavigationButons({ goBack, goNext, canContinue }: Naviga
 
                     <Button
                         type="button"
-                        onClick={goNext}
+                        onClick={() => {persistForm();goNext()}}
                         disabled={!canContinue}
                         className={[
                             "h-14 flex-1 max-w-[560px] text-base font-semibold",
@@ -33,6 +36,16 @@ export default function NavigationButons({ goBack, goNext, canContinue }: Naviga
                     >
                         Continue
                     </Button>
+
+                    {hasErrors && 
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={goNextWithError}
+                        className="h-14 w-16 border-[#0071c2] text-[#0071c2] hover:bg-[#e6f0fa]"
+                    >
+                        Next Error
+                    </Button>}
                 </div>
             </div>
         </div>
