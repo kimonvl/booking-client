@@ -22,6 +22,7 @@ export const guestPropertySlice = createSlice({
         },
         searchFailure: (state, action: PayloadAction<string>) => {
             state.error = action.payload;
+            state.searchResults = [];
             state.loading = false;
         },
         loadMoreStart: (state) => {

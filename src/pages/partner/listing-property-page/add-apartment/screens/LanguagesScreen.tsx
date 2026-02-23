@@ -7,6 +7,8 @@ import HelpCard from "./HelpCard";
 import { ChevronDown, ThumbsUp } from "lucide-react";
 import { useAppSelector } from "@/store/hooks";
 import { selectLanguageDictionary } from "@/store/dictionaries/dictionary.selector";
+import { StepErrorBanner } from "@/components/error-baners/StepErrorBaner";
+import { selectAddApartmentErrors } from "@/store/partner/manage-property/apartment/apartment.selector";
 
 interface LanguagesScreenProps {
     languages: Record<string, boolean>;
@@ -18,10 +20,15 @@ interface LanguagesScreenProps {
 export default function LanguagesScreen({ languages, setLanguages, additionalLanguages, setAdditionalLanguages }: LanguagesScreenProps) {
     const allLanguages = useAppSelector(selectLanguageDictionary);
     const selectedAdditionalLanguages = allLanguages
-    .filter((lang) => additionalLanguages[lang.code])
-    .map((lang) => lang.label);
+        .filter((lang) => additionalLanguages[lang.code])
+        .map((lang) => lang.label);
     const selectedAdditionalLanguagesLabel =
         selectedAdditionalLanguages.length > 0 ? selectedAdditionalLanguages.join(", ") : "Select languages";
+
+    const addApartmentErrors = useAppSelector(selectAddApartmentErrors);
+    const langErrors = addApartmentErrors?.languages
+        ? [addApartmentErrors.languages]
+        : [];
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 min-h-full ml-2 mr-2 mt-1">
@@ -29,7 +36,7 @@ export default function LanguagesScreen({ languages, setLanguages, additionalLan
                 <h1 className="text-4xl font-bold text-[#1a1a1a]">
                     What languages do you or your staff speak?
                 </h1>
-
+                <StepErrorBanner messages={langErrors} />
                 <div className="mt-8">
                     <Card className="rounded-md">
                         <CardContent className="p-6">

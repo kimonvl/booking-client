@@ -5,6 +5,9 @@ import { AlertCircle, ThumbsUp, Upload, X } from "lucide-react";
 import HelpCard from "./HelpCard";
 import type { RefObject } from "react";
 import type { PhotoItem } from "@/types/request/apartment/addApartmentRequest.types";
+import { useAppSelector } from "@/store/hooks";
+import { selectAddApartmentErrors } from "@/store/partner/manage-property/apartment/apartment.selector";
+import { StepErrorBanner } from "@/components/error-baners/StepErrorBaner";
 
 interface PhotosScreen {
     photos: PhotoItem[]; 
@@ -25,13 +28,18 @@ export default function PhotosScreen({
     removePhoto,
     fileInputRef
 }: PhotosScreen) {
+  const addApartmentErrors = useAppSelector(selectAddApartmentErrors);
+  const photosErrors = addApartmentErrors?.photosCount
+  ? [addApartmentErrors.photosCount]
+  : []; 
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 ml-2 mr-2 mt-1">
       <div>
         <h1 className="text-4xl font-bold text-[#1a1a1a]">
           What does your place look like?
         </h1>
-
+        <StepErrorBanner messages={photosErrors}/>
         <div className="mt-8 space-y-6">
           <Card className="rounded-md">
             <CardContent className="p-6">

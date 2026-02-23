@@ -3,6 +3,10 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import HelpCard from "./HelpCard";
 import { Lightbulb } from "lucide-react";
+import { InlineFieldErrorBaner } from "@/components/error-baners/InlineFieldErrorBaner";
+import { useAppSelector } from "@/store/hooks";
+import { selectAddApartmentErrors } from "@/store/partner/manage-property/apartment/apartment.selector";
+import { inputClass } from "../AddAppartmentPage";
 
 interface PriceScreenProps {
     pricePerNight: number;
@@ -10,6 +14,7 @@ interface PriceScreenProps {
 }
 
 export default function PriceScreen({ pricePerNight, setPricePerNight }: PriceScreenProps) {
+    const addApartmentErrors = useAppSelector(selectAddApartmentErrors);
     return (
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 ml-2 mr-2 mt-1">
             <div>
@@ -77,7 +82,7 @@ export default function PriceScreen({ pricePerNight, setPricePerNight }: PriceSc
                             <div className="mt-4 text-sm font-semibold text-[#1a1a1a]">
                                 Price guests pay
                             </div>
-
+                            <InlineFieldErrorBaner message={addApartmentErrors?.pricePerNight}/>
                             <div className="mt-2 flex items-center gap-2">
                                 <div className="h-10 w-10 rounded-md border grid place-items-center text-muted-foreground">
                                     €
@@ -93,6 +98,7 @@ export default function PriceScreen({ pricePerNight, setPricePerNight }: PriceSc
                                         if (Number.isNaN(n) || n < 0) return;
                                         setPricePerNight(n);
                                     }}
+                                    className={inputClass(!!addApartmentErrors?.pricePerNight)}
                                 />
                             </div>
 

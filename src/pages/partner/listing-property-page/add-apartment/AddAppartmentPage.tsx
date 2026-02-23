@@ -27,6 +27,12 @@ const steps: StepsType[] = ["name", "address",
   "details", "amenities", "services", "languages", "rules",
   "photos", "price", "review"];
 
+export const inputClass = (hasError: boolean) =>
+  `w-full rounded-md border px-3 py-2 focus:outline-none ${hasError
+    ? "border-red-500 ring-1 ring-red-300 focus:ring-red-400"
+    : "border-gray-300 focus:ring-2 focus:ring-blue-400"
+  }`;
+
 export default function AddAppartmentPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -223,28 +229,28 @@ export default function AddAppartmentPage() {
     dispatch(setAddApartmentForm(
       {
         propertyName,
-  address,
-  sleepingAreas,
-  guestCount,
-  bathroomCount,
-  allowChildren,
-  offerCots,
-  aptSize,
-  amenities,
-  serveBreakfast,
-  isParkingAvailable,
-  languages,
-  additionalLanguages,
-  smokingAllowed,
-  partiesAllowed,
-  petsAllowed,
-  checkInFrom,
-  checkInUntil,
-  checkOutFrom,
-  checkOutUntil,
-  photos,
-  mainPhotoId,
-  pricePerNight,
+        address,
+        sleepingAreas,
+        guestCount,
+        bathroomCount,
+        allowChildren,
+        offerCots,
+        aptSize,
+        amenities,
+        serveBreakfast,
+        isParkingAvailable,
+        languages,
+        additionalLanguages,
+        smokingAllowed,
+        partiesAllowed,
+        petsAllowed,
+        checkInFrom,
+        checkInUntil,
+        checkOutFrom,
+        checkOutUntil,
+        photos,
+        mainPhotoId,
+        pricePerNight,
       }
     ))
   }

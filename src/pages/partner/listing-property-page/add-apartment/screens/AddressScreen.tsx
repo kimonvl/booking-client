@@ -7,6 +7,9 @@ import type { Dispatch, SetStateAction } from "react";
 import { useAppSelector } from "@/store/hooks";
 import { selectCountryDictionary } from "@/store/dictionaries/dictionary.selector";
 import type { AddressType } from "@/types/request/apartment/addApartmentRequest.types";
+import { selectAddApartmentErrors } from "@/store/partner/manage-property/apartment/apartment.selector";
+import { InlineFieldErrorBaner } from "@/components/error-baners/InlineFieldErrorBaner";
+import { inputClass } from "../AddAppartmentPage";
 
 interface AddressScreenProps {
     address: AddressType;
@@ -15,6 +18,7 @@ interface AddressScreenProps {
 
 export default function AddressScreen({ address, setAddress }: AddressScreenProps) {
     const countryDictionary = useAppSelector(selectCountryDictionary);
+    const addApartmentErrors = useAppSelector(selectAddApartmentErrors);
     return (
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 ml-2 mr-2 mt-1">
             <div>
@@ -32,17 +36,19 @@ export default function AddressScreen({ address, setAddress }: AddressScreenProp
                                     <div className="text-sm font-semibold text-[#1a1a1a] mb-2">
                                         Street name
                                     </div>
+                                    <InlineFieldErrorBaner message={addApartmentErrors?.["address.street"]} />
                                     <Input
                                         value={address.street}
                                         onChange={(e) => setAddress({ ...address, street: e.target.value })}
                                         placeholder="Street name"
-                                        className="h-10"
+                                        className={inputClass(!!addApartmentErrors?.["address.street"]) + "h-10"}
                                     />
                                 </div>
                                 <div>
                                     <div className="text-sm font-semibold text-[#1a1a1a] mb-2">
                                         Street number
                                     </div>
+                                    <InlineFieldErrorBaner message={addApartmentErrors?.["address.streetNumber"]} />
                                     <Input
                                         inputMode="numeric"
                                         pattern="[0-9]*"
@@ -52,7 +58,7 @@ export default function AddressScreen({ address, setAddress }: AddressScreenProp
                                             setAddress({ ...address, streetNumber: digitsOnly });
                                         }}
                                         placeholder="Street number"
-                                        className="h-10"
+                                        className={inputClass(!!addApartmentErrors?.["address.streetNumber"]) + "h-10"}
                                     />
                                 </div>
 
@@ -60,6 +66,7 @@ export default function AddressScreen({ address, setAddress }: AddressScreenProp
                                     <div className="text-sm font-semibold text-[#1a1a1a] mb-2">
                                         Apartment or floor number (optional)
                                     </div>
+                                    <InlineFieldErrorBaner message={addApartmentErrors?.["address.floorNumber"]} />
                                     <Input
                                         inputMode="numeric"
                                         pattern="[0-9]*"
@@ -68,8 +75,9 @@ export default function AddressScreen({ address, setAddress }: AddressScreenProp
                                             const digitsOnly = e.target.value.replace(/\D/g, "");
                                             setAddress({ ...address, floorNumber: digitsOnly });
                                         }}
-                                        placeholder="Street number"
-                                        className="h-10"
+                                        placeholder="Floor number"
+                                        className={inputClass(!!addApartmentErrors?.["address.floorNumber"]) + "h-10"}
+
                                     />
                                 </div>
 
@@ -77,8 +85,10 @@ export default function AddressScreen({ address, setAddress }: AddressScreenProp
                                     <div className="text-sm font-semibold text-[#1a1a1a] mb-2">
                                         Country/region
                                     </div>
+                                    <InlineFieldErrorBaner message={addApartmentErrors?.["address.country"]} />
                                     <Select value={address.country} onValueChange={(value) => setAddress({ ...address, country: value })}>
-                                        <SelectTrigger className="h-10">
+                                        <SelectTrigger className={inputClass(!!addApartmentErrors?.["address.country"]) + "h-10"}
+                                        >
                                             <SelectValue placeholder="Select country" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -97,11 +107,12 @@ export default function AddressScreen({ address, setAddress }: AddressScreenProp
                                         <div className="text-sm font-semibold text-[#1a1a1a] mb-2">
                                             City
                                         </div>
+                                        <InlineFieldErrorBaner message={addApartmentErrors?.["address.city"]} />
                                         <Input
                                             value={address.city}
                                             onChange={(e) => setAddress({ ...address, city: e.target.value })}
                                             placeholder=""
-                                            className="h-10"
+                                            className={inputClass(!!addApartmentErrors?.["address.city"]) + "h-10"}
                                         />
                                     </div>
 
@@ -109,17 +120,18 @@ export default function AddressScreen({ address, setAddress }: AddressScreenProp
                                         <div className="text-sm font-semibold text-[#1a1a1a] mb-2">
                                             Post code / Zip code
                                         </div>
+                                        <InlineFieldErrorBaner message={addApartmentErrors?.["address.postCode"]} />
                                         <Input
-                                        inputMode="numeric"
-                                        pattern="[0-9]*"
-                                        value={address.postCode}
-                                        onChange={(e) => {
-                                            const digitsOnly = e.target.value.replace(/\D/g, "");
-                                            setAddress({ ...address, postCode: digitsOnly });
-                                        }}
-                                        placeholder="Street number"
-                                        className="h-10"
-                                    />
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            value={address.postCode}
+                                            onChange={(e) => {
+                                                const digitsOnly = e.target.value.replace(/\D/g, "");
+                                                setAddress({ ...address, postCode: digitsOnly });
+                                            }}
+                                            placeholder="Street number"
+                                            className={inputClass(!!addApartmentErrors?.["address.postCode"]) + "h-10"}
+                                        />
                                     </div>
                                 </div>
                             </div>

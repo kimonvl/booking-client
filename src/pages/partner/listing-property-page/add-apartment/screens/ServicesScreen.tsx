@@ -4,6 +4,10 @@ import { Separator } from "@/components/ui/separator";
 import { Lightbulb } from "lucide-react";
 import HelpCard from "./HelpCard";
 import type { IsParkingAvailableType } from "@/types/request/apartment/addApartmentRequest.types";
+import { useAppSelector } from "@/store/hooks";
+import { selectAddApartmentErrors } from "@/store/partner/manage-property/apartment/apartment.selector";
+import { InlineFieldErrorBaner } from "@/components/error-baners/InlineFieldErrorBaner";
+import { inputClass } from "../AddAppartmentPage";
 
 interface ServicesScreenProps {
     serveBreakfast: boolean;
@@ -18,6 +22,7 @@ export default function ServicesScreen({
     isParkingAvailable, 
     setIsParkingAvailable
 }: ServicesScreenProps) {
+  const addApartmentErrors = useAppSelector(selectAddApartmentErrors);
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 ml-2 mr-2 mt-1">
       <div>
@@ -36,11 +41,11 @@ export default function ServicesScreen({
               <div className="text-sm font-semibold text-[#1a1a1a]">
                 Do you serve guests breakfast?
               </div>
-
+              <InlineFieldErrorBaner message={addApartmentErrors?.serveBreakfast}/>
               <RadioGroup
                 value={serveBreakfast ? "yes" : "no"}
                 onValueChange={(v) => setServeBreakfast(v === "yes" ? true : false)}
-                className="mt-4 space-y-3"
+                className={inputClass(!!addApartmentErrors?.serveBreakfast) + "mt-4 space-y-3"}
               >
                 <label className="flex items-center gap-3">
                   <RadioGroupItem value="yes" />
@@ -62,11 +67,11 @@ export default function ServicesScreen({
               <div className="text-sm font-semibold text-[#1a1a1a]">
                 Is parking available to guests?
               </div>
-
+              <InlineFieldErrorBaner message={addApartmentErrors?.isParkingAvailable}/>
               <RadioGroup
                 value={isParkingAvailable}
                 onValueChange={(v) => setIsParkingAvailable(v as any)}
-                className="mt-4 space-y-3"
+                className={inputClass(!!addApartmentErrors?.isParkingAvailable) + "mt-4 space-y-3"}
               >
                 <label className="flex items-center gap-3">
                   <RadioGroupItem value="free" />

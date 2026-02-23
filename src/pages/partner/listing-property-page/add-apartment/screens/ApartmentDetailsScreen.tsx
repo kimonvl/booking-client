@@ -9,6 +9,9 @@ import { useState, type Dispatch, type SetStateAction } from "react";
 import AddBedDialog from "./AddBedDialog";
 import CounterFilter from "@/components/filters/CounterFilter";
 import type { SleepingAreasType } from "@/types/request/apartment/addApartmentRequest.types";
+import { InlineFieldErrorBaner } from "@/components/error-baners/InlineFieldErrorBaner";
+import { useAppSelector } from "@/store/hooks";
+import { selectAddApartmentErrors } from "@/store/partner/manage-property/apartment/apartment.selector";
 
 interface ApartmentDetailsScreenProps {
   sleepingAreas: SleepingAreasType;
@@ -43,6 +46,8 @@ export default function ApartmentDetailsScreen({
   aptSize,
   setAptSize,
 }: ApartmentDetailsScreenProps) {
+  const addApartmentErrors = useAppSelector(selectAddApartmentErrors);
+
   const [addBedOpen, setAddBedOpen] = useState(false);
   const [selectedBedroomIndex, setSelectedBedroomIndex] = useState<number | null>(null);
   return (
@@ -58,7 +63,7 @@ export default function ApartmentDetailsScreen({
                 <div className="text-lg font-semibold text-[#1a1a1a]">
                   Where can people sleep?
                 </div>
-
+                <InlineFieldErrorBaner message={addApartmentErrors?.sleepingAreas} />
                 <div className="mt-4 space-y-4">
                   {/* Bedrooms */}
                   {sleepingAreas.bedrooms.map((bedroom, idx) => (
@@ -182,6 +187,7 @@ export default function ApartmentDetailsScreen({
                   <div className="text-lg font-semibold text-[#1a1a1a] mb-2">
                     How many guests can stay?
                   </div>
+                  <InlineFieldErrorBaner message={addApartmentErrors?.guestCount} />
                   <CounterFilter
                     count={guestCount}
                     setCount={setGuestCount}
@@ -192,6 +198,7 @@ export default function ApartmentDetailsScreen({
                   <div className="text-lg font-semibold text-[#1a1a1a] mb-2">
                     How many bathrooms are there?
                   </div>
+                  <InlineFieldErrorBaner message={addApartmentErrors?.bathroomCount} />
                   <CounterFilter
                     count={bathroomCount}
                     setCount={setBathroomCount}
@@ -208,6 +215,7 @@ export default function ApartmentDetailsScreen({
                   <div className="text-lg font-semibold text-[#1a1a1a]">
                     Do you allow children?
                   </div>
+                  <InlineFieldErrorBaner message={addApartmentErrors?.allowChildren} />
                   <RadioGroup
                     value={allowChildren ? "yes" : "no"}
                     onValueChange={(v) => setAllowChildren(v === "yes" ? true : false)}
@@ -232,7 +240,7 @@ export default function ApartmentDetailsScreen({
                     Cots sleep most infants 0-3 and can be made available to guests
                     on request.
                   </div>
-
+                  <InlineFieldErrorBaner message={addApartmentErrors?.offerCots} />
                   <RadioGroup
                     value={offerCots ? "yes" : "no"}
                     onValueChange={(v) => setOfferCots(v === "yes" ? true : false)}
@@ -261,7 +269,7 @@ export default function ApartmentDetailsScreen({
                 <div className="mt-3 text-sm font-semibold text-[#1a1a1a]">
                   Apartment size - optional
                 </div>
-
+                <InlineFieldErrorBaner message={addApartmentErrors?.aptSize} />
                 <div className="mt-2 flex items-center gap-3">
                   <Input
                     value={aptSize}

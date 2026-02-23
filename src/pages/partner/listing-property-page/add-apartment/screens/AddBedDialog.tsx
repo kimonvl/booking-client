@@ -18,7 +18,6 @@ const bedroomBedTypeValues: BedroomBedType[] = ["single", "double", "king_size"]
 const livingRoomBedTypeValues: LivingRoomBedType[] = ["single_sofa", "double_sofa"];
 
 export default function AddBedDialog({ open, setOpen, sleepingAreas, setSleepingAreas, selectedBedroomIndex }: AddBedDialogProps) {
-console.log(selectedBedroomIndex);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>

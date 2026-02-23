@@ -20,7 +20,6 @@ export function* search(): SagaIterator {
         const filters = yield select(selectSearchPageFilters);
         const pageSize = yield select(selectSearchPageSize)
         const filtersReq = filtersToRequest(filters, 0, pageSize);
-        console.log("search saga maxGuest ", filtersReq.maxGuest);
         
         const res: AxiosResponse<ApiResponse<Page<PropertyShort>>> = yield call(callApiWithRefresh, () => 
             sendPostJson<ApiResponse<Page<PropertyShort>>, PropertySearchRequest>(`/guest/properties/search`, filtersReq)
@@ -73,6 +72,7 @@ export function* getSelectedProperty(action: PayloadAction<string>): SagaIterato
 }
 
 export function* onSearchStart(): SagaIterator {
+    // TODO: fix this, stop sending requests if consecutive actions fired
     yield takeLatest([
         setBasicFilters.type,
         toggleAmenity.type,

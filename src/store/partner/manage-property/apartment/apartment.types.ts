@@ -9,6 +9,7 @@ export interface AddApartmentErrors {
   "address.postCode"?: string;
   "address.street"?: string;
   "address.streetNumber"?: string;
+  "address.floorNumber"?: string;
   sleepingAreas?: string;
 
   guestCount?: string;

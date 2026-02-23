@@ -2,13 +2,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import HelpCard from "./HelpCard";
 import { Lightbulb, ThumbsUp } from "lucide-react";
+import { InlineFieldErrorBaner } from "@/components/error-baners/InlineFieldErrorBaner";
+import { useAppSelector } from "@/store/hooks";
+import { selectAddApartmentErrors } from "@/store/partner/manage-property/apartment/apartment.selector";
+import { inputClass } from "../AddAppartmentPage";
 
 interface NameScreenProps {
-    propertyName: string;
-    setPropertyName: (v: string) => void;
+  propertyName: string;
+  setPropertyName: (v: string) => void;
 }
 
-export default function NameScreen({propertyName, setPropertyName}: NameScreenProps) {
+export default function NameScreen({ propertyName, setPropertyName }: NameScreenProps) {
+  const addApartmentErrors = useAppSelector(selectAddApartmentErrors);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 ml-2 mr-2 mt-1">
       <div>
@@ -22,11 +28,12 @@ export default function NameScreen({propertyName, setPropertyName}: NameScreenPr
               <div className="text-sm font-semibold text-[#1a1a1a] mb-2">
                 Property name
               </div>
+              <InlineFieldErrorBaner message={addApartmentErrors?.propertyName} />
               <Input
                 value={propertyName}
                 onChange={(e) => setPropertyName(e.target.value)}
                 placeholder=""
-                className="h-10 text-black"
+                className={inputClass(!!addApartmentErrors?.propertyName) + "h-10 text-black"}
               />
             </CardContent>
           </Card>

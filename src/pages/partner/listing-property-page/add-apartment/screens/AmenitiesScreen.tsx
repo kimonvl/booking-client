@@ -5,6 +5,8 @@ import HelpCard from "./HelpCard";
 import { ThumbsUp } from "lucide-react";
 import { useAppSelector } from "@/store/hooks";
 import { selectAmenitiesDictionary } from "@/store/dictionaries/dictionary.selector";
+import { StepErrorBanner } from "@/components/error-baners/StepErrorBaner";
+import { selectAddApartmentErrors } from "@/store/partner/manage-property/apartment/apartment.selector";
 
 interface AmenitiesScreenProps {
     amenities: Record<string, boolean>;
@@ -13,37 +15,18 @@ interface AmenitiesScreenProps {
 
 export default function AmenitiesScreen({amenities, setAmenities}: AmenitiesScreenProps) {
   const groups = useAppSelector(selectAmenitiesDictionary);
-  // const groups = [
-  //     {
-  //       title: "General",
-  //       items: [
-  //         "Air conditioning",
-  //         "Heating",
-  //         "Free WiFi",
-  //         "Electric vehicle charging station",
-  //       ],
-  //     },
-  //     {
-  //       title: "Cooking and cleaning",
-  //       items: ["Kitchen", "Kitchenette", "Washing machine"],
-  //     },
-  //     {
-  //       title: "Entertainment",
-  //       items: ["Flat-screen TV", "Swimming pool", "Hot tub", "Minibar", "Sauna"],
-  //     },
-  //     {
-  //       title: "Outside and view",
-  //       items: ["Balcony", "Garden view", "Terrace", "View"],
-  //     },
-  //   ];
-
+  const addApartmentErrors = useAppSelector(selectAddApartmentErrors);
+  const amenityErrors = addApartmentErrors?.amenities
+  ? [addApartmentErrors.amenities]
+  : [];
+ 
     return (
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 ml-2 mt-1 mr-2">
         <div>
           <h1 className="text-4xl font-bold text-[#1a1a1a]">
             What can guests use at your place?
           </h1>
-
+          <StepErrorBanner messages={amenityErrors}/>
           <div className="mt-8">
             <Card className="rounded-md">
               <CardContent className="p-6">

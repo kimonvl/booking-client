@@ -6,6 +6,10 @@ import { Switch } from "@/components/ui/switch";
 import HelpCard from "./HelpCard";
 import { Lightbulb } from "lucide-react";
 import type { PetsAllowedType, TimeType } from "@/types/request/apartment/addApartmentRequest.types";
+import { useAppSelector } from "@/store/hooks";
+import { selectAddApartmentErrors } from "@/store/partner/manage-property/apartment/apartment.selector";
+import { InlineFieldErrorBaner } from "@/components/error-baners/InlineFieldErrorBaner";
+import { inputClass } from "../AddAppartmentPage";
 
 interface RulesScreenProps {
     smokingAllowed: boolean;
@@ -67,6 +71,8 @@ export default function RulesScreen({
         "23:00",
     ];
 
+    const addApartmentErrors = useAppSelector(selectAddApartmentErrors);
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 ml-2 mr-2 mt-1">
             <div>
@@ -79,6 +85,7 @@ export default function RulesScreen({
                             <div className="space-y-5">
                                 <div className="flex items-center justify-between">
                                     <div className="text-sm font-medium">Smoking allowed</div>
+                                    <InlineFieldErrorBaner message={addApartmentErrors?.smokingAllowed}/>
                                     <Switch
                                         checked={smokingAllowed}
                                         onCheckedChange={setSmokingAllowed}
@@ -89,6 +96,7 @@ export default function RulesScreen({
                                     <div className="text-sm font-medium">
                                         Parties/events allowed
                                     </div>
+                                    <InlineFieldErrorBaner message={addApartmentErrors?.partiesAllowed}/>
                                     <Switch
                                         checked={partiesAllowed}
                                         onCheckedChange={setPartiesAllowed}
@@ -103,6 +111,7 @@ export default function RulesScreen({
                                 <div className="text-sm font-semibold text-[#1a1a1a]">
                                     Do you allow pets?
                                 </div>
+                                <InlineFieldErrorBaner message={addApartmentErrors?.petsAllowed}/>
                                 <RadioGroup
                                     value={petsAllowed}
                                     onValueChange={(v) => setPetsAllowed(v as PetsAllowedType)}
@@ -131,13 +140,15 @@ export default function RulesScreen({
                                     <div className="text-sm font-semibold text-[#1a1a1a]">
                                         Check in
                                     </div>
+                                    
                                     <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
                                             <div className="text-xs text-muted-foreground mb-2">
                                                 From
                                             </div>
+                                            <InlineFieldErrorBaner message={addApartmentErrors?.checkInFrom}/>
                                             <Select value={checkInFrom} onValueChange={setCheckInFrom}>
-                                                <SelectTrigger className="h-10">
+                                                <SelectTrigger className={inputClass(!!addApartmentErrors?.checkInFrom) + "h-10"}>
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -154,11 +165,12 @@ export default function RulesScreen({
                                             <div className="text-xs text-muted-foreground mb-2">
                                                 Until
                                             </div>
+                                            <InlineFieldErrorBaner message={addApartmentErrors?.checkInUntil}/>
                                             <Select
                                                 value={checkInUntil}
                                                 onValueChange={setCheckInUntil}
                                             >
-                                                <SelectTrigger className="h-10">
+                                                <SelectTrigger className={inputClass(!!addApartmentErrors?.checkInUntil) + "h-10"}>
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -182,11 +194,12 @@ export default function RulesScreen({
                                             <div className="text-xs text-muted-foreground mb-2">
                                                 From
                                             </div>
+                                            <InlineFieldErrorBaner message={addApartmentErrors?.checkOutFrom}/>
                                             <Select
                                                 value={checkOutFrom}
                                                 onValueChange={setCheckOutFrom}
                                             >
-                                                <SelectTrigger className="h-10">
+                                                <SelectTrigger className={inputClass(!!addApartmentErrors?.checkOutFrom) + "h-10"}>
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -203,11 +216,12 @@ export default function RulesScreen({
                                             <div className="text-xs text-muted-foreground mb-2">
                                                 Until
                                             </div>
+                                            <InlineFieldErrorBaner message={addApartmentErrors?.checkOutUntil}/>
                                             <Select
                                                 value={checkOutUntil}
                                                 onValueChange={setCheckOutUntil}
                                             >
-                                                <SelectTrigger className="h-10">
+                                                <SelectTrigger className={inputClass(!!addApartmentErrors?.checkOutUntil) + "h-10"}>
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
