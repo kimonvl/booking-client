@@ -119,6 +119,7 @@ export function* createBookingPending(): SagaIterator {
   const guestCount = yield select(selectSearchPageGuests);
   const checkoutDetailForm = yield select(selectCheckoutPageDetailsForm);
   const req = constructCreateIntentReq(propertyId, checkIn, checkout, guestCount, checkoutDetailForm);
+  
   try {
     const res: AxiosResponse<ApiResponse<number>> = yield call(callApiWithRefresh, () =>
       sendPostJson<ApiResponse<number>, CreateBookingReq>(`/bookings/create`, req)

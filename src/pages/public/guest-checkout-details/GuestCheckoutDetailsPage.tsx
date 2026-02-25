@@ -7,7 +7,7 @@ import { selectCurrentUser, selectIsAuthenticated } from "@/store/auth/auth.sele
 import GuestCheckoutForm from "./GuestCheckoutForm";
 import type { CheckoutDetailsFormState } from "@/store/guest/pages/checkout-page/checkoutPage.types";
 import { selectCheckoutPageDetailsForm } from "@/store/guest/pages/checkout-page/checkoutPage.selector";
-import { populateFromAuthenticatedUser } from "@/store/guest/pages/checkout-page/checkoutPageSlice";
+import { populateFromAuthenticatedUser, setGuestCheckoutDetailsForm } from "@/store/guest/pages/checkout-page/checkoutPageSlice";
 import { useNavigate } from "react-router-dom";
 import SignInToContinueModal from "./SignInToContinueModal";
 import { createBookingPendingStart, resetCreateBookingCompleted } from "@/store/guest/booking/bookingSlice";
@@ -95,6 +95,7 @@ export default function GuestCheckoutDetailsPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    dispatch(setGuestCheckoutDetailsForm(formInput));
     dispatch(createBookingPendingStart());
   };
 
