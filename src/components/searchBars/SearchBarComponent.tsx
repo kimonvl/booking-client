@@ -9,10 +9,15 @@ import { useAppSelector } from '@/store/hooks';
 import { selectSearchPageCheckIn, selectSearchPageCheckout, selectSearchPageCity } from '@/store/guest/pages/search-page/searchPage.selector';
 import { fromYmd, toYmd } from '@/store/guest/pages/search-page/searchPage.types';
 import { toast } from 'sonner';
+import { selectSearchFieldErrors } from '@/store/guest/property/guestProperty.selector';
+import TooltipFieldErrorBaner from '../error-baners/TooltipFieldErrorBaner';
 
 // TODO: fix the navigate, navigate only if a city is given in the input field and add the search string in url
 export default function SearchBarComponent() {
     const navigate = useNavigate();
+
+    const searchFieldErrors = useAppSelector(selectSearchFieldErrors);
+
     const checkIn = useAppSelector(selectSearchPageCheckIn);
     const checkOut = useAppSelector(selectSearchPageCheckout);
     const city = useAppSelector(selectSearchPageCity);
@@ -31,10 +36,10 @@ export default function SearchBarComponent() {
     const [pets, setPets] = useState(false);
 
     const search = () => {
-        if (cityFilter == null || cityFilter.trim() == "") {
-            toast.error("Select a city to search");
-            return;
-        }
+        // if (cityFilter == null || cityFilter.trim() == "") {
+        //     toast.error("Select a city to search");
+        //     return;
+        // }
         const params = new URLSearchParams();
         params.set("city", cityFilter.trim());
         if (dates?.from) params.set("checkIn", toYmd(dates.from));
@@ -48,29 +53,60 @@ export default function SearchBarComponent() {
     return (
         <div className="max-w-7xl mx-auto px-4 pb-6">
             <div className="bg-yellow-400 p-1 rounded-lg flex flex-col md:flex-row gap-1">
-                <Input
-                    value={cityFilter}
-                    onChange={(e) => setCityFilter(e.target.value)}
-                    placeholder="Αθήνα"
-                    className="text-black bg-white h-14"
-                />
-                <div className="bg-white h-14 flex items-center rounded-md w-170">
-                    <DateRangePickerPopOver value={dates} onChange={setDates} open={open} setOpen={setOpen} />
-                </div>
-                <div className="bg-white h-14 flex items-center rounded-md w-170">
-                    <GuestCountPopOver
-                        open={guestPopoverOpen}
-                        setOpen={setGuestPopoverOpen}
-                        adultCount={adultCount}
-                        setAdultCount={setAdultCount}
-                        pets={pets}
-                        setPets={setPets}
+
+                {/* CITY */}
+                <div className="relative h-14">
+                    <Input
+                        value={cityFilter}
+                        onChange={(e) => setCityFilter(e.target.value)}
+                        placeholder="Αθήνα"
+                        className={`h-14 text-black bg-white ${searchFieldErrors?.city ? "border-red-500 ring-1 ring-red-300" : ""
+                            }`}
                     />
+
+                    {searchFieldErrors?.city && (
+                        <div className="absolute left-2 top-full -mt-[6px] z-50">
+                            <TooltipFieldErrorBaner message={searchFieldErrors.city} />
+                        </div>
+                    )}
                 </div>
-                <Button
-                    className="h-14 bg-[#0071c2] text-white"
-                    onClick={() => search()}
-                >
+
+                {/* DATES */}
+                <div className="relative h-14 w-170">
+                    <div className="bg-white h-14 flex items-center rounded-md">
+                        <DateRangePickerPopOver value={dates} onChange={setDates} open={open} setOpen={setOpen} />
+                    </div>
+
+                    {(searchFieldErrors?._global || searchFieldErrors?.checkIn || searchFieldErrors?.checkOut) && (
+                        <div className="absolute left-2 top-full -mt-[6px] z-50">
+                            <TooltipFieldErrorBaner
+                                message={searchFieldErrors?._global || searchFieldErrors?.checkIn || searchFieldErrors?.checkOut}
+                            />
+                        </div>
+                    )}
+                </div>
+
+                {/* GUESTS */}
+                <div className="relative h-14 w-170">
+                    <div className="bg-white h-14 flex items-center rounded-md">
+                        <GuestCountPopOver
+                            open={guestPopoverOpen}
+                            setOpen={setGuestPopoverOpen}
+                            adultCount={adultCount}
+                            setAdultCount={setAdultCount}
+                            pets={pets}
+                            setPets={setPets}
+                        />
+                    </div>
+
+                    {searchFieldErrors?.maxGuest && (
+                        <div className="absolute left-2 top-full -mt-[6px] z-50">
+                            <TooltipFieldErrorBaner message={searchFieldErrors.maxGuest} />
+                        </div>
+                    )}
+                </div>
+
+                <Button className="h-14 bg-[#0071c2] text-white" onClick={search}>
                     Αναζήτηση
                 </Button>
             </div>

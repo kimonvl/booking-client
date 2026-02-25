@@ -30,8 +30,11 @@ export function* search(): SagaIterator {
             toast.success(res.data.message);
         }
     } catch (error: any) {
+        console.log(error, "search saga");
+        
         const errorMessage = error.response?.data?.message || "An error occurred";
-        yield put(searchFailure(errorMessage));
+        yield put(searchFailure({errorMsg: errorMessage, fieldErrors: error.response?.data?.data}));
+        toast.warning(errorMessage);
     }
 }
 

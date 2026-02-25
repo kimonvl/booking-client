@@ -25,6 +25,30 @@ export interface PropertyShort {
     reviewSummary: ReviewSummary;
 }
 
+export interface SearchFieldErrors {
+  city?: string;
+  type?: string;
+
+  minPrice?: string;
+  maxPrice?: string;
+
+  maxGuest?: string;
+  bathroomCount?: string;
+  bedroomCount?: string;
+
+  checkIn?: string;
+  checkOut?: string;
+
+  amenities?: string;
+
+  pets?: string;
+
+  page?: string;
+  size?: string;
+
+  _global?: string; // cross-field errors like date range / price range
+}
+
 export interface PropertyDetails {
     id: number;
     propertyAmenities: Amenity[];
@@ -56,6 +80,7 @@ export interface PropertyDetails {
 
 export interface GuestPropertyState {
     searchResults: PropertyShort[];
+    searchFieldErrors: SearchFieldErrors;
     selectedProperty: PropertyDetails | null;
     loading: boolean;
     error: string | null;

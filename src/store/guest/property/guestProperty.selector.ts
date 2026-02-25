@@ -11,6 +11,11 @@ export const selectSearchResult = createSelector(
     (guestPropertySlice) => guestPropertySlice.searchResults
 );
 
+export const selectSearchFieldErrors = createSelector(
+    [selectGuestPropertyReducer],
+    (guestPropertySlice) => guestPropertySlice.searchFieldErrors
+);
+
 export const selectSelectedProperty = createSelector(
     [selectGuestPropertyReducer],
     (guestPropertySlice) => guestPropertySlice.selectedProperty

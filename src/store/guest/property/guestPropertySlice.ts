@@ -1,9 +1,10 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { GuestPropertyState, PropertyDetails, PropertyShort } from "./guestProperty.types";
+import type { GuestPropertyState, PropertyDetails, PropertyShort, SearchFieldErrors } from "./guestProperty.types";
 
 
 const initialState: GuestPropertyState = {
     searchResults: [],
+    searchFieldErrors: {},
     selectedProperty: null,
     loading: false,
     error: null,
@@ -18,10 +19,12 @@ export const guestPropertySlice = createSlice({
         },
         searchSuccess: (state, action: PayloadAction<PropertyShort[]>) => {
             state.searchResults = action.payload;
+            state.searchFieldErrors = {};
             state.loading = false;
         },
-        searchFailure: (state, action: PayloadAction<string>) => {
-            state.error = action.payload;
+        searchFailure: (state, action: PayloadAction<{errorMsg: string, fieldErrors: SearchFieldErrors}>) => {
+            state.error = action.payload.errorMsg;
+            state.searchFieldErrors = action.payload.fieldErrors;
             state.searchResults = [];
             state.loading = false;
         },
