@@ -1,14 +1,8 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { BookingStatusResponse } from "@/types/response/booking/bookingStatus.types";
+import type { BookingState, CreateBookingErrors } from "./booking.types";
 
-export type BookingState = {
-  polling: boolean;
-  status: "idle" | "loading" | "confirmed" | "failed";
-  error: string | null;
-  latest: BookingStatusResponse | null;
-  createBookingCompleted: boolean;
-  createdBookingId: number | null;
-};
+
 
 const initialState: BookingState = {
   polling: false,
@@ -17,6 +11,7 @@ const initialState: BookingState = {
   latest: null,
   createBookingCompleted: false,
   createdBookingId: null,
+  createBookingErrors: {},
 };
 
 export const bookingSlice = createSlice({
@@ -25,14 +20,16 @@ export const bookingSlice = createSlice({
   reducers: {
     createBookingPendingStart: (state) => {
       state.createBookingCompleted = false;
+      state.createBookingErrors = {}
     },
     createBookingPendingSuccess: (state, action: PayloadAction<number>) => {
       state.createBookingCompleted = true;
       state.createdBookingId = action.payload;
     },
-    createBookingPendingFailure: (state, action: PayloadAction<string>) => {
+    createBookingPendingFailure: (state, action: PayloadAction<{message: string, createBookingErrors: CreateBookingErrors}>) => {
       state.createBookingCompleted = false;
-      state.error = action.payload;
+      state.error = action.payload.message;
+      state.createBookingErrors = action.payload.createBookingErrors;
     },
     cancelPendingBookingStart: (_state, _action: PayloadAction<number>) => {
     },

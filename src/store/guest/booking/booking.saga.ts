@@ -130,7 +130,7 @@ export function* createBookingPending(): SagaIterator {
     }
   } catch (error: any) {
     const msg = error.response?.data?.message || error.message || "Payment intent failed";
-    yield put(createBookingPendingFailure(msg));
+    yield put(createBookingPendingFailure({message: msg, createBookingErrors: error.response?.data?.data}));
     toast.error(msg);
   }
 }
