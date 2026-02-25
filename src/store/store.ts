@@ -49,7 +49,7 @@ const persistGroupHomeConfig = {
 const persistGuestPropertyConfig = {
   key: "guestProperty",
   storage,
-  whitelist: [],
+  whitelist: ['selectedProperty'],
 };
 
 const persistSearchPageConfig = {
