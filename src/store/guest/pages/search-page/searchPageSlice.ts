@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { toYmd, type SearchPageState } from "./searchPage.types";
+import { resetGuestState } from "../../guest.actions";
 
 
 
@@ -38,7 +39,7 @@ export const searchPageSlice = createSlice({
             maxGuest: number,
             pets: boolean
         }>) => {
-            state.filters = {...state.filters, ...action.payload};
+            state.filters = { ...state.filters, ...action.payload };
         },
         toggleAmenity: (state, action: PayloadAction<string>) => {
             const index = state.filters.amenities.indexOf(action.payload);
@@ -63,13 +64,16 @@ export const searchPageSlice = createSlice({
         setBathrooms: (state, action: PayloadAction<number>) => {
             state.filters.bathroomCount = action.payload;
         },
-        setPaginationMetadata: (state, action: PayloadAction<{page: number, totalPages: number, totalElements: number, last: boolean}>) => {
+        setPaginationMetadata: (state, action: PayloadAction<{ page: number, totalPages: number, totalElements: number, last: boolean }>) => {
             state.page = action.payload.page;
             state.totalPages = action.payload.totalPages;
             state.totalElements = action.payload.totalElements;
             state.last = action.payload.last;
         }
-    }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(resetGuestState, () => initialState);
+    },
 });
 
 const searchPageReducer = searchPageSlice.reducer;

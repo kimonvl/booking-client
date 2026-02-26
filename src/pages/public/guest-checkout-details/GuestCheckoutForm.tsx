@@ -1,6 +1,10 @@
+import { InlineFieldErrorBaner } from "@/components/error-baners/InlineFieldErrorBaner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { inputClass } from "@/pages/partner/listing-property-page/add-apartment/AddAppartmentPage";
+import { selectCreatedBookingErrors } from "@/store/guest/booking/booking.selector";
 import type { CheckoutDetailsFormState } from "@/store/guest/pages/checkout-page/checkoutPage.types";
+import { useAppSelector } from "@/store/hooks";
 import type { Dispatch, FormEvent, SetStateAction } from "react";
 
 interface GuestCheckoutFormProps {
@@ -11,6 +15,8 @@ interface GuestCheckoutFormProps {
 }
 
 export default function GuestCheckoutForm({formInput, setFormInput, handleSubmit, isValid}: GuestCheckoutFormProps) {
+    const createBookingErrors = useAppSelector(selectCreatedBookingErrors);
+
     return (
         <Card className="mt-4">
             <CardContent className="p-0">
@@ -49,11 +55,10 @@ export default function GuestCheckoutForm({formInput, setFormInput, handleSubmit
                         {/* Title */}
                         <div>
                             <div className="text-sm font-semibold text-gray-800 mb-2">Title</div>
-                            {/* Use your FormFields select via CommonForm? We’ll keep it simple inline or via controls.
-                          If you want title inside CommonForm grid, keep it there and remove this block. */}
+                            <InlineFieldErrorBaner message={createBookingErrors?.["checkOutDetails.title"]} />
                             {/* Quick inline select */}
                             <select
-                                className="w-full h-10 rounded-md border border-gray-300 px-3 text-sm"
+                                className={inputClass(!!createBookingErrors?.["checkOutDetails.title"]) + "w-full h-10 rounded-md border border-gray-300 px-3 text-sm"}
                                 value={formInput.title}
                                 onChange={(e) => setFormInput((s: CheckoutDetailsFormState) => ({ ...s, title: e.target.value as any }))}
                             >
@@ -66,8 +71,9 @@ export default function GuestCheckoutForm({formInput, setFormInput, handleSubmit
 
                         <div>
                             <div className="text-sm font-semibold text-gray-800 mb-2">First Name *</div>
+                            <InlineFieldErrorBaner message={createBookingErrors?.["checkOutDetails.firstName"]} />
                             <input
-                                className="w-full h-10 rounded-md border border-gray-300 px-3 text-sm"
+                                className={inputClass(!!createBookingErrors?.["checkOutDetails.firstName"]) + "w-full h-10 rounded-md border border-gray-300 px-3 text-sm"}
                                 value={formInput.firstName}
                                 onChange={(e) => setFormInput((s: CheckoutDetailsFormState) => ({ ...s, firstName: e.target.value }))}
                             />
@@ -75,8 +81,9 @@ export default function GuestCheckoutForm({formInput, setFormInput, handleSubmit
 
                         <div>
                             <div className="text-sm font-semibold text-gray-800 mb-2">Last Name *</div>
+                            <InlineFieldErrorBaner message={createBookingErrors?.["checkOutDetails.lastName"]} />
                             <input
-                                className="w-full h-10 rounded-md border border-gray-300 px-3 text-sm"
+                                className={inputClass(!!createBookingErrors?.["checkOutDetails.lastName"]) + "w-full h-10 rounded-md border border-gray-300 px-3 text-sm"}
                                 value={formInput.lastName}
                                 onChange={(e) => setFormInput((s: CheckoutDetailsFormState) => ({ ...s, lastName: e.target.value }))}
                             />
@@ -87,8 +94,9 @@ export default function GuestCheckoutForm({formInput, setFormInput, handleSubmit
                     <div className="mt-5 grid gap-4">
                         <div>
                             <div className="text-sm font-semibold text-gray-800 mb-2">Email Address *</div>
+                            <InlineFieldErrorBaner message={createBookingErrors?.["checkOutDetails.email"]} />
                             <input
-                                className="w-full h-10 rounded-md border border-gray-300 px-3 text-sm"
+                                className={inputClass(!!createBookingErrors?.["checkOutDetails.email"]) + "w-full h-10 rounded-md border border-gray-300 px-3 text-sm"}
                                 value={formInput.email}
                                 onChange={(e) => setFormInput((s: CheckoutDetailsFormState) => ({ ...s, email: e.target.value }))}
                             />
@@ -107,8 +115,9 @@ export default function GuestCheckoutForm({formInput, setFormInput, handleSubmit
                         <div>
                             <div className="text-sm font-semibold text-gray-800 mb-2">Telephone (mobile number preferred) *</div>
                             <div className="flex gap-3">
+                                <InlineFieldErrorBaner message={createBookingErrors?.["checkOutDetails.phoneCountryCode"]} />
                                 <select
-                                    className="h-10 rounded-md border border-gray-300 px-3 text-sm w-28"
+                                    className={inputClass(!!createBookingErrors?.["checkOutDetails.phoneCountryCode"]) + "h-10 rounded-md border border-gray-300 px-3 text-sm w-28"}
                                     value={formInput.phoneCountryCode}
                                     onChange={(e) => setFormInput((s: CheckoutDetailsFormState) => ({ ...s, phoneCountryCode: e.target.value }))}
                                 >
@@ -116,8 +125,9 @@ export default function GuestCheckoutForm({formInput, setFormInput, handleSubmit
                                     <option value="+1">+1</option>
                                     <option value="+44">+44</option>
                                 </select>
+                                <InlineFieldErrorBaner message={createBookingErrors?.["checkOutDetails.phoneNumber"]} />
                                 <input
-                                    className="flex-1 h-10 rounded-md border border-gray-300 px-3 text-sm"
+                                    className={inputClass(!!createBookingErrors?.["checkOutDetails.phoneNumber"]) + "flex-1 h-10 rounded-md border border-gray-300 px-3 text-sm"}
                                     value={formInput.phoneNumber}
                                     onChange={(e) => setFormInput((s: CheckoutDetailsFormState) => ({ ...s, phoneNumber: e.target.value }))}
                                 />

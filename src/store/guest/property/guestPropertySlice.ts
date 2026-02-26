@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { GuestPropertyState, PropertyDetails, PropertyShort, SearchFieldErrors } from "./guestProperty.types";
+import { resetGuestState } from "../guest.actions";
 
 
 const initialState: GuestPropertyState = {
@@ -22,7 +23,7 @@ export const guestPropertySlice = createSlice({
             state.searchFieldErrors = {};
             state.loading = false;
         },
-        searchFailure: (state, action: PayloadAction<{errorMsg: string, fieldErrors: SearchFieldErrors}>) => {
+        searchFailure: (state, action: PayloadAction<{ errorMsg: string, fieldErrors: SearchFieldErrors }>) => {
             state.error = action.payload.errorMsg;
             state.searchFieldErrors = action.payload.fieldErrors;
             state.searchResults = [];
@@ -50,7 +51,10 @@ export const guestPropertySlice = createSlice({
             state.error = action.payload;
             state.loading = false;
         },
-    }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(resetGuestState, () => initialState);
+    },
 });
 
 const guestPropertyReducer = guestPropertySlice.reducer;

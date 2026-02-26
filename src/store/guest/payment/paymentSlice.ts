@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { resetGuestState } from "../guest.actions";
 
 export type PaymentStatusUI = "idle" | "loading" | "succeeded" | "failed";
 
@@ -37,6 +38,9 @@ export const paymentSlice = createSlice({
       state.clientSecret = null;
     },
     resetPaymentState: () => initialState,
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetGuestState, () => initialState);
   },
 });
 

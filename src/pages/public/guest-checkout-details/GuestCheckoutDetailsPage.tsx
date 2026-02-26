@@ -11,7 +11,9 @@ import { populateFromAuthenticatedUser, setGuestCheckoutDetailsForm } from "@/st
 import { useNavigate } from "react-router-dom";
 import SignInToContinueModal from "./SignInToContinueModal";
 import { createBookingPendingStart, resetCreateBookingCompleted } from "@/store/guest/booking/bookingSlice";
-import { selectCreateBookingCompleted } from "@/store/guest/booking/booking.selector";
+import { selectCreateBookingCompleted, selectCreatedBookingErrors } from "@/store/guest/booking/booking.selector";
+import CreateBookingErrorDialog from "./CreateBookingErrorDialog";
+import { resetGuestState } from "@/store/guest/guest.actions";
 
 
 function Stepper() {
@@ -63,6 +65,27 @@ export default function GuestCheckoutDetailsPage() {
   const checkoutDetailsForm = useAppSelector(selectCheckoutPageDetailsForm);
   const showGate = !isAuthenticated;
   const createBookingCompleted = useAppSelector(selectCreateBookingCompleted);
+  const createBookingErrors = useAppSelector(selectCreatedBookingErrors);
+
+  // check for create booking errors.
+  // If there are errors only in Checkout details then show field errors as usual.
+  // Errors associated with the booking will trigger a dialog window.
+  useEffect(() => {
+    const fields = Object.keys(createBookingErrors);
+    if (
+      !fields.includes("propertyId") &&
+      !fields.includes("checkIn") &&
+      !fields.includes("checkOut") &&
+      !fields.includes("guestCount") &&
+      !fields.includes("_global")
+    ) {
+      return;
+    }
+    setOpenerrorDialog(true);
+  }, [createBookingErrors]);
+
+  const [openErrorDialog, setOpenerrorDialog] = useState(false);
+  console.log("openErrorDialog", openErrorDialog);
 
   useEffect(() => {
     if (createBookingCompleted) {
@@ -103,6 +126,15 @@ export default function GuestCheckoutDetailsPage() {
 
   return (
     <div className="bg-white relative">
+      <CreateBookingErrorDialog
+        open={openErrorDialog}
+        errors={createBookingErrors}
+        onBackHome={() => {
+          dispatch(resetGuestState());
+          navigate("/", { replace: true });
+        }
+      }
+      />
       {/* Modal */}
       <SignInToContinueModal
         open={showGate}

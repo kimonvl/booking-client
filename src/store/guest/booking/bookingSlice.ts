@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { BookingStatusResponse } from "@/types/response/booking/bookingStatus.types";
 import type { BookingState, CreateBookingErrors } from "./booking.types";
+import { resetGuestState } from "../guest.actions";
 
 
 
@@ -26,7 +27,7 @@ export const bookingSlice = createSlice({
       state.createBookingCompleted = true;
       state.createdBookingId = action.payload;
     },
-    createBookingPendingFailure: (state, action: PayloadAction<{message: string, createBookingErrors: CreateBookingErrors}>) => {
+    createBookingPendingFailure: (state, action: PayloadAction<{ message: string, createBookingErrors: CreateBookingErrors }>) => {
       state.createBookingCompleted = false;
       state.error = action.payload.message;
       state.createBookingErrors = action.payload.createBookingErrors;
@@ -65,6 +66,9 @@ export const bookingSlice = createSlice({
       state.polling = false;
     },
     resetConfirm: () => initialState,
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetGuestState, () => initialState);
   },
 });
 

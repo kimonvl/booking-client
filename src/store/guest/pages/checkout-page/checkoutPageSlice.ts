@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { CheckoutDetailsFormState, CheckoutPageState } from "./checkoutPage.types";
 import type { AuthUser } from "@/store/auth/auth.types";
+import { resetGuestState } from "../../guest.actions";
 
 
 
@@ -31,7 +32,10 @@ export const checkoutPageSlice = createSlice({
         setGuestCheckoutDetailsForm: (state, action: PayloadAction<CheckoutDetailsFormState>) => {
             state.checkoutDetailsForm = action.payload;
         }
-    }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(resetGuestState, () => initialState);
+    },
 });
 
 const checkoutPageReducer = checkoutPageSlice.reducer;
