@@ -11,7 +11,7 @@ import { toast } from "sonner";
 export function* getOperationsTable(): SagaIterator {
     try {
         const res: AxiosResponse<ApiResponse<PropertyOperationsRow[]>> = yield call(callApiWithRefresh, () => 
-            sendGet<ApiResponse<PropertyOperationsRow[]>>("/partner/primaryAccount/getOperationsTable")
+            sendGet<ApiResponse<PropertyOperationsRow[]>>("/partner/primary-account/operations-table")
         );
         if (res && res.data.success) {
             yield put(getOperationsTableSuccess(res.data.data));
@@ -26,7 +26,7 @@ export function* getOperationsTable(): SagaIterator {
 export function* getSummaryTiles(): SagaIterator {
     try {
         const res: AxiosResponse<ApiResponse<SummaryTile[]>> = yield call(callApiWithRefresh, () => 
-            sendGet<ApiResponse<SummaryTile[]>>("/partner/primaryAccount/getSummaryTiles")
+            sendGet<ApiResponse<SummaryTile[]>>("/partner/primary-account/summary-tiles")
         );
         if (res && res.data.success) {
             yield put(getSummaryTilesSuccess(res.data.data));

@@ -62,7 +62,7 @@ export function* loadMore(): SagaIterator {
 export function* getSelectedProperty(action: PayloadAction<string>): SagaIterator {
     try {
         const res: AxiosResponse<ApiResponse<PropertyDetails>> = yield call(callApiWithRefresh, () => 
-            sendGet<ApiResponse<PropertyDetails>>(`/guest/properties/getPropertyDetails/${action.payload}`)
+            sendGet<ApiResponse<PropertyDetails>>(`/guest/properties/details/${action.payload}`)
         );
         if (res && res.data.success) {
             yield put(getSelectedPropertySuccess(res.data.data));

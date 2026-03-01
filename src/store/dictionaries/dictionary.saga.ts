@@ -11,7 +11,7 @@ import { toast } from "sonner";
 export function* getAmenitiesDictionary(): SagaIterator {
     try {
         const res: AxiosResponse<ApiResponse<AmenityDictionaryItem[]>> = yield call(callApiWithRefresh, () => 
-            sendGet<ApiResponse<AmenityDictionaryItem[]>>("/dictionary/getAmenities")
+            sendGet<ApiResponse<AmenityDictionaryItem[]>>("/dictionaries/amenities")
         );
         if (res && res.data.success) {
             yield put(getAmenitiesDictionarySuccess(res.data.data));
@@ -26,7 +26,7 @@ export function* getAmenitiesDictionary(): SagaIterator {
 export function* getLanguageDictionary(): SagaIterator {
     try {
         const res: AxiosResponse<ApiResponse<LanguageDictionaryItem[]>> = yield call(callApiWithRefresh, () => 
-            sendGet<ApiResponse<LanguageDictionaryItem[]>>("/dictionary/getLanguages")
+            sendGet<ApiResponse<LanguageDictionaryItem[]>>("/dictionaries/languages")
         );
         if (res && res.data.success) {
             yield put(getLanguageDictionarySuccess(res.data.data));
@@ -41,7 +41,7 @@ export function* getLanguageDictionary(): SagaIterator {
 export function* getCountryDictionary(): SagaIterator {
     try {
         const res: AxiosResponse<ApiResponse<CountryDictionaryItem[]>> = yield call(callApiWithRefresh, () => 
-            sendGet<ApiResponse<CountryDictionaryItem[]>>("/dictionary/getCountries")
+            sendGet<ApiResponse<CountryDictionaryItem[]>>("/dictionaries/countries")
         );
         if (res && res.data.success) {
             yield put(getCountryDictionarySuccess(res.data.data));
@@ -56,7 +56,7 @@ export function* getCountryDictionary(): SagaIterator {
 export function* getRoleDictionary(): SagaIterator {
     try {
         const res: AxiosResponse<ApiResponse<RoleDictionaryItem[]>> = yield call(callApiWithRefresh, () => 
-            sendGet<ApiResponse<RoleDictionaryItem[]>>("/dictionary/roles")
+            sendGet<ApiResponse<RoleDictionaryItem[]>>("/dictionaries/roles")
         );
         if (res && res.data.success) {
             yield put(getRoleDictionarySuccess(res.data.data));

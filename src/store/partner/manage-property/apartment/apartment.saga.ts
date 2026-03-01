@@ -35,7 +35,7 @@ export function* sendAddApartment(action: PayloadAction<AddApartmentRequest>): S
         fd.append("mainIndex", String(mainIndex));
         
         const res: AxiosResponse<ApiResponse<null>> = yield call(callApiWithRefresh, () =>
-            sendPostFormData<ApiResponse<null>>("/partner/apartment/addApartment", fd), {allowRetry: true}
+            sendPostFormData<ApiResponse<null>>("/partner/properties/create", fd), {allowRetry: true}
         );
         if (res && res.data.success) {
             console.log(res.data.data);

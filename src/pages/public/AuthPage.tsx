@@ -120,11 +120,12 @@ export default function AuthPage() {
       toast.error("Please fill email and password.");
       return;
     }
+    const roleId = isPartner ? partnerRole?.id : guestRole?.id;
     dispatch(
       loginStart({
         email: loginInput.email.trim(),
         password: loginInput.password,
-        roleId: isPartner ? partnerRole?.id : partnerRole?.id,
+        roleId: roleId,
       })
     );
   }
@@ -133,6 +134,10 @@ export default function AuthPage() {
     e.preventDefault();
     if (!validateRegister())
       return;
+    const roleId = isPartner ? partnerRole?.id : guestRole?.id;
+    console.log(isPartner, "isPartner");
+    console.log(roleId, "roleId");
+    
 // TODO get roles as a dictionary
     dispatch(
       registerStart({
@@ -141,7 +146,7 @@ export default function AuthPage() {
         lastName: registerInput.lastName,
         firstName: registerInput.firstName,
         country: registerInput.country,
-        roleId: isPartner ? partnerRole?.id : partnerRole?.id,
+        roleId: roleId,
       })
     );
   }
