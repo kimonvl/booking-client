@@ -7,7 +7,7 @@ export interface AuthUser {
   country: string;
   firstName: string;
   lastName: string;
-  role: UserRole;
+  roleId: number;
 }
 
 export interface RegisterErrors {

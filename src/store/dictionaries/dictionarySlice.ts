@@ -1,10 +1,11 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { AmenityDictionaryItem, CountryDictionaryItem, DictionaryState, LanguageDictionaryItem } from "./dictionary.types";
+import type { AmenityDictionaryItem, CountryDictionaryItem, DictionaryState, LanguageDictionaryItem, RoleDictionaryItem } from "./dictionary.types";
 
 const initialState: DictionaryState = {
     amenityDictionary: [],
     languageDictionary: [],
     countryDictionary: [],
+    roleDictionary: [],
     loading: false,
     error: null,
 }
@@ -46,6 +47,17 @@ export const dictionarySlice = createSlice({
             state.error = action.payload;
             state.loading = false;
         },
+        getRoleDictionaryStart: (state) => {
+            state.loading = true;
+        },
+        getRoleDictionarySuccess: (state, action: PayloadAction<RoleDictionaryItem[]>) => {
+            state.roleDictionary = action.payload;
+            state.loading = false;
+        },
+        getRoleDictionaryFailure: (state, action: PayloadAction<string>) => {
+            state.error = action.payload;
+            state.loading = false;
+        },
     }
 });
 
@@ -60,6 +72,9 @@ export const {
     getCountryDictionaryStart,
     getCountryDictionarySuccess,
     getCountryDictionaryFailure,
+    getRoleDictionaryStart,
+    getRoleDictionarySuccess,
+    getRoleDictionaryFailure,
 } = dictionarySlice.actions;
 
 export default dictionaryReducer;

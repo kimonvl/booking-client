@@ -9,7 +9,7 @@ import { loginStart, registerStart, resetRegisterCompleted } from "@/store/auth/
 import { selectAccessToken, selectAuthStatus, selectBootstrapStatus, selectCurrentUser, selectRegisterCompleted, selectRegisterErrors } from "@/store/auth/auth.selector";
 import CommonForm from "@/components/common-form/CommonForm";
 import { loginFormControls, registerFormControls, type LoginFormState, type RegisterFormState } from "@/types/form-config/AuthFormControlls";
-import { selectCountryNames } from "@/store/dictionaries/dictionary.selector";
+import { selectCountryNames, selectRoleDictionaryItem } from "@/store/dictionaries/dictionary.selector";
 
 
 type UrlRole = "guest" | "partner";
@@ -42,6 +42,8 @@ export default function AuthPage() {
   const countries = useAppSelector(selectCountryNames);
   const registerFieldErrors = useAppSelector(selectRegisterErrors);
   const isRegisterCompleted = useAppSelector(selectRegisterCompleted);
+  const partnerRole = useAppSelector((state) => selectRoleDictionaryItem(state, "PARTNER"));
+  const guestRole = useAppSelector((state) => selectRoleDictionaryItem(state, "GUEST"));
 
   useEffect(() => {
     if (isRegisterCompleted) {
@@ -51,10 +53,10 @@ export default function AuthPage() {
   }, [isRegisterCompleted])
 
   useEffect(() => {
-    if (user && user.role == "PARTNER") {
+    if (user && user.roleId === partnerRole?.id) {
       navigate("/partner", { replace: true });
     }
-    if (user && user.role == "GUEST") {
+    if (user && user.roleId == guestRole?.id) {
       navigate("/", { replace: true });
     }
   }, [user])
@@ -96,7 +98,7 @@ export default function AuthPage() {
     const isHome =
       !from || from === "/" || from.startsWith("/?") || from.startsWith("/#");
 
-    if (user.role === "PARTNER" && isHome) {
+    if (user.roleId === partnerRole?.id && isHome) {
       navigate("/partner", { replace: true });
       return;
     }
@@ -122,7 +124,7 @@ export default function AuthPage() {
       loginStart({
         email: loginInput.email.trim(),
         password: loginInput.password,
-        role: isPartner ? "PARTNER" : "GUEST",
+        roleId: isPartner ? partnerRole?.id : partnerRole?.id,
       })
     );
   }
@@ -131,7 +133,7 @@ export default function AuthPage() {
     e.preventDefault();
     if (!validateRegister())
       return;
-
+// TODO get roles as a dictionary
     dispatch(
       registerStart({
         email: registerInput.email.trim(),
@@ -139,7 +141,7 @@ export default function AuthPage() {
         lastName: registerInput.lastName,
         firstName: registerInput.firstName,
         country: registerInput.country,
-        role: isPartner ? "PARTNER" : "GUEST",
+        roleId: isPartner ? partnerRole?.id : partnerRole?.id,
       })
     );
   }
@@ -188,25 +190,25 @@ export default function AuthPage() {
 
           <div className="flex gap-2 text-sm">
             <Link
-              to={`/auth/guest/${mode}${location.search}`}
+              to={`/auth/${guestRole?.name.toLowerCase()}/${mode}${location.search}`}
               state={location.state}
               className={[
                 "px-3 py-1 rounded-full border",
                 !isPartner ? "bg-blue-50 border-blue-600 text-blue-600" : "border-gray-300",
               ].join(" ")}
             >
-              Guest
+              {guestRole?.name.toLowerCase()}
             </Link>
 
             <Link
-              to={`/auth/partner/${mode}${location.search}`}
+              to={`/auth/${partnerRole?.name.toLowerCase()}/${mode}${location.search}`}
               state={location.state}
               className={[
                 "px-3 py-1 rounded-full border",
                 isPartner ? "bg-blue-50 border-blue-600 text-blue-600" : "border-gray-300",
               ].join(" ")}
             >
-              Partner
+              {partnerRole?.name.toLowerCase()}
             </Link>
           </div>
         </CardHeader>

@@ -7,12 +7,15 @@ import SelectPropertyTypePage from '@/pages/partner/listing-property-page/Select
 import { Route, Routes } from 'react-router-dom'
 import RequireAuth from './guards/RequireAuth'
 import RequireRole from './guards/RequireRole'
+import { selectRoleDictionaryItem } from '@/store/dictionaries/dictionary.selector'
+import { useAppSelector } from '@/store/hooks'
 
 export default function PartnerRoutes() {
+  const partnerRole = useAppSelector((state) => selectRoleDictionaryItem(state, "PARTNER"));
   return (
     <Routes>
       <Route element={<RequireAuth />}>
-        <Route element={<RequireRole role='PARTNER' />}>
+        <Route element={<RequireRole roleId={partnerRole?.id} />}>
           <Route element={<PartnerLayout />} >
             <Route index element={<PartnerDashboardPage />} />
           </Route>

@@ -1,7 +1,7 @@
 export interface LoginRequest {
     email: string;
     password: string;
-    role: string;
+    roleId: number | undefined;
 }
 
 export interface RegisterRequest {
@@ -10,5 +10,5 @@ export interface RegisterRequest {
     lastName: string,
     firstName: string,
     country: string,
-    role: string;
+    roleId: number | undefined;
 }

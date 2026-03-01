@@ -1,9 +1,23 @@
 import { createSelector } from "reselect";
 import type { RootState } from "../store";
-import type { DictionaryState } from "./dictionary.types";
+import type { DictionaryState, RoleCode } from "./dictionary.types";
+
 
 
 const selectDictionaryReducer = (state: RootState): DictionaryState => state.dictionary;
+
+export const selectRoleDictionary = createSelector(
+    [selectDictionaryReducer],
+    (dictionarySlice) => dictionarySlice.roleDictionary
+);
+
+export const selectRoleDictionaryItem = createSelector(
+  [
+    selectRoleDictionary,
+    (_: RootState, roleCode: RoleCode) => roleCode,
+  ],
+  (items, roleCode) => items.find((item) => item.name === roleCode)
+);
 
 export const selectAmenitiesDictionary = createSelector(
     [selectDictionaryReducer],

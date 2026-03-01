@@ -21,10 +21,18 @@ export interface CountryDictionaryItem {
     name: string;
 }
 
+export type RoleCode = "GUEST" | "PARTNER";
+
+export interface RoleDictionaryItem {
+    id: number;
+    name: RoleCode;
+}
+
 export interface DictionaryState {
     amenityDictionary: AmenityDictionaryItem[];
     languageDictionary: LanguageDictionaryItem[];
     countryDictionary: CountryDictionaryItem[];
+    roleDictionary: RoleDictionaryItem[];
     loading: boolean;
     error: string | null;
 }

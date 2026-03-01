@@ -1,9 +1,9 @@
 import type { SagaIterator } from "redux-saga";
 import { all, call, put, takeLatest } from "redux-saga/effects";
-import { getAmenitiesDictionaryFailure, getAmenitiesDictionaryStart, getAmenitiesDictionarySuccess, getCountryDictionaryFailure, getCountryDictionaryStart, getCountryDictionarySuccess, getLanguageDictionaryFailure, getLanguageDictionaryStart, getLanguageDictionarySuccess } from "./dictionarySlice";
+import { getAmenitiesDictionaryFailure, getAmenitiesDictionaryStart, getAmenitiesDictionarySuccess, getCountryDictionaryFailure, getCountryDictionaryStart, getCountryDictionarySuccess, getLanguageDictionaryFailure, getLanguageDictionaryStart, getLanguageDictionarySuccess, getRoleDictionaryFailure, getRoleDictionaryStart, getRoleDictionarySuccess } from "./dictionarySlice";
 import type { AxiosResponse } from "axios";
 import type { ApiResponse } from "@/types/response/apiResponse";
-import type { AmenityDictionaryItem, CountryDictionaryItem, LanguageDictionaryItem } from "./dictionary.types";
+import type { AmenityDictionaryItem, CountryDictionaryItem, LanguageDictionaryItem, RoleDictionaryItem } from "./dictionary.types";
 import { callApiWithRefresh } from "../refreshSagaWraper";
 import { sendGet } from "@/utils/axios.utils";
 import { toast } from "sonner";
@@ -53,6 +53,21 @@ export function* getCountryDictionary(): SagaIterator {
     }
 }
 
+export function* getRoleDictionary(): SagaIterator {
+    try {
+        const res: AxiosResponse<ApiResponse<RoleDictionaryItem[]>> = yield call(callApiWithRefresh, () => 
+            sendGet<ApiResponse<RoleDictionaryItem[]>>("/dictionary/roles")
+        );
+        if (res && res.data.success) {
+            yield put(getRoleDictionarySuccess(res.data.data));
+            toast.success(res.data.message);
+        }
+    } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "An error occurred";
+        yield put(getRoleDictionaryFailure(errorMessage));
+    }
+}
+
 export function* onGetAmenitiesDictionaryStart(): SagaIterator {
     yield takeLatest(getAmenitiesDictionaryStart.type, getAmenitiesDictionary);
 }
@@ -65,10 +80,15 @@ export function* onGetCountryDictionaryStart(): SagaIterator {
     yield takeLatest(getCountryDictionaryStart.type, getCountryDictionary);
 }
 
+export function* onGetRoleDictionaryStart(): SagaIterator {
+    yield takeLatest(getRoleDictionaryStart.type, getRoleDictionary);
+}
+
 export function* dictionarySaga(): SagaIterator {
     yield all([
         call(onGetAmenitiesDictionaryStart),
         call(onGetLanguageDictionaryStart),
         call(onGetCountryDictionaryStart),
+        call(onGetRoleDictionaryStart),
     ]);
 }
