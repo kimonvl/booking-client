@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { Button } from "@/components/ui/button";
 import { selectConfirmError, selectConfirmLatest, selectConfirmStatus } from "@/store/guest/booking/booking.selector";
 import { resetConfirm, startPollingBooking } from "@/store/guest/booking/bookingSlice";
+import { resetPaymentState } from "@/store/guest/payment/paymentSlice";
 
 export default function GuestCheckoutConfirmPage() {
   const dispatch = useAppDispatch();
@@ -32,6 +33,7 @@ export default function GuestCheckoutConfirmPage() {
   // When confirmed -> go to success page
   useEffect(() => {
     if (status === "confirmed") {
+      dispatch(resetPaymentState());
       navigate(`/checkout/success?bookingId=${bookingId}`, { replace: true });
     }
   }, [status, bookingId, navigate]);

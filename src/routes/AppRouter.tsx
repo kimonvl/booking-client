@@ -7,6 +7,11 @@ import { useDispatch } from "react-redux";
 import { useAppSelector } from "@/store/hooks";
 import { selectCountryDictionary, selectRoleDictionary } from "@/store/dictionaries/dictionary.selector";
 import { getCountryDictionaryStart, getRoleDictionaryStart } from "@/store/dictionaries/dictionarySlice";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 export default function AppRouter() {
   const dispatch = useDispatch();
@@ -27,7 +32,13 @@ export default function AppRouter() {
     <BrowserRouter>
       <AppBootstrapGate>
         <Routes>
-          <Route path="/*" element={<PublicRoutes />} />
+
+          <Route path="/*" element={
+            <Elements stripe={stripePromise}>
+              <PublicRoutes />
+            </Elements>
+          } />
+
           <Route path="/partner/*" element={<PartnerRoutes />} />
           <Route path="/guest/*" element={<div>Guest routes</div>} />
         </Routes>
