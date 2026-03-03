@@ -1,40 +1,40 @@
 import type { RootState } from "@/store/store";
 import { createSelector } from "reselect";
-import type { AddApartmentErrors, AppartmentState } from "./apartment.types";
 import type { StepsType } from "@/pages/partner/listing-property-page/add-apartment/AddAppartmentPage";
+import type { CreatePropertyErrors, CreatePropertyState } from "./createProperty.types";
 
 
-const selectApartmentReducer = (state: RootState): AppartmentState => state.apartment;
+const selectCreatePropertyReducer = (state: RootState): CreatePropertyState => state.apartment;
 
-export const selectAddApartmentLoading = createSelector(
-    [selectApartmentReducer],
-    (apartmentSlice) => apartmentSlice.addApartmentLoading
+export const selectCreatePropertyLoading = createSelector(
+    [selectCreatePropertyReducer],
+    (createPropertySlice) => createPropertySlice.createPropertyLoading
 );
 
-export const selectAddApartmentErrors = createSelector(
-    [selectApartmentReducer],
-    (apartmentSlice) => apartmentSlice.addApartmentErrors
+export const selectCreatePropertyErrors = createSelector(
+    [selectCreatePropertyReducer],
+    (createPropertySlice) => createPropertySlice.createPropertyErrors
 );
 
-export const selectAddApartmentHasFieldErrors = createSelector(
-    [selectApartmentReducer],
-    (apartmentSlice) => apartmentSlice.hasFieldErrors
+export const selectCreatePropertyHasFieldErrors = createSelector(
+    [selectCreatePropertyReducer],
+    (createPropertySlice) => createPropertySlice.hasFieldErrors
 );
 
-export const selectAddApartmentForm = createSelector(
-    [selectApartmentReducer],
-    (apartmentSlice) => apartmentSlice.apartmentForm
+export const selectCreatePropertyForm = createSelector(
+    [selectCreatePropertyReducer],
+    (createPropertySlice) => createPropertySlice.createPropertyForm
 );
 
-export const selectAddApartmentStepsWithError = createSelector(
-  [selectAddApartmentErrors],
-  (addApartmentErrors): StepsType[] => {
-    if (!addApartmentErrors) return [];
+export const selectCreatePropertyStepsWithError = createSelector(
+  [selectCreatePropertyErrors],
+  (createPropertyErrors): StepsType[] => {
+    if (!createPropertyErrors) return [];
 
     const stepSet = new Set<StepsType>();
 
-    (Object.keys(addApartmentErrors) as (keyof AddApartmentErrors)[]).forEach((field) => {
-      const msg = addApartmentErrors[field];
+    (Object.keys(createPropertyErrors) as (keyof CreatePropertyErrors)[]).forEach((field) => {
+      const msg = createPropertyErrors[field];
 
       // ignore empty/undefined errors
       if (!msg || (typeof msg === "string" && msg.trim() === "")) return;
@@ -60,7 +60,7 @@ const STEPS_ORDER: StepsType[] = [
   "review",
 ];
 
-const FIELD_TO_STEP: Partial<Record<keyof AddApartmentErrors, StepsType>> = {
+const FIELD_TO_STEP: Partial<Record<keyof CreatePropertyErrors, StepsType>> = {
   propertyName: "name",
 
   address: "address",

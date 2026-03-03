@@ -9,6 +9,7 @@ import RequireAuth from './guards/RequireAuth'
 import RequireRole from './guards/RequireRole'
 import { selectRoleDictionaryItem } from '@/store/dictionaries/dictionary.selector'
 import { useAppSelector } from '@/store/hooks'
+import ManagePropertyPage from '@/pages/partner/manage-property-page/ManagePropertyPage'
 
 export default function PartnerRoutes() {
   const partnerRole = useAppSelector((state) => selectRoleDictionaryItem(state, "PARTNER"));
@@ -18,6 +19,7 @@ export default function PartnerRoutes() {
         <Route element={<RequireRole roleId={partnerRole?.id} />}>
           <Route element={<PartnerLayout />} >
             <Route index element={<PartnerDashboardPage />} />
+            <Route path="manage-property" element={<ManagePropertyPage />} />
           </Route>
           <Route element={<ListingPropertyLayout />} >
             <Route path="select-property-type" element={<SelectPropertyTypePage />} />

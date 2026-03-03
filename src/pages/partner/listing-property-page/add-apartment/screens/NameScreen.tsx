@@ -4,8 +4,8 @@ import HelpCard from "./HelpCard";
 import { Lightbulb, ThumbsUp } from "lucide-react";
 import { InlineFieldErrorBaner } from "@/components/error-baners/InlineFieldErrorBaner";
 import { useAppSelector } from "@/store/hooks";
-import { selectAddApartmentErrors } from "@/store/partner/manage-property/apartment/apartment.selector";
 import { inputClass } from "../AddAppartmentPage";
+import { selectCreatePropertyErrors } from "@/store/partner/manage-property/create-property/createProperty.selector";
 
 interface NameScreenProps {
   propertyName: string;
@@ -13,7 +13,7 @@ interface NameScreenProps {
 }
 
 export default function NameScreen({ propertyName, setPropertyName }: NameScreenProps) {
-  const addApartmentErrors = useAppSelector(selectAddApartmentErrors);
+  const addApartmentErrors = useAppSelector(selectCreatePropertyErrors);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 ml-2 mr-2 mt-1">

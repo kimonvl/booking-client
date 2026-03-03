@@ -53,7 +53,7 @@ export type PhotoItem = {
   url: string;
 };
 
-export interface AddApartmentRequest {
+export interface CreatePropertyRequest {
     propertyName: string;
     address: AddressType;
     sleepingAreas: SleepingAreasType;

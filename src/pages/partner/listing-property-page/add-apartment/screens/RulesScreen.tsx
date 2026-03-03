@@ -7,9 +7,9 @@ import HelpCard from "./HelpCard";
 import { Lightbulb } from "lucide-react";
 import type { PetsAllowedType, TimeType } from "@/types/request/apartment/addApartmentRequest.types";
 import { useAppSelector } from "@/store/hooks";
-import { selectAddApartmentErrors } from "@/store/partner/manage-property/apartment/apartment.selector";
 import { InlineFieldErrorBaner } from "@/components/error-baners/InlineFieldErrorBaner";
 import { inputClass } from "../AddAppartmentPage";
+import { selectCreatePropertyErrors } from "@/store/partner/manage-property/create-property/createProperty.selector";
 
 interface RulesScreenProps {
     smokingAllowed: boolean;
@@ -71,7 +71,7 @@ export default function RulesScreen({
         "23:00",
     ];
 
-    const addApartmentErrors = useAppSelector(selectAddApartmentErrors);
+    const addApartmentErrors = useAppSelector(selectCreatePropertyErrors);
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 ml-2 mr-2 mt-1">

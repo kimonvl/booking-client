@@ -2,12 +2,12 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Building2, Sparkles } from "lucide-react";
 import { useAppSelector } from "@/store/hooks";
-import { selectAddApartmentHasFieldErrors, selectAddApartmentLoading } from "@/store/partner/manage-property/apartment/apartment.selector";
+import { selectCreatePropertyHasFieldErrors, selectCreatePropertyLoading } from "@/store/partner/manage-property/create-property/createProperty.selector";
 
 export default function AddApartmentLoaderPage() {
   const navigate = useNavigate();
-  const addApartmentLoading = useAppSelector(selectAddApartmentLoading);
-  const hasFieldErrors = useAppSelector(selectAddApartmentHasFieldErrors);
+  const addApartmentLoading = useAppSelector(selectCreatePropertyLoading);
+  const hasFieldErrors = useAppSelector(selectCreatePropertyHasFieldErrors);
 
   useEffect(() => {
     if (!addApartmentLoading)

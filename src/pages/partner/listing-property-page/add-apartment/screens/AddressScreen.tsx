@@ -7,9 +7,9 @@ import type { Dispatch, SetStateAction } from "react";
 import { useAppSelector } from "@/store/hooks";
 import { selectCountryDictionary } from "@/store/dictionaries/dictionary.selector";
 import type { AddressType } from "@/types/request/apartment/addApartmentRequest.types";
-import { selectAddApartmentErrors } from "@/store/partner/manage-property/apartment/apartment.selector";
 import { InlineFieldErrorBaner } from "@/components/error-baners/InlineFieldErrorBaner";
 import { inputClass } from "../AddAppartmentPage";
+import { selectCreatePropertyErrors } from "@/store/partner/manage-property/create-property/createProperty.selector";
 
 interface AddressScreenProps {
     address: AddressType;
@@ -18,7 +18,7 @@ interface AddressScreenProps {
 
 export default function AddressScreen({ address, setAddress }: AddressScreenProps) {
     const countryDictionary = useAppSelector(selectCountryDictionary);
-    const addApartmentErrors = useAppSelector(selectAddApartmentErrors);
+    const addApartmentErrors = useAppSelector(selectCreatePropertyErrors);
     return (
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 ml-2 mr-2 mt-1">
             <div>

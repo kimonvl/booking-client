@@ -29,9 +29,10 @@ export default function CreateBookingErrorDialog({
 }) {
   const entries = React.useMemo(
     () =>
-      Object.entries(errors)
+      {if (!errors) return [];
+      return Object.entries(errors)
         .filter(([, v]) => typeof v === "string" && v.trim().length > 0)
-        .map(([k, v]) => ({ key: k, message: v as string })),
+        .map(([k, v]) => ({ key: k, message: v as string }))},
     [errors]
   );
 
@@ -53,14 +54,14 @@ export default function CreateBookingErrorDialog({
         </DialogHeader>
 
         <div className="mt-2 rounded-md border bg-muted/20 p-3">
-          {entries.length === 0 ? (
+          {entries?.length === 0 ? (
             <div className="text-sm text-muted-foreground">
               Something went wrong, but we couldn’t extract specific error messages.
             </div>
           ) : (
             <ul className="space-y-2">
-              {entries.map((e) => (
-                <li key={e.key} className="text-sm">
+              {entries?.map((e) => (
+                <li key={e?.key} className="text-sm">
                   <div className="font-semibold">{humanizeKey(e.key)}</div>
                   <div className="text-muted-foreground">{e.message}</div>
                 </li>

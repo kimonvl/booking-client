@@ -6,7 +6,7 @@ import { ThumbsUp } from "lucide-react";
 import { useAppSelector } from "@/store/hooks";
 import { selectAmenitiesDictionary } from "@/store/dictionaries/dictionary.selector";
 import { StepErrorBanner } from "@/components/error-baners/StepErrorBaner";
-import { selectAddApartmentErrors } from "@/store/partner/manage-property/apartment/apartment.selector";
+import { selectCreatePropertyErrors } from "@/store/partner/manage-property/create-property/createProperty.selector";
 
 interface AmenitiesScreenProps {
     amenities: Record<string, boolean>;
@@ -15,7 +15,7 @@ interface AmenitiesScreenProps {
 
 export default function AmenitiesScreen({amenities, setAmenities}: AmenitiesScreenProps) {
   const groups = useAppSelector(selectAmenitiesDictionary);
-  const addApartmentErrors = useAppSelector(selectAddApartmentErrors);
+  const addApartmentErrors = useAppSelector(selectCreatePropertyErrors);
   const amenityErrors = addApartmentErrors?.amenities
   ? [addApartmentErrors.amenities]
   : [];

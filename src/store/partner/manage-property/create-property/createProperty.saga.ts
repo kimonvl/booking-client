@@ -1,15 +1,15 @@
 import type { SagaIterator } from "redux-saga";
 import { all, call, put, takeLatest } from "redux-saga/effects";
-import { sendAddApartmentFailure, sendAddApartmentStart, sendAddApartmentSuccess } from "./apartmentSlice";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { AddApartmentRequest } from "@/types/request/apartment/addApartmentRequest.types";
 import type { AxiosResponse } from "axios";
 import type { ApiResponse } from "@/types/response/apiResponse";
 import { sendPostFormData } from "@/utils/axios.utils";
 import { callApiWithRefresh } from "@/store/refreshSagaWraper";
 import { toast } from "sonner";
+import { sendCreatePropertyFailure, sendCreatePropertyStart, sendCreatePropertySuccess } from "./createPropertySlice";
+import type { CreatePropertyRequest } from "@/types/request/apartment/addApartmentRequest.types";
 
-export function* sendAddApartment(action: PayloadAction<AddApartmentRequest>): SagaIterator {
+export function* sendAddApartment(action: PayloadAction<CreatePropertyRequest>): SagaIterator {
     try {
         const {
             photos,
@@ -40,22 +40,22 @@ export function* sendAddApartment(action: PayloadAction<AddApartmentRequest>): S
         if (res && res.data.success) {
             console.log(res.data.data);
             
-            yield put(sendAddApartmentSuccess());
+            yield put(sendCreatePropertySuccess());
             toast.success(res.data.message);
         }
     } catch (error: any) {
         const errorMessage = error.response?.data?.message || "An error occurred";
         toast.warning(errorMessage);
-        yield put(sendAddApartmentFailure({error: errorMessage, fieldErrors: error.response?.data?.data}));
+        yield put(sendCreatePropertyFailure({error: errorMessage, fieldErrors: error.response?.data?.data}));
     }
 }
 
-export function* onSendAddApartmentStart() {
-    yield takeLatest(sendAddApartmentStart.type, sendAddApartment);
+export function* onSendCreatePropertyStart() {
+    yield takeLatest(sendCreatePropertyStart.type, sendAddApartment);
 }
 
-export function* apartmentSaga(): SagaIterator {
+export function* createPropertySaga(): SagaIterator {
     yield all([
-        call(onSendAddApartmentStart),
+        call(onSendCreatePropertyStart),
     ])
 }

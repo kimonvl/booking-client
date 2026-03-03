@@ -8,11 +8,11 @@ import authReducer from "./auth/authSlice";
 import dictionaryReducer from "./dictionaries/dictionarySlice";
 import groupHomeReducer from "./partner/primary-account/group-home/groupHomeSlice";
 import guestPropertyReducer from "./guest/property/guestPropertySlice";
-import apartmentReducer from "./partner/manage-property/apartment/apartmentSlice";
 import searchPageReducer from "./guest/pages/search-page/searchPageSlice";
 import checkoutPageReducer from "./guest/pages/checkout-page/checkoutPageSlice";
 import paymentReducer from "./guest/payment/paymentSlice";
 import bookingReducer from "./guest/booking/bookingSlice";
+import createPropertyReducer from "./partner/manage-property/create-property/createPropertySlice";
 
 /* =========================
    Persist configurations
@@ -29,14 +29,14 @@ const persistDictionaryConfig = {
   whitelist: ['amenityDictionary', 'languageDictionary'],
 };
 
-const persistApartmentConfig = {
-  key: "apartment",
+const persistCreatePropertyConfig = {
+  key: "createProperty",
   storage,
   whitelist: [
-    "addApartmentLoading",
-    "addApartmentErrors",
+    "createPropertyLoading",
+    "createPropertyErrors",
     "hasFieldErrors",
-    "apartmentForm",
+    "createPropertyForm",
   ],
 };
 
@@ -86,7 +86,7 @@ export const store = configureStore({
   reducer: {
     auth: persistReducer(persistAuthConfig, authReducer),
     dictionary: persistReducer(persistDictionaryConfig, dictionaryReducer),
-    apartment: persistReducer(persistApartmentConfig, apartmentReducer),
+    createProperty: persistReducer(persistCreatePropertyConfig, createPropertyReducer),
     groupHome: persistReducer(persistGroupHomeConfig, groupHomeReducer),
     guestProperty: persistReducer(persistGuestPropertyConfig, guestPropertyReducer),
     searchPage: persistReducer(persistSearchPageConfig, searchPageReducer),

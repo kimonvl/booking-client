@@ -8,7 +8,7 @@ import { ChevronDown, ThumbsUp } from "lucide-react";
 import { useAppSelector } from "@/store/hooks";
 import { selectLanguageDictionary } from "@/store/dictionaries/dictionary.selector";
 import { StepErrorBanner } from "@/components/error-baners/StepErrorBaner";
-import { selectAddApartmentErrors } from "@/store/partner/manage-property/apartment/apartment.selector";
+import { selectCreatePropertyErrors } from "@/store/partner/manage-property/create-property/createProperty.selector";
 
 interface LanguagesScreenProps {
     languages: Record<string, boolean>;
@@ -25,7 +25,7 @@ export default function LanguagesScreen({ languages, setLanguages, additionalLan
     const selectedAdditionalLanguagesLabel =
         selectedAdditionalLanguages.length > 0 ? selectedAdditionalLanguages.join(", ") : "Select languages";
 
-    const addApartmentErrors = useAppSelector(selectAddApartmentErrors);
+    const addApartmentErrors = useAppSelector(selectCreatePropertyErrors);
     const langErrors = addApartmentErrors?.languages
         ? [addApartmentErrors.languages]
         : [];

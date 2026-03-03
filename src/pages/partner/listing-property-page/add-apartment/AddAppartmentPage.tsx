@@ -16,8 +16,8 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { getAmenitiesDictionaryStart, getCountryDictionaryStart, getLanguageDictionaryStart } from "@/store/dictionaries/dictionarySlice";
 import { selectAmenitiesDictionary, selectCountryDictionary, selectLanguageDictionary } from "@/store/dictionaries/dictionary.selector";
 import type { AddressType, IsParkingAvailableType, PetsAllowedType, PhotoItem, SleepingAreasType, TimeType } from "@/types/request/apartment/addApartmentRequest.types";
-import { sendAddApartmentStart, setAddApartmentForm } from "@/store/partner/manage-property/apartment/apartmentSlice";
-import { selectAddApartmentForm, selectAddApartmentStepsWithError } from "@/store/partner/manage-property/apartment/apartment.selector";
+import { selectCreatePropertyForm, selectCreatePropertyStepsWithError } from "@/store/partner/manage-property/create-property/createProperty.selector";
+import { sendCreatePropertyStart, setCreatePropertyForm } from "@/store/partner/manage-property/create-property/createPropertySlice";
 
 export type StepsType = "name" | "address" |
   "details" | "amenities" | "services" | "languages" | "rules" |
@@ -37,8 +37,8 @@ export default function AddAppartmentPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const apartmentForm = useAppSelector(selectAddApartmentForm);
-  const errorSteps = useAppSelector(selectAddApartmentStepsWithError);
+  const apartmentForm = useAppSelector(selectCreatePropertyForm);
+  const errorSteps = useAppSelector(selectCreatePropertyStepsWithError);
 
   const [activeStep, setActiveStep] = useState<StepsType>(errorSteps.length > 0 ? errorSteps[0] : steps[0]);
   const [stepsProgress, setStepsProgress] = useState<Record<StepsType, boolean>>({
@@ -226,7 +226,7 @@ export default function AddAppartmentPage() {
   }
 
   const persistForm = () => {
-    dispatch(setAddApartmentForm(
+    dispatch(setCreatePropertyForm(
       {
         propertyName,
         address,
@@ -282,7 +282,7 @@ export default function AddAppartmentPage() {
       photos,
     };
 
-    dispatch(sendAddApartmentStart(payload));
+    dispatch(sendCreatePropertyStart(payload));
     navigate("/partner/add-apartment-loader");
 
     // TODO: call your API

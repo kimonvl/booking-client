@@ -6,8 +6,8 @@ import HelpCard from "./HelpCard";
 import type { RefObject } from "react";
 import type { PhotoItem } from "@/types/request/apartment/addApartmentRequest.types";
 import { useAppSelector } from "@/store/hooks";
-import { selectAddApartmentErrors } from "@/store/partner/manage-property/apartment/apartment.selector";
 import { StepErrorBanner } from "@/components/error-baners/StepErrorBaner";
+import { selectCreatePropertyErrors } from "@/store/partner/manage-property/create-property/createProperty.selector";
 
 interface PhotosScreen {
     photos: PhotoItem[]; 
@@ -28,7 +28,7 @@ export default function PhotosScreen({
     removePhoto,
     fileInputRef
 }: PhotosScreen) {
-  const addApartmentErrors = useAppSelector(selectAddApartmentErrors);
+  const addApartmentErrors = useAppSelector(selectCreatePropertyErrors);
   const photosErrors = addApartmentErrors?.photosCount
   ? [addApartmentErrors.photosCount]
   : []; 

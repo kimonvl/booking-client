@@ -11,7 +11,7 @@ import CounterFilter from "@/components/filters/CounterFilter";
 import type { SleepingAreasType } from "@/types/request/apartment/addApartmentRequest.types";
 import { InlineFieldErrorBaner } from "@/components/error-baners/InlineFieldErrorBaner";
 import { useAppSelector } from "@/store/hooks";
-import { selectAddApartmentErrors } from "@/store/partner/manage-property/apartment/apartment.selector";
+import { selectCreatePropertyErrors } from "@/store/partner/manage-property/create-property/createProperty.selector";
 
 interface ApartmentDetailsScreenProps {
   sleepingAreas: SleepingAreasType;
@@ -46,7 +46,7 @@ export default function ApartmentDetailsScreen({
   aptSize,
   setAptSize,
 }: ApartmentDetailsScreenProps) {
-  const addApartmentErrors = useAppSelector(selectAddApartmentErrors);
+  const addApartmentErrors = useAppSelector(selectCreatePropertyErrors);
 
   const [addBedOpen, setAddBedOpen] = useState(false);
   const [selectedBedroomIndex, setSelectedBedroomIndex] = useState<number | null>(null);

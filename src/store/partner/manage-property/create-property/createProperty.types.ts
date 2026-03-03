@@ -1,6 +1,6 @@
 import type { AddressType, IsParkingAvailableType, PetsAllowedType, PhotoItem, SleepingAreasType, TimeType } from "@/types/request/apartment/addApartmentRequest.types";
 
-export interface AddApartmentErrors {
+export interface CreatePropertyErrors {
   propertyName?: string;
 
   address?: string;
@@ -43,7 +43,7 @@ export interface AddApartmentErrors {
   _global?: string;
 }
 
-export interface AddApartmentForm {
+export interface CreatePropertyForm {
   propertyName: string;
   address: AddressType;
   sleepingAreas: SleepingAreasType;
@@ -69,10 +69,10 @@ export interface AddApartmentForm {
   pricePerNight: number;
 }
 
-export interface AppartmentState {
-    apartmentForm: AddApartmentForm;
-    addApartmentLoading: boolean;
-    addApartmentErrors: AddApartmentErrors | null;
+export interface CreatePropertyState {
+    createPropertyForm: CreatePropertyForm;
+    createPropertyLoading: boolean;
+    createPropertyErrors: CreatePropertyErrors | null;
     hasFieldErrors: boolean;
     error: string | null;
 }

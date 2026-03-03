@@ -71,6 +71,7 @@ export default function GuestCheckoutDetailsPage() {
   // If there are errors only in Checkout details then show field errors as usual.
   // Errors associated with the booking will trigger a dialog window.
   useEffect(() => {
+    if (!createBookingErrors) return;
     const fields = Object.keys(createBookingErrors);
     if (
       !fields.includes("propertyId") &&
