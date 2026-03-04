@@ -9,6 +9,8 @@ import { selectCountryDictionary, selectRoleDictionary } from "@/store/dictionar
 import { getCountryDictionaryStart, getRoleDictionaryStart } from "@/store/dictionaries/dictionarySlice";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import { connectWebsocketStart } from "@/store/websocket/websocketSlice";
+import { selectAccessToken } from "@/store/auth/auth.selector";
 
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
@@ -17,6 +19,7 @@ export default function AppRouter() {
   const dispatch = useDispatch();
   const countryDictionary = useAppSelector(selectCountryDictionary);
   const roleDictionary = useAppSelector(selectRoleDictionary);
+  const accessToken = useAppSelector(selectAccessToken);
 
   useEffect(() => {
     if (!countryDictionary || countryDictionary.length == 0)
@@ -27,6 +30,11 @@ export default function AppRouter() {
     if (!roleDictionary || roleDictionary.length == 0)
       dispatch(getRoleDictionaryStart());
   }, [dispatch])
+
+  useEffect(() => {
+    console.log("Connecting WS...");
+    dispatch(connectWebsocketStart());
+  }, [accessToken, dispatch]);
 
   return (
     <BrowserRouter>

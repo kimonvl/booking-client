@@ -4,12 +4,11 @@ import { toast } from "sonner";
 import type { AuthUser } from "./auth.types";
 import type { SagaIterator } from "redux-saga";
 import type { AxiosResponse } from "axios";
-import { sendGet, sendPostJson } from "@/utils/axios.utils";
+import { sendPostJson } from "@/utils/axios.utils";
 import type { ApiResponse } from "@/types/response/apiResponse";
-import { bootstrapDone, bootstrapStart, getTestFailure, getTestStart, getTestSuccess, loginFailed, loginStart, loginSuccess, logoutFailure, logoutStart, logoutSuccess, refreshSuccess, registerFailed, registerStart, registerSuccess } from "./authSlice";
+import { bootstrapDone, bootstrapStart, loginFailed, loginStart, loginSuccess, logoutFailure, logoutStart, logoutSuccess, refreshSuccess, registerFailed, registerStart, registerSuccess } from "./authSlice";
 import type { LoginRequest, RegisterRequest } from "@/types/request/auth/authRequest.types";
 import type { LoginResponse } from "@/types/response/auth/authResponse.types";
-import { callApiWithRefresh } from "../refreshSagaWraper";
 import { selectSelectedCountryCode } from "../dictionaries/dictionary.selector";
 
 export function* register(action: PayloadAction<RegisterRequest>): SagaIterator {
@@ -93,20 +92,6 @@ export function* bootstrap(): SagaIterator {
     }
 }
 
-export function* getTest(): SagaIterator {
-    try {
-        const res: AxiosResponse<ApiResponse<string>> = yield call(callApiWithRefresh, () =>
-            sendGet<ApiResponse<string>>("/partner/getTest")
-        );
-        if (res && res.data.success) {
-            yield put(getTestSuccess(res.data.data));
-            toast.success(res.data.message);
-        }
-    } catch (e) {
-        yield put(getTestFailure());
-    }
-}
-
 export function* onRegisterStart(): SagaIterator {
     yield takeLatest(registerStart.type, register);
 }
@@ -123,16 +108,11 @@ export function* onBootstrapStart(): SagaIterator {
     yield takeLeading(bootstrapStart.type, bootstrap);
 }
 
-export function* onGetTestStart(): SagaIterator {
-    yield takeLatest(getTestStart.type, getTest);
-}
-
 export function* authSaga(): SagaIterator {
     yield all([
         call(onRegisterStart),
         call(onLoginStart),
         call(onBootstrapStart),
-        call(onGetTestStart),
         call(onLogoutStart),
     ]);
 }

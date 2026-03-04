@@ -13,6 +13,8 @@ import checkoutPageReducer from "./guest/pages/checkout-page/checkoutPageSlice";
 import paymentReducer from "./guest/payment/paymentSlice";
 import bookingReducer from "./guest/booking/bookingSlice";
 import createPropertyReducer from "./partner/manage-property/create-property/createPropertySlice";
+import websocketrReducer from "./websocket/websocketSlice";
+import websocketMiddleware from "./websocket/websocketMiddleware";
 
 /* =========================
    Persist configurations
@@ -76,6 +78,12 @@ const persistPaymentConfig = {
   whitelist: [],
 };
 
+const persistWebsocketConfig = {
+  key: "websocket",
+  storage,
+  whitelist: [],
+};
+
 /* =========================
    Persisted reducers
    ========================= */
@@ -93,12 +101,13 @@ export const store = configureStore({
     checkoutPage: persistReducer(persistCheckoutPageConfig, checkoutPageReducer),
     booking: persistReducer(persistBookingConfig, bookingReducer),
     payment: persistReducer(persistPaymentConfig, paymentReducer),
+    websocket: persistReducer(persistWebsocketConfig, websocketrReducer),
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       thunk: false,
       serializableCheck: false,
-    }).concat(sagaMiddleware, logger),
+    }).concat(sagaMiddleware, websocketMiddleware,logger),
 });
 
 export const persistor = persistStore(store);

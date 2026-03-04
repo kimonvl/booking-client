@@ -2,9 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import TabsComponent from "@/components/tabs/TabsComponent";
 import ImageSlider, { type SliderItem } from "@/components/sliders/ImageSlider";
 import ImageCardCollection from "@/components/collections/ImageCardCollection";
-import { useAppDispatch } from "@/store/hooks";
-import { getTestStart } from "@/store/auth/authSlice";
-
 type Category = "Πόλη" | "Παραλία" | "Φύση" | "Χαλάρωση";
 
 const categorySliderItems: Record<Category, SliderItem[]> = {
@@ -160,7 +157,6 @@ function canScrollRight(container: HTMLDivElement | null) {
 }
 
 const StaysPage = () => {
-  const dispatch = useAppDispatch();
 
   const [activeCategory, setActiveCategory] = useState<Category>("Πόλη");
 
@@ -270,7 +266,7 @@ const StaysPage = () => {
       {/* HERO */}
       <section className="bg-[#003580] text-white">
         <div className="max-w-7xl mx-auto px-4 py-16">
-          <h2 onClick={() => dispatch(getTestStart())} className="text-4xl font-bold mb-2">
+          <h2 className="text-4xl font-bold mb-2">
             Βρείτε το επόμενο κατάλυμά σας
           </h2>
           <p className="text-lg mb-8">
