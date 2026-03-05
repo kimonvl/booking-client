@@ -4,7 +4,7 @@ import type { StepsType } from "@/pages/partner/listing-property-page/add-apartm
 import type { CreatePropertyErrors, CreatePropertyState } from "./createProperty.types";
 
 
-const selectCreatePropertyReducer = (state: RootState): CreatePropertyState => state.apartment;
+const selectCreatePropertyReducer = (state: RootState): CreatePropertyState => state.createProperty;
 
 export const selectCreatePropertyLoading = createSelector(
     [selectCreatePropertyReducer],
