@@ -1,286 +1,163 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import * as React from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  HelpCircle,
-  UserCircle2,
-  Search,
   Home,
   CalendarDays,
   ListChecks,
   Building2,
   Inbox,
   Wallet,
-  Info,
   ChevronDown,
-  Eye,
   Mail,
-  MessageSquare,
-  FileText,
 } from "lucide-react";
+import InboxTab from "./InboxTab";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
+type ManageTab =
+  | "home"
+  | "calendar"
+  | "reservations"
+  | "property"
+  | "inbox"
+  | "finance";
 
-/**
- * PartnerGoLivePage (Monolith)
- * - Single file layout matching the screenshot you provided (Booking.com extranet-style go-live page)
- * - Mock data only
- * - Uses shadcn/ui + TailwindCSS
- */
-
-const NAV_BLUE = "bg-[#003580]";
-const ACTION_BLUE = "bg-[#0071c2] hover:bg-[#005fa3]";
-
-const ManagePropertyPage: React.FC = () => {
-  const navigate = useNavigate();
-
-  const mock = {
-    propertyName: "kimon house",
-    propertyId: "15512249",
-    address: "Αλεξανδρείας 63 1, Athens, 172 35, Greece",
-    hasKypBanner: true,
-    notifications: { property: 4, finance: 1 },
-  };
+export default function ManagePropertyPage() {
+  const [tab, setTab] = React.useState<ManageTab>("home");
+  const badges = { property: 4, finance: 1 };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* =========================================================
-          TOP HEADER (blue bar)
-         ========================================================= */}
-      <header className={`${NAV_BLUE} text-white`}>
-        <div className="mx-auto max-w-[1400px] px-6">
-          {/* top row */}
-          <div className="flex items-center justify-between py-4">
-            <div className="flex items-center gap-5">
-              <div className="text-2xl font-extrabold tracking-tight">
-                Booking<span className="opacity-90">.com</span>
-              </div>
+    // Full viewport + vertical layout
+    <div className="min-h-screen w-screen flex flex-col">
+      <Tabs
+        value={tab}
+        onValueChange={(v) => setTab(v as ManageTab)}
+        // Tabs should fill the available height
+        className="flex-1 flex flex-col"
+      >
+        {/* HEADER (blue) */}
+        <div className="bg-[#003580] text-white">
+          <div className="mx-auto max-w-[1400px] px-6">
+            <TabsList className="h-auto w-fit inline-flex bg-transparent p-0 gap-8 border-0 rounded-none py-5">
+              <TopIconTab value="home" label="Home" icon={<Home className="h-7 w-7" />} />
 
-              <div className="hidden md:flex items-center gap-2">
-                <span className="text-sm font-semibold">{mock.propertyName}</span>
-                <span className="inline-flex items-center gap-2 rounded border border-white/30 bg-white/10 px-2 py-1 text-xs font-semibold">
-                  {mock.propertyId}
-                  <ChevronDown className="h-4 w-4 opacity-90" />
-                </span>
-                <button className="rounded p-1 hover:bg-white/10" aria-label="View">
-                  <Eye className="h-4 w-4 opacity-90" />
-                </button>
-              </div>
-            </div>
+              <TopIconTab
+                value="calendar"
+                label="Calendar & pricing"
+                icon={<CalendarDays className="h-7 w-7" />}
+                showChevron
+              />
 
-            <div className="flex items-center gap-3">
-              <div className="hidden lg:flex items-center">
-                <div className="relative w-[420px]">
-                  <Input
-                    className="h-10 bg-white text-black placeholder:text-muted-foreground pr-10"
-                    placeholder="Search pages and reservations"
-                  />
-                  <Search className="h-4 w-4 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                </div>
-              </div>
+              <TopIconTab
+                value="reservations"
+                label="Reservations"
+                icon={<ListChecks className="h-7 w-7" />}
+              />
 
-              <button className="hidden md:flex items-center justify-center h-10 w-10 rounded-full bg-white/10 hover:bg-white/15">
-                <span className="text-sm">🇺🇸</span>
-              </button>
+              <TopIconTab
+                value="property"
+                label="Property"
+                icon={<Building2 className="h-7 w-7" />}
+                badge={badges.property}
+                showChevron
+              />
 
-              <button className="hidden md:flex items-center justify-center h-10 w-10 rounded-full bg-white/10 hover:bg-white/15">
-                <HelpCircle className="h-5 w-5" />
-              </button>
+              <TopIconTab
+                value="inbox"
+                label="Inbox"
+                icon={<Inbox className="h-7 w-7" />}
+                rightIcon={<Mail className="h-5 w-5" />}
+                showChevron
+              />
 
-              <button className="flex items-center justify-center h-10 w-10 rounded-full bg-white/10 hover:bg-white/15">
-                <UserCircle2 className="h-6 w-6" />
-              </button>
-            </div>
-          </div>
+              <TopIconTab
+                value="finance"
+                label="Finance"
+                icon={<Wallet className="h-7 w-7" />}
+                badge={badges.finance}
+                showChevron
+              />
+            </TabsList>
 
-          {/* nav row */}
-          <nav className="flex items-center gap-8 pb-3">
-            <NavItem icon={<Home className="h-5 w-5" />} label="Home" active />
-            <NavItem icon={<CalendarDays className="h-5 w-5" />} label="Calendar & pricing" />
-            <NavItem icon={<ListChecks className="h-5 w-5" />} label="Reservations" />
-            <NavItem
-              icon={<Building2 className="h-5 w-5" />}
-              label="Property"
-              badge={mock.notifications.property}
-            />
-            <NavItem icon={<Inbox className="h-5 w-5" />} label="Inbox" iconRight={<Mail className="h-4 w-4" />} />
-            <NavItem icon={<Wallet className="h-5 w-5" />} label="Finance" badge={mock.notifications.finance} />
-          </nav>
-        </div>
-      </header>
-
-      {/* =========================================================
-          PAGE BODY
-         ========================================================= */}
-      <main className="mx-auto max-w-[1400px] px-6 py-8">
-        {/* KYP banner */}
-        {mock.hasKypBanner && (
-          <div className="mb-8 rounded border border-orange-300 bg-orange-50 p-5">
-            <div className="flex items-start gap-3">
-              <div className="mt-0.5 h-6 w-6 rounded-full border border-orange-300 bg-white flex items-center justify-center">
-                <Info className="h-4 w-4 text-orange-700" />
-              </div>
-
-              <div className="flex-1">
-                <div className="font-semibold text-[#1a1a1a]">
-                  We need more details for the Know Your Partner (KYP) form
-                </div>
-                <p className="mt-2 text-sm text-[#1a1a1a] leading-relaxed">
-                  You&apos;ll need to provide further KYP information about your property to comply with various legal
-                  and regulatory requirements. Use the link below to add the info. For more details, check out{" "}
-                  <span className="text-[#0071c2] underline cursor-pointer">this article</span> in Partner Help.
-                </p>
-
-                <button
-                  className="mt-3 text-sm font-semibold text-[#0071c2] hover:underline"
-                  onClick={() => navigate("/partner/kyp")}
-                >
-                  Complete the information
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Main grid: left big card + right small card */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_360px]">
-          {/* LEFT: property go-live card */}
-          <Card className="rounded-none border">
-            <CardContent className="p-6">
-              <div className="flex gap-6">
-                {/* property image */}
-                <div className="h-20 w-28 bg-muted border rounded-sm overflow-hidden flex items-center justify-center">
-                  <div className="text-xs text-muted-foreground">photo</div>
-                </div>
-
-                <div className="flex-1">
-                  <div className="text-2xl font-extrabold text-[#1a1a1a]">{mock.propertyName}</div>
-                  <div className="mt-1 text-sm text-muted-foreground flex items-center gap-2">
-                    <span>📍</span>
-                    <span>{mock.address}</span>
-                  </div>
-
-                  <div className="mt-4 text-sm font-semibold text-[#1a1a1a]">Go live on Booking.com</div>
-
-                  <p className="mt-2 text-sm text-[#1a1a1a] leading-relaxed max-w-2xl">
-                    You&apos;re about to go live to the world! Just make sure your calendar and pricing are correct
-                    since all of our bookings are <span className="font-semibold">instantly confirmed</span>.
-                  </p>
-
-                  <p className="mt-4 text-sm text-[#1a1a1a]">
-                    When you&apos;re ready, just click the button below to go live!
-                  </p>
-
-                  <div className="mt-5">
-                    <Button
-                      className={`${ACTION_BLUE} rounded-none px-6`}
-                      onClick={() => navigate("/partner/property/go-live")}
-                    >
-                      Make my property live
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* RIGHT: update calendar card */}
-          <Card className="rounded-none border">
-            <CardContent className="p-6">
-              <div className="text-lg font-extrabold text-[#1a1a1a]">Update your calendar</div>
-              <p className="mt-2 text-sm text-[#1a1a1a] leading-relaxed">
-                Bookings you receive are instant. Avoid overbookings by updating your calendar.
-              </p>
-
-              <div className="mt-4">
-                <Button className={`${ACTION_BLUE} w-full rounded-none`} onClick={() => navigate("/partner/calendar")}>
-                  Update calendar
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-
-      {/* =========================================================
-          FOOTER (blue strip with links + actions)
-         ========================================================= */}
-      <footer className={`${NAV_BLUE} text-white mt-10`}>
-        <div className="mx-auto max-w-[1400px] px-6 py-7">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="flex flex-wrap items-center gap-6 text-sm">
-              <button className="hover:underline">About Us</button>
-              <button className="hover:underline">Privacy and cookie statements</button>
-              <button className="hover:underline">FAQs</button>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-              <Button
-                className="rounded-none bg-[#0071c2] hover:bg-[#005fa3]"
-                onClick={() => navigate("/partner/select-property-type")}
-              >
-                Add new property
-              </Button>
-              <Button
-                variant="secondary"
-                className="rounded-none bg-white/10 text-white hover:bg-white/15 border border-white/20"
-                onClick={() => navigate("/partner/feedback")}
-              >
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Share your feedback
-              </Button>
-            </div>
-          </div>
-
-          <Separator className="my-6 bg-white/15" />
-
-          <div className="text-xs text-white/80">
-            © Copyright Booking.com {new Date().getFullYear()}
+            <div className="h-px bg-white/20" />
           </div>
         </div>
-      </footer>
+
+        {/* CONTENT AREA (fills remaining height + full width) */}
+        <div className="flex-1 w-full bg-white text-black">
+          {/* each TabsContent is made flex-1 so it can fill height */}
+          <TabsContent value="home" className="m-0 h-full w-full flex-1">
+            <div className="h-full w-full p-6">Home content</div>
+          </TabsContent>
+
+          <TabsContent value="calendar" className="m-0 h-full w-full flex-1">
+            <div className="h-full w-full p-6">Calendar content</div>
+          </TabsContent>
+
+          <TabsContent value="reservations" className="m-0 h-full w-full flex-1">
+            <div className="h-full w-full p-6">Reservations content</div>
+          </TabsContent>
+
+          <TabsContent value="property" className="m-0 h-full w-full flex-1">
+            <div className="h-full w-full p-6">Property content</div>
+          </TabsContent>
+
+          <TabsContent value="inbox" className="m-0 h-full w-full flex-1">
+            <InboxTab />          
+          </TabsContent>
+
+          <TabsContent value="finance" className="m-0 h-full w-full flex-1">
+            <div className="h-full w-full p-6">Finance content</div>
+          </TabsContent>
+        </div>
+      </Tabs>
     </div>
-  );
-};
-
-function NavItem({
-  icon,
-  label,
-  active,
-  badge,
-  iconRight,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  active?: boolean;
-  badge?: number;
-  iconRight?: React.ReactNode;
-}) {
-  return (
-    <button
-      className={[
-        "relative flex flex-col items-center gap-1 py-2 text-white/90 hover:text-white",
-        active ? "text-white" : "",
-      ].join(" ")}
-    >
-      <div className="relative">
-        {icon}
-        {typeof badge === "number" && badge > 0 && (
-          <span className="absolute -right-2 -top-2 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-600 px-1 text-[11px] font-bold">
-            {badge}
-          </span>
-        )}
-      </div>
-      <div className="flex items-center gap-1 text-xs font-semibold">
-        <span>{label}</span>
-        {iconRight}
-        {!active && label !== "Home" && <ChevronDown className="h-3 w-3 opacity-80" />}
-      </div>
-      {active && <div className="mt-1 h-[3px] w-10 bg-white" />}
-    </button>
   );
 }
 
-export default ManagePropertyPage;
+function TopIconTab({
+  value,
+  label,
+  icon,
+  badge,
+  showChevron,
+  rightIcon,
+}: {
+  value: string;
+  label: string;
+  icon: React.ReactNode;
+  badge?: number;
+  showChevron?: boolean;
+  rightIcon?: React.ReactNode;
+}) {
+  return (
+    <TabsTrigger
+      value={value}
+      className={[
+        "flex-none",
+        "relative h-auto rounded-none bg-transparent p-0 shadow-none",
+        "text-white/90 hover:text-white data-[state=active]:text-white",
+        "data-[state=active]:bg-transparent",
+        "focus-visible:ring-0 focus-visible:ring-offset-0",
+      ].join(" ")}
+    >
+      <div className="flex flex-col items-center gap-2 pb-3">
+        <div className="relative">
+          {icon}
+          {typeof badge === "number" && badge > 0 && (
+            <span className="absolute -right-3 -top-3 flex h-6 min-w-[24px] items-center justify-center rounded-full bg-red-600 px-1 text-xs font-bold leading-none">
+              {badge}
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-1 text-sm font-semibold whitespace-nowrap">
+          <span>{label}</span>
+          {rightIcon}
+          {showChevron && <ChevronDown className="h-4 w-4 opacity-90" />}
+        </div>
+      </div>
+
+      {/* underline driven by state */}
+      <span className="absolute bottom-0 left-1/2 h-[3px] w-10 -translate-x-1/2 bg-transparent data-[state=active]:bg-white" />
+    </TabsTrigger>
+  );
+}
